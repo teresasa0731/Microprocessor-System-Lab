@@ -252,6 +252,10 @@ _light_up_PARM_2:
 	.ds 1
 _main_long_flag_65536_20:
 	.ds 2
+_main_double_cnt_65536_20:
+	.ds 2
+_main_double_flag_65536_20:
+	.ds 2
 _main_sloc0_1_0:
 	.ds 2
 ;--------------------------------------------------------
@@ -637,8 +641,10 @@ _light_up:
 ;Allocation info for local variables in function 'main'
 ;------------------------------------------------------------
 ;long_flag                 Allocated with name '_main_long_flag_65536_20'
-;i                         Allocated to registers r4 r5 
-;i                         Allocated to registers r4 r5 
+;double_cnt                Allocated with name '_main_double_cnt_65536_20'
+;double_flag               Allocated with name '_main_double_flag_65536_20'
+;i                         Allocated to registers r6 r7 
+;i                         Allocated to registers r6 r7 
 ;sloc0                     Allocated with name '_main_sloc0_1_0'
 ;------------------------------------------------------------
 ;	./src/main.c:104: void main(void)
@@ -646,26 +652,30 @@ _light_up:
 ;	 function main
 ;	-----------------------------------------
 _main:
-;	./src/main.c:107: int long_flag = 0;
+;	./src/main.c:107: int long_flag = 0, double_cnt = 0, double_flag = 0;
 	clr	a
 	mov	_main_long_flag_65536_20,a
 	mov	(_main_long_flag_65536_20 + 1),a
+	mov	_main_double_cnt_65536_20,a
+	mov	(_main_double_cnt_65536_20 + 1),a
+	mov	_main_double_flag_65536_20,a
+	mov	(_main_double_flag_65536_20 + 1),a
 ;	./src/main.c:109: for (int i = 0; i < 9; i++)
-	mov	r4,#0x00
-	mov	r5,#0x00
-00151$:
+	mov	r6,#0x00
+	mov	r7,#0x00
+00161$:
 	clr	c
-	mov	a,r4
+	mov	a,r6
 	subb	a,#0x09
-	mov	a,r5
+	mov	a,r7
 	xrl	a,#0x80
 	subb	a,#0x80
-	jnc	00148$
+	jnc	00158$
 ;	./src/main.c:111: curINPUT[i] = LEVEL_HIGH;
-	mov	a,r4
-	add	a,r4
+	mov	a,r6
+	add	a,r6
 	mov	r2,a
-	mov	a,r5
+	mov	a,r7
 	rlc	a
 	mov	r3,a
 	mov	a,r2
@@ -696,33 +706,33 @@ _main:
 	inc	r0
 	mov	@r0,#0x00
 ;	./src/main.c:109: for (int i = 0; i < 9; i++)
-	inc	r4
+	inc	r6
 ;	./src/main.c:117: while (1)
-	cjne	r4,#0x00,00151$
-	inc	r5
-	sjmp	00151$
-00148$:
+	cjne	r6,#0x00,00161$
+	inc	r7
+	sjmp	00161$
+00158$:
 ;	./src/main.c:119: delay_ms(20);
 	mov	dptr,#0x0014
 	lcall	_delay_ms
 ;	./src/main.c:120: read_curINPUT();
 	lcall	_read_curINPUT
 ;	./src/main.c:123: for (int i = 0; i < 9; i++)
-	mov	r4,#0x00
-	mov	r5,#0x00
-00154$:
+	mov	r6,#0x00
+	mov	r7,#0x00
+00164$:
 	clr	c
-	mov	a,r4
+	mov	a,r6
 	subb	a,#0x09
-	mov	a,r5
+	mov	a,r7
 	xrl	a,#0x80
 	subb	a,#0x80
-	jnc	00148$
+	jnc	00158$
 ;	./src/main.c:125: switch (state[i])
-	mov	a,r4
-	add	a,r4
+	mov	a,r6
+	add	a,r6
 	mov	r2,a
-	mov	a,r5
+	mov	a,r7
 	rlc	a
 	mov	r3,a
 	mov	a,r2
@@ -737,170 +747,176 @@ _main:
 	subb	a,_main_sloc0_1_0
 	clr	a
 	subb	a,(_main_sloc0_1_0 + 1)
-	jnc	00242$
-	ljmp	00121$
-00242$:
+	jnc	00264$
+	ljmp	00122$
+00264$:
 	mov	a,_main_sloc0_1_0
 	mov	b,#0x03
 	mul	ab
-	mov	dptr,#00243$
+	mov	dptr,#00265$
 	jmp	@a+dptr
-00243$:
+00265$:
 	ljmp	00102$
-	ljmp	00105$
-	ljmp	00109$
-	ljmp	00116$
+	ljmp	00106$
+	ljmp	00110$
+	ljmp	00117$
 ;	./src/main.c:127: case BTN_RELEASED:
 00102$:
 ;	./src/main.c:128: if (curINPUT[i] == LEVEL_LOW)
 	mov	a,r2
 	add	a,#_curINPUT
 	mov	r0,a
-	mov	ar6,@r0
+	mov	ar4,@r0
 	inc	r0
-	mov	ar7,@r0
+	mov	ar5,@r0
 	dec	r0
-	mov	a,r6
-	orl	a,r7
-	jz	00244$
-	ljmp	00121$
-00244$:
+	mov	a,r4
+	orl	a,r5
+	jnz	00104$
 ;	./src/main.c:129: state[i] = BTN_DEBOUNCED;
 	mov	@r1,#0x01
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
-;	./src/main.c:130: break;
-	ljmp	00121$
-;	./src/main.c:131: case BTN_DEBOUNCED:
-00105$:
-;	./src/main.c:132: if (curINPUT[i] == LEVEL_LOW)
+	ljmp	00122$
+00104$:
+;	./src/main.c:131: double_cnt++;
+	inc	_main_double_cnt_65536_20
+	clr	a
+	cjne	a,_main_double_cnt_65536_20,00267$
+	inc	(_main_double_cnt_65536_20 + 1)
+00267$:
+;	./src/main.c:133: break;
+	ljmp	00122$
+;	./src/main.c:134: case BTN_DEBOUNCED:
+00106$:
+;	./src/main.c:135: if (curINPUT[i] == LEVEL_LOW)
 	mov	a,r2
 	add	a,#_curINPUT
 	mov	r0,a
-	mov	ar6,@r0
+	mov	ar4,@r0
 	inc	r0
-	mov	ar7,@r0
+	mov	ar5,@r0
 	dec	r0
-	mov	a,r6
-	orl	a,r7
-	jnz	00107$
-;	./src/main.c:133: state[i] = BTN_PRESSED;
+	mov	a,r4
+	orl	a,r5
+	jnz	00108$
+;	./src/main.c:137: state[i] = BTN_PRESSED;
 	mov	@r1,#0x02
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
-	ljmp	00121$
-00107$:
-;	./src/main.c:135: state[i] = BTN_RELEASED;
+	ljmp	00122$
+00108$:
+;	./src/main.c:140: state[i] = BTN_RELEASED;
 	mov	@r1,#0x00
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
-;	./src/main.c:136: break;
-;	./src/main.c:137: case BTN_PRESSED:
-	sjmp	00121$
-00109$:
-;	./src/main.c:138: if (curINPUT[i] == LEVEL_LOW)
+;	./src/main.c:141: break;
+;	./src/main.c:142: case BTN_PRESSED:
+	sjmp	00122$
+00110$:
+;	./src/main.c:143: if (curINPUT[i] == LEVEL_LOW)
 	mov	a,r2
 	add	a,#_curINPUT
 	mov	r0,a
-	mov	ar6,@r0
+	mov	ar4,@r0
 	inc	r0
-	mov	ar7,@r0
+	mov	ar5,@r0
 	dec	r0
-	mov	a,r6
-	orl	a,r7
-	jnz	00114$
-;	./src/main.c:140: count[i]++;
+	mov	a,r4
+	orl	a,r5
+	jnz	00115$
+;	./src/main.c:145: count[i]++;
 	mov	a,r2
 	add	a,#_count
 	mov	r0,a
-	mov	ar6,@r0
+	mov	ar4,@r0
 	inc	r0
-	mov	ar7,@r0
+	mov	ar5,@r0
 	dec	r0
-	inc	r6
-	cjne	r6,#0x00,00247$
-	inc	r7
-00247$:
-	mov	@r0,ar6
+	inc	r4
+	cjne	r4,#0x00,00270$
+	inc	r5
+00270$:
+	mov	@r0,ar4
 	inc	r0
-	mov	@r0,ar7
+	mov	@r0,ar5
 	dec	r0
-;	./src/main.c:141: if (count[i] > 50)
+;	./src/main.c:146: if (count[i] > 50)
 	clr	c
 	mov	a,#0x32
-	subb	a,r6
+	subb	a,r4
 	clr	a
-	subb	a,r7
-	jnc	00111$
-;	./src/main.c:143: state[i] = BTN_LONG_PRESSED;
+	subb	a,r5
+	jnc	00112$
+;	./src/main.c:148: state[i] = BTN_LONG_PRESSED;
 	mov	@r1,#0x03
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
-;	./src/main.c:144: long_flag = 1;
+;	./src/main.c:149: long_flag = 1;
 	mov	_main_long_flag_65536_20,#0x01
 	mov	(_main_long_flag_65536_20 + 1),#0x00
-	sjmp	00121$
-00111$:
-;	./src/main.c:148: state[i] = BTN_PRESSED;
+	sjmp	00122$
+00112$:
+;	./src/main.c:153: state[i] = BTN_PRESSED;
 	mov	@r1,#0x02
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
-	sjmp	00121$
-00114$:
-;	./src/main.c:151: state[i] = BTN_RELEASED;
+	sjmp	00122$
+00115$:
+;	./src/main.c:156: state[i] = BTN_RELEASED;
 	mov	@r1,#0x00
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
-;	./src/main.c:152: break;
-;	./src/main.c:153: case BTN_LONG_PRESSED:
-	sjmp	00121$
-00116$:
-;	./src/main.c:154: if (curINPUT[i] == LEVEL_LOW)
+;	./src/main.c:158: break;
+;	./src/main.c:159: case BTN_LONG_PRESSED:
+	sjmp	00122$
+00117$:
+;	./src/main.c:160: if (curINPUT[i] == LEVEL_LOW)
 	mov	a,r2
 	add	a,#_curINPUT
 	mov	r0,a
-	mov	ar6,@r0
+	mov	ar4,@r0
 	inc	r0
-	mov	ar7,@r0
+	mov	ar5,@r0
 	dec	r0
-	mov	a,r6
-	orl	a,r7
-	jnz	00118$
-;	./src/main.c:155: state[i] = BTN_LONG_PRESSED;
+	mov	a,r4
+	orl	a,r5
+	jnz	00119$
+;	./src/main.c:161: state[i] = BTN_LONG_PRESSED;
 	mov	@r1,#0x03
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
-	sjmp	00121$
-00118$:
-;	./src/main.c:158: state[i] = BTN_RELEASED;
+	sjmp	00122$
+00119$:
+;	./src/main.c:164: state[i] = BTN_RELEASED;
 	mov	@r1,#0x00
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
-;	./src/main.c:159: count[i] = 0;
+;	./src/main.c:165: count[i] = 0;
 	mov	a,r2
 	add	a,#_count
 	mov	r0,a
 	mov	@r0,#0x00
 	inc	r0
 	mov	@r0,#0x00
-;	./src/main.c:164: }
-00121$:
-;	./src/main.c:167: if ((state[i] == BTN_RELEASED) && (prestate[i] == BTN_PRESSED))
-	mov	a,r4
-	add	a,r4
-	mov	r6,a
-	mov	a,r5
-	rlc	a
-	mov	r7,a
+;	./src/main.c:170: }
+00122$:
+;	./src/main.c:173: if (((state[i] == BTN_RELEASED) && (prestate[i] == BTN_PRESSED)) || (double_flag && (i == 8) && (double_cnt > 100)))
 	mov	a,r6
+	add	a,r6
+	mov	r4,a
+	mov	a,r7
+	rlc	a
+	mov	r5,a
+	mov	a,r4
 	add	a,#_state
 	mov	r1,a
 	mov	ar2,@r1
@@ -909,49 +925,67 @@ _main:
 	dec	r1
 	mov	a,r2
 	orl	a,r3
-	jz	00250$
-	ljmp	00143$
-00250$:
-	mov	a,r6
+	jnz	00155$
+	mov	a,r4
 	add	a,#_prestate
 	mov	r1,a
-	mov	ar6,@r1
+	mov	ar4,@r1
 	inc	r1
-	mov	ar7,@r1
+	mov	ar5,@r1
 	dec	r1
-	cjne	r6,#0x02,00251$
-	cjne	r7,#0x00,00251$
-	sjmp	00252$
-00251$:
-	ljmp	00143$
-00252$:
-;	./src/main.c:169: switch (i)
-	mov	a,r5
-	jnb	acc.7,00253$
-	ljmp	00132$
-00253$:
+	cjne	r4,#0x02,00274$
+	cjne	r5,#0x00,00274$
+	sjmp	00149$
+00274$:
+00155$:
+	mov	a,_main_double_flag_65536_20
+	orl	a,(_main_double_flag_65536_20 + 1)
+	jnz	00275$
+	ljmp	00150$
+00275$:
+	cjne	r6,#0x08,00276$
+	cjne	r7,#0x00,00276$
+	sjmp	00277$
+00276$:
+	ljmp	00150$
+00277$:
 	clr	c
-	mov	a,#0x08
-	subb	a,r4
+	mov	a,#0x64
+	subb	a,_main_double_cnt_65536_20
 	mov	a,#(0x00 ^ 0x80)
-	mov	b,r5
+	mov	b,(_main_double_cnt_65536_20 + 1)
 	xrl	b,#0x80
 	subb	a,b
-	jnc	00254$
-	ljmp	00132$
-00254$:
-	mov	a,r4
-	add	a,#(00255$-3-.)
+	jc	00278$
+	ljmp	00150$
+00278$:
+00149$:
+;	./src/main.c:175: switch (i)
+	mov	a,r7
+	jnb	acc.7,00279$
+	ljmp	00139$
+00279$:
+	clr	c
+	mov	a,#0x08
+	subb	a,r6
+	mov	a,#(0x00 ^ 0x80)
+	mov	b,r7
+	xrl	b,#0x80
+	subb	a,b
+	jnc	00280$
+	ljmp	00139$
+00280$:
+	mov	a,r6
+	add	a,#(00281$-3-.)
 	movc	a,@a+pc
 	mov	dpl,a
-	mov	a,r4
-	add	a,#(00256$-3-.)
+	mov	a,r6
+	add	a,#(00282$-3-.)
 	movc	a,@a+pc
 	mov	dph,a
 	clr	a
 	jmp	@a+dptr
-00255$:
-	.db	00122$
+00281$:
 	.db	00123$
 	.db	00124$
 	.db	00125$
@@ -960,8 +994,8 @@ _main:
 	.db	00128$
 	.db	00129$
 	.db	00130$
-00256$:
-	.db	00122$>>8
+	.db	00131$
+00282$:
 	.db	00123$>>8
 	.db	00124$>>8
 	.db	00125$>>8
@@ -970,239 +1004,277 @@ _main:
 	.db	00128$>>8
 	.db	00129$>>8
 	.db	00130$>>8
-;	./src/main.c:171: case 0:
-00122$:
-;	./src/main.c:172: patt = shift_left(1, patt);
+	.db	00131$>>8
+;	./src/main.c:177: case 0:
+00123$:
+;	./src/main.c:178: patt = shift_left(1, patt);
 	mov	_shift_left_PARM_2,_patt
 	mov	dptr,#0x0001
-	push	ar5
-	push	ar4
+	push	ar7
+	push	ar6
 	lcall	_shift_left
 	mov	_patt,dpl
-	pop	ar4
-	pop	ar5
-;	./src/main.c:173: break;
-	ljmp	00132$
-;	./src/main.c:174: case 1:
-00123$:
-;	./src/main.c:175: patt = light_up(0, patt);
+	pop	ar6
+	pop	ar7
+;	./src/main.c:179: break;
+	ljmp	00139$
+;	./src/main.c:180: case 1:
+00124$:
+;	./src/main.c:181: patt = light_up(0, patt);
 	mov	_light_up_PARM_2,_patt
 	mov	dptr,#0x0000
-	push	ar5
-	push	ar4
+	push	ar7
+	push	ar6
 	lcall	_light_up
 	mov	_patt,dpl
-	pop	ar4
-	pop	ar5
-;	./src/main.c:176: break;
-	ljmp	00132$
-;	./src/main.c:177: case 2:
-00124$:
-;	./src/main.c:178: patt = light_up(1, patt);
+	pop	ar6
+	pop	ar7
+;	./src/main.c:182: break;
+	ljmp	00139$
+;	./src/main.c:183: case 2:
+00125$:
+;	./src/main.c:184: patt = light_up(1, patt);
 	mov	_light_up_PARM_2,_patt
 	mov	dptr,#0x0001
-	push	ar5
-	push	ar4
+	push	ar7
+	push	ar6
 	lcall	_light_up
 	mov	_patt,dpl
-	pop	ar4
-	pop	ar5
-;	./src/main.c:179: break;
-	ljmp	00132$
-;	./src/main.c:180: case 3:
-00125$:
-;	./src/main.c:181: patt = light_up(2, patt);
+	pop	ar6
+	pop	ar7
+;	./src/main.c:185: break;
+	ljmp	00139$
+;	./src/main.c:186: case 3:
+00126$:
+;	./src/main.c:187: patt = light_up(2, patt);
 	mov	_light_up_PARM_2,_patt
 	mov	dptr,#0x0002
-	push	ar5
-	push	ar4
+	push	ar7
+	push	ar6
 	lcall	_light_up
 	mov	_patt,dpl
-	pop	ar4
-	pop	ar5
-;	./src/main.c:182: break;
-	ljmp	00132$
-;	./src/main.c:183: case 4:
-00126$:
-;	./src/main.c:184: patt = shift_right(1, patt);
+	pop	ar6
+	pop	ar7
+;	./src/main.c:188: break;
+	ljmp	00139$
+;	./src/main.c:189: case 4:
+00127$:
+;	./src/main.c:190: patt = shift_right(1, patt);
 	mov	_shift_right_PARM_2,_patt
 	mov	dptr,#0x0001
-	push	ar5
-	push	ar4
+	push	ar7
+	push	ar6
 	lcall	_shift_right
 	mov	_patt,dpl
-	pop	ar4
-	pop	ar5
-;	./src/main.c:185: break;
-;	./src/main.c:186: case 5:
-	sjmp	00132$
-00127$:
-;	./src/main.c:187: patt = light_up(4, patt);
+	pop	ar6
+	pop	ar7
+;	./src/main.c:191: break;
+	ljmp	00139$
+;	./src/main.c:192: case 5:
+00128$:
+;	./src/main.c:193: patt = light_up(4, patt);
 	mov	_light_up_PARM_2,_patt
 	mov	dptr,#0x0004
-	push	ar5
-	push	ar4
+	push	ar7
+	push	ar6
 	lcall	_light_up
 	mov	_patt,dpl
-	pop	ar4
-	pop	ar5
-;	./src/main.c:188: break;
-;	./src/main.c:189: case 6:
-	sjmp	00132$
-00128$:
-;	./src/main.c:190: patt = light_up(5, patt);
+	pop	ar6
+	pop	ar7
+;	./src/main.c:194: break;
+	ljmp	00139$
+;	./src/main.c:195: case 6:
+00129$:
+;	./src/main.c:196: patt = light_up(5, patt);
 	mov	_light_up_PARM_2,_patt
 	mov	dptr,#0x0005
-	push	ar5
-	push	ar4
+	push	ar7
+	push	ar6
 	lcall	_light_up
 	mov	_patt,dpl
-	pop	ar4
-	pop	ar5
-;	./src/main.c:191: break;
-;	./src/main.c:192: case 7:
-	sjmp	00132$
-00129$:
-;	./src/main.c:193: patt = light_up(6, patt);
+	pop	ar6
+	pop	ar7
+;	./src/main.c:197: break;
+;	./src/main.c:198: case 7:
+	sjmp	00139$
+00130$:
+;	./src/main.c:199: patt = light_up(6, patt);
 	mov	_light_up_PARM_2,_patt
 	mov	dptr,#0x0006
-	push	ar5
-	push	ar4
+	push	ar7
+	push	ar6
 	lcall	_light_up
 	mov	_patt,dpl
-	pop	ar4
-	pop	ar5
-;	./src/main.c:194: break;
-;	./src/main.c:195: case 8:
-	sjmp	00132$
-00130$:
-;	./src/main.c:196: patt = shift_left(1, patt);
+	pop	ar6
+	pop	ar7
+;	./src/main.c:200: break;
+;	./src/main.c:201: case 8:
+	sjmp	00139$
+00131$:
+;	./src/main.c:202: if (double_flag)
+	mov	a,_main_double_flag_65536_20
+	orl	a,(_main_double_flag_65536_20 + 1)
+	jz	00136$
+;	./src/main.c:204: if (double_cnt < 100)
+	clr	c
+	mov	a,_main_double_cnt_65536_20
+	subb	a,#0x64
+	mov	a,(_main_double_cnt_65536_20 + 1)
+	xrl	a,#0x80
+	subb	a,#0x80
+	jnc	00133$
+;	./src/main.c:205: patt = shift_left(3, patt);
 	mov	_shift_left_PARM_2,_patt
-	mov	dptr,#0x0001
-	push	ar5
-	push	ar4
+	mov	dptr,#0x0003
+	push	ar7
+	push	ar6
 	lcall	_shift_left
 	mov	_patt,dpl
-	pop	ar4
-	pop	ar5
-;	./src/main.c:200: }
-00132$:
-;	./src/main.c:201: count[i] = 0;
-	mov	a,r4
-	add	a,r4
-	mov	r6,a
-	mov	a,r5
-	rlc	a
-	mov	r7,a
+	pop	ar6
+	pop	ar7
+	sjmp	00134$
+00133$:
+;	./src/main.c:207: patt = shift_left(1, patt);
+	mov	_shift_left_PARM_2,_patt
+	mov	dptr,#0x0001
+	push	ar7
+	push	ar6
+	lcall	_shift_left
+	mov	_patt,dpl
+	pop	ar6
+	pop	ar7
+00134$:
+;	./src/main.c:208: double_flag = 0;
+	clr	a
+	mov	_main_double_flag_65536_20,a
+	mov	(_main_double_flag_65536_20 + 1),a
+	sjmp	00139$
+00136$:
+;	./src/main.c:212: double_flag = 1;
+	mov	_main_double_flag_65536_20,#0x01
+;	./src/main.c:213: double_cnt = 0;
+	clr	a
+	mov	(_main_double_flag_65536_20 + 1),a
+	mov	_main_double_cnt_65536_20,a
+	mov	(_main_double_cnt_65536_20 + 1),a
+;	./src/main.c:219: }
+00139$:
+;	./src/main.c:220: count[i] = 0;
 	mov	a,r6
+	add	a,r6
+	mov	r4,a
+	mov	a,r7
+	rlc	a
+	mov	r5,a
+	mov	a,r4
 	add	a,#_count
 	mov	r0,a
 	mov	@r0,#0x00
 	inc	r0
 	mov	@r0,#0x00
-	ljmp	00144$
-00143$:
-;	./src/main.c:203: else if (state[i] == BTN_LONG_PRESSED)
-	mov	a,r4
-	add	a,r4
-	mov	r6,a
-	mov	a,r5
-	rlc	a
+	ljmp	00151$
+00150$:
+;	./src/main.c:222: else if (state[i] == BTN_LONG_PRESSED)
 	mov	a,r6
+	add	a,r6
+	mov	r4,a
+	mov	a,r7
+	rlc	a
+	mov	a,r4
 	add	a,#_state
 	mov	r1,a
-	mov	ar6,@r1
+	mov	ar4,@r1
 	inc	r1
-	mov	ar7,@r1
+	mov	ar5,@r1
 	dec	r1
-	cjne	r6,#0x03,00144$
-	cjne	r7,#0x00,00144$
-;	./src/main.c:205: switch (i)
-	cjne	r4,#0x00,00259$
-	cjne	r5,#0x00,00259$
-	sjmp	00133$
-00259$:
-	cjne	r4,#0x04,00260$
-	cjne	r5,#0x00,00260$
-	sjmp	00134$
-00260$:
-;	./src/main.c:207: case 0:
-	cjne	r4,#0x08,00144$
-	cjne	r5,#0x00,00144$
-	sjmp	00135$
-00133$:
-;	./src/main.c:208: patt = light_up(9, patt);
+	cjne	r4,#0x03,00151$
+	cjne	r5,#0x00,00151$
+;	./src/main.c:224: switch (i)
+	cjne	r6,#0x00,00287$
+	cjne	r7,#0x00,00287$
+	sjmp	00140$
+00287$:
+	cjne	r6,#0x04,00288$
+	cjne	r7,#0x00,00288$
+	sjmp	00141$
+00288$:
+;	./src/main.c:226: case 0:
+	cjne	r6,#0x08,00151$
+	cjne	r7,#0x00,00151$
+	sjmp	00142$
+00140$:
+;	./src/main.c:227: patt = light_up(9, patt);
 	mov	_light_up_PARM_2,_patt
 	mov	dptr,#0x0009
-	push	ar5
-	push	ar4
+	push	ar7
+	push	ar6
 	lcall	_light_up
 	mov	_patt,dpl
-	pop	ar4
-	pop	ar5
-;	./src/main.c:209: break;
-;	./src/main.c:210: case 4:
-	sjmp	00144$
-00134$:
-;	./src/main.c:211: patt = shift_right(1, patt);
+	pop	ar6
+	pop	ar7
+;	./src/main.c:228: break;
+;	./src/main.c:229: case 4:
+	sjmp	00151$
+00141$:
+;	./src/main.c:230: patt = shift_right(1, patt);
 	mov	_shift_right_PARM_2,_patt
 	mov	dptr,#0x0001
-	push	ar5
-	push	ar4
+	push	ar7
+	push	ar6
 	lcall	_shift_right
 	mov	_patt,dpl
-	pop	ar4
-	pop	ar5
-;	./src/main.c:212: break;
-;	./src/main.c:213: case 8:
-	sjmp	00144$
-00135$:
-;	./src/main.c:214: if (long_flag)
+	pop	ar6
+	pop	ar7
+;	./src/main.c:231: break;
+;	./src/main.c:232: case 8:
+	sjmp	00151$
+00142$:
+;	./src/main.c:233: if (long_flag)
 	mov	a,_main_long_flag_65536_20
 	orl	a,(_main_long_flag_65536_20 + 1)
-	jz	00144$
-;	./src/main.c:216: patt = shift_left(2, patt);
+	jz	00151$
+;	./src/main.c:235: patt = shift_left(2, patt);
 	mov	_shift_left_PARM_2,_patt
 	mov	dptr,#0x0002
-	push	ar5
-	push	ar4
+	push	ar7
+	push	ar6
 	lcall	_shift_left
 	mov	_patt,dpl
-	pop	ar4
-	pop	ar5
-;	./src/main.c:217: long_flag = 0;
+	pop	ar6
+	pop	ar7
+;	./src/main.c:236: long_flag = 0;
 	clr	a
 	mov	_main_long_flag_65536_20,a
 	mov	(_main_long_flag_65536_20 + 1),a
-;	./src/main.c:222: }
-00144$:
-;	./src/main.c:225: prestate[i] = state[i];
-	mov	a,r4
-	add	a,r4
-	mov	r6,a
-	mov	a,r5
-	rlc	a
+;	./src/main.c:241: }
+00151$:
+;	./src/main.c:244: prestate[i] = state[i];
 	mov	a,r6
+	add	a,r6
+	mov	r4,a
+	mov	a,r7
+	rlc	a
+	mov	a,r4
 	add	a,#_prestate
 	mov	r1,a
-	mov	a,r6
+	mov	a,r4
 	add	a,#_state
 	mov	r0,a
-	mov	ar6,@r0
+	mov	ar4,@r0
 	inc	r0
-	mov	ar7,@r0
+	mov	ar5,@r0
 	dec	r0
-	mov	@r1,ar6
+	mov	@r1,ar4
 	inc	r1
-	mov	@r1,ar7
+	mov	@r1,ar5
 	dec	r1
 ;	./src/main.c:123: for (int i = 0; i < 9; i++)
-	inc	r4
-	cjne	r4,#0x00,00263$
-	inc	r5
-00263$:
-;	./src/main.c:228: }
-	ljmp	00154$
+	inc	r6
+	cjne	r6,#0x00,00291$
+	inc	r7
+00291$:
+;	./src/main.c:247: }
+	ljmp	00164$
 	.area CSEG    (CODE)
 	.area CONST   (CODE)
 	.area XINIT   (CODE)
