@@ -2,39 +2,62 @@
 #include "delay.h"
 
 #define led P1
-#define INPUT1 P0_7	 // column 1
-#define INPUT2 P0_6	 // column 2
-#define INPUT3 P0_5	 // column 3
-#define OUTPUT1 P0_4 // row 1
-#define OUTPUT2 P0_3 // row 2
-#define OUTPUT3 P0_2 // row 3
+#define INPUT0 P0_7	 // column 1
+#define INPUT1 P0_6	 // column 2
+#define INPUT2 P0_5	 // column 3
+#define OUTPUT0 P0_4 // row 1
+#define OUTPUT1 P0_3 // row 2
+#define OUTPUT2 P0_2 // row 3
+
+#define LEVEL_HIGH 1
+#define LEVEL_LOW 0
+
+#define BTN_RELEASED 0
+#define BTN_DEBOUNCED 1
+#define BTN_PRESSED 2
+#define BTN_LONG_PRESSED 3
+#define BTN_DOUBLE_RELEASED 4
+#define BTN_DOUBLE_CLICKED 5
+
+unsigned int curINPUT[9], state[9], prestate[9], count[9];
+unsigned char patt = 0x80; // led value
 
 void delay_ms(unsigned int input_ms); // delay func
 void scan_row(unsigned int row)
 {
 	switch (row)
 	{
-	case 1:
+	case 0:
 
-		OUTPUT1 = 0; // row1 output 0
-		OUTPUT2 = 1; // row2 output 1
-		OUTPUT3 = 1; // row3 output 1
+		OUTPUT0 = 0; // row1 output 0
+		OUTPUT1 = 1; // row2 output 1
+		OUTPUT2 = 1; // row3 output 1
+		break;
+
+	case 1:
+		OUTPUT0 = 1; // row1 output 1
+		OUTPUT1 = 0; // row2 output 0
+		OUTPUT2 = 1; // row3 output 1
 		break;
 
 	case 2:
-		OUTPUT1 = 1; // row1 output 1
-		OUTPUT2 = 0; // row2 output 0
-		OUTPUT3 = 1; // row3 output 1
-		break;
-
-	case 3:
-		OUTPUT1 = 1; // row1 output 1
-		OUTPUT2 = 1; // row2 output 1
-		OUTPUT3 = 0; // row3 output 0
+		OUTPUT0 = 1; // row1 output 1
+		OUTPUT1 = 1; // row2 output 1
+		OUTPUT2 = 0; // row3 output 0
 		break;
 
 	default:
 		break;
+	}
+}
+void read_curINPUT(void)
+{
+	for (int i = 0; i < 3; i++)
+	{
+		scan_row(i);
+		curINPUT[i * 3 + 0] = INPUT0;
+		curINPUT[i * 3 + 1] = INPUT1;
+		curINPUT[i * 3 + 2] = INPUT2;
 	}
 }
 unsigned char shift_left(unsigned int bit, unsigned char patt)
@@ -81,139 +104,95 @@ unsigned char light_up(unsigned int idx, unsigned char patt)
 void main(void)
 {
 
-	unsigned int preINPUT[10];
-	unsigned char patt = 0x80; // led value
-	unsigned int cnt = 0;
-
-	// initialize preINPUT matrix
-	for (int i = 0; i < 10; i++)
+	// initialize matrix
+	for (int i = 0; i < 9; i++)
 	{
-		preINPUT[i] = 1;
+		curINPUT[i] = LEVEL_HIGH;
+		state[i] = BTN_RELEASED;
+		prestate[i] = BTN_RELEASED;
+		count[i] = 0;
 	}
 
 	while (1)
 	{
-		scan_row(1);
+		delay_ms(20);
+		read_curINPUT();
 
-		// but1:short left1;long no move
-		if ((INPUT1 == 0) && (preINPUT[1] == 1))
+		// finate state machine
+		for (int i = 0; i < 9; i++)
 		{
-			delay_ms(20);
-			if (INPUT1 == 0)
+			switch (state[i])
 			{
-				delay_ms(1500);
-				if (INPUT1 != 0)
-					patt = shift_left(1, patt);
+			case BTN_RELEASED:
+				if (curINPUT[i] == LEVEL_LOW)
+					state[i] = BTN_DEBOUNCED;
+				break;
+			case BTN_DEBOUNCED:
+				if (curINPUT[i] == LEVEL_LOW)
+					state[i] = BTN_PRESSED;
 				else
-					patt = light_up(9, patt);
-			}
-		}
-		preINPUT[1] = INPUT1;
-
-		// but2:light up P1.0
-		if ((INPUT2 == 0) && (preINPUT[2] == 1))
-		{
-			delay_ms(20);
-			if (INPUT2 == 0)
-				patt = light_up(0, patt);
-		}
-		preINPUT[2] = INPUT2;
-
-		// but3:light up P1.1
-		if ((INPUT3 == 0) && (preINPUT[3] == 1))
-		{
-			delay_ms(20);
-			if (INPUT3 == 0)
-				patt = light_up(1, patt);
-		}
-		preINPUT[3] = INPUT3;
-
-		// scan row 2
-		scan_row(2);
-
-		// but4:light up P1.2
-		if ((INPUT1 == 0) && (preINPUT[4] == 1))
-		{
-			delay_ms(20);
-			if (INPUT1 == 0)
-				patt = light_up(2, patt);
-		}
-		preINPUT[4] = INPUT1;
-
-		// but5:short right1;long right
-		if ((INPUT2 == 0) && (preINPUT[5] == 1))
-		{
-			delay_ms(20);
-			if (INPUT2 == 0)
-			{
-				delay_ms(1500);
-				if (INPUT1 != 0)
+					state[i] = BTN_RELEASED;
+				break;
+			case BTN_PRESSED:
+				if (curINPUT[i] == LEVEL_LOW)
 				{
-					patt = shift_right(1, patt);
-					cnt++;
-				}
-			}
-		}
-
-		else if ((INPUT2 == 0) && cnt)
-		{
-			patt = shift_right(1, patt);
-			delay_ms(100);
-		}
-		else
-		{
-			cnt = 0;
-		}
-		preINPUT[5] = INPUT2;
-
-		// but6:light up P1.4
-		if ((INPUT3 == 0) && (preINPUT[6] == 1))
-		{
-			delay_ms(20);
-			if (INPUT3 == 0)
-				patt = light_up(4, patt);
-		}
-		preINPUT[6] = INPUT3;
-
-		scan_row(3);
-
-		// but7:light up P1.5
-		if ((INPUT1 == 0) && (preINPUT[7] == 1))
-		{
-			delay_ms(20);
-			if (INPUT1 == 0)
-				patt = light_up(5, patt);
-		}
-		preINPUT[7] = INPUT1;
-
-		// but8:light up P1.6
-		if ((INPUT2 == 0) && (preINPUT[8] == 1))
-		{
-			delay_ms(20);
-			if (INPUT2 == 0)
-				patt = light_up(6, patt);
-		}
-		preINPUT[8] = INPUT2;
-
-		// but9:short left1;long left2;fast2 left3
-		if ((INPUT3 == 0) && (preINPUT[9] == 1) && (cnt == 0))
-		{
-			delay_ms(20);
-			if (INPUT3 == 0)
-			{
-				delay_ms(500);
-				if (INPUT3 != 0)
-					patt = shift_left(1, patt);
-				else
-				{
-					delay_ms(500);
-					if (INPUT3 != 0)
-						patt = shift_left(3, patt);
+					count[i]++;
+					if (count[i] > 100)
+						state[i] = BTN_LONG_PRESSED;
 					else
-						patt = shift_left(2, patt);
+						state[i] = BTN_PRESSED;
 				}
+				else
+					state[i] = BTN_RELEASED;
+				break;
+			case BTN_LONG_PRESSED:
+				if (curINPUT[i] == LEVEL_LOW)
+					state[i] = BTN_LONG_PRESSED;
+				else
+				{
+					state[i] = BTN_RELEASED;
+					count[i] = 0;
+				}
+				break;
+			default:
+				break;
+			}
+			prestate[i] = state[i];
+
+			// button function
+			switch (i)
+			{
+			case 0:
+				if ((state[i] == BTN_RELEASED) && (prestate[i] == BTN_PRESSED) && count)
+					patt = shift_left(1, patt);
+				break;
+			case 1:
+				patt = light_up(0, patt);
+				break;
+			case 2:
+				patt = light_up(1, patt);
+				break;
+			case 3:
+				patt = light_up(2, patt);
+				break;
+			case 4:
+				patt = shift_right(1, patt);
+				break;
+			case 5:
+				patt = light_up(4, patt);
+				break;
+			case 6:
+				patt = light_up(5, patt);
+				break;
+			case 7:
+				patt = light_up(6, patt);
+				break;
+			case 8:
+				patt = shift_left(1, patt);
+				break;
+			default:
+				break;
 			}
 		}
-		preINPUT[9] = INPUT3;
 	}
 }
