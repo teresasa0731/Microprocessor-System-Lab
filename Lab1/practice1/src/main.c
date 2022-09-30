@@ -104,6 +104,7 @@ unsigned char light_up(unsigned int idx, unsigned char patt)
 void main(void)
 {
 
+	int long_flag = 0;
 	// initialize matrix
 	for (int i = 0; i < 9; i++)
 	{
@@ -137,8 +138,12 @@ void main(void)
 				if (curINPUT[i] == LEVEL_LOW)
 				{
 					count[i]++;
-					if (count[i] > 100)
+					if (count[i] > 50)
+					{
 						state[i] = BTN_LONG_PRESSED;
+						long_flag = 1;
+					}
+
 					else
 						state[i] = BTN_PRESSED;
 				}
@@ -157,42 +162,67 @@ void main(void)
 			default:
 				break;
 			}
-			prestate[i] = state[i];
 
 			// button function
-			switch (i)
+			if ((state[i] == BTN_RELEASED) && (prestate[i] == BTN_PRESSED))
 			{
-			case 0:
-				if ((state[i] == BTN_RELEASED) && (prestate[i] == BTN_PRESSED) && count)
+				switch (i)
+				{
+				case 0:
 					patt = shift_left(1, patt);
-				break;
-			case 1:
-				patt = light_up(0, patt);
-				break;
-			case 2:
-				patt = light_up(1, patt);
-				break;
-			case 3:
-				patt = light_up(2, patt);
-				break;
-			case 4:
-				patt = shift_right(1, patt);
-				break;
-			case 5:
-				patt = light_up(4, patt);
-				break;
-			case 6:
-				patt = light_up(5, patt);
-				break;
-			case 7:
-				patt = light_up(6, patt);
-				break;
-			case 8:
-				patt = shift_left(1, patt);
-				break;
-			default:
-				break;
+					break;
+				case 1:
+					patt = light_up(0, patt);
+					break;
+				case 2:
+					patt = light_up(1, patt);
+					break;
+				case 3:
+					patt = light_up(2, patt);
+					break;
+				case 4:
+					patt = shift_right(1, patt);
+					break;
+				case 5:
+					patt = light_up(4, patt);
+					break;
+				case 6:
+					patt = light_up(5, patt);
+					break;
+				case 7:
+					patt = light_up(6, patt);
+					break;
+				case 8:
+					patt = shift_left(1, patt);
+					break;
+				default:
+					break;
+				}
+				count[i] = 0;
 			}
+			else if (state[i] == BTN_LONG_PRESSED)
+			{
+				switch (i)
+				{
+				case 0:
+					patt = light_up(9, patt);
+					break;
+				case 4:
+					patt = shift_right(1, patt);
+					break;
+				case 8:
+					if (long_flag)
+					{
+						patt = shift_left(2, patt);
+						long_flag = 0;
+					}
+					break;
+				default:
+					break;
+				}
+			}
+
+			prestate[i] = state[i];
 		}
 	}
 }

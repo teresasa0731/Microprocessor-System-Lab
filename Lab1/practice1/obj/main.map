@@ -72,17 +72,17 @@ C:   00000020  s__CODE
 C:   00000022  l_GSINIT3                       
 C:   0000002A  l_GSINIT4                       
 C:   00000035  s_GSINIT4                       
-C:   00000054  s_SSEG                          
+C:   00000058  s_SSEG                          
 C:   0000005F  s_GSINIT                        
 C:   0000005F  s_GSINIT5                       
 C:   00000062  s_GSFINAL                       
 C:   00000065  s_CSEG                          
 C:   00000080  l_DSEG                          
-C:   000000AC  l_SSEG                          
+C:   000000A8  l_SSEG                          
 C:   00000100  l_IRAM                          
-C:   0000039F  l_CSEG                          
-C:   00000404  s_CONST                         
-C:   00000404  s_XINIT                         
+C:   00000441  l_CSEG                          
+C:   000004A6  s_CONST                         
+C:   000004A6  s_XINIT                         
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 3.
 Hexadecimal  [32-Bits]
@@ -233,11 +233,11 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-SSEG                                00000054    000000AC =         172. bytes (REL,OVR)
+SSEG                                00000058    000000A8 =         168. bytes (REL,OVR)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     00000054  __start__stack                     main
+     00000058  __start__stack                     main
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 8.
 Hexadecimal  [32-Bits]
@@ -316,7 +316,7 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-CSEG                                00000065    0000039F =         927. bytes (REL,CON,CODE)
+CSEG                                00000065    00000441 =        1089. bytes (REL,CON,CODE)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -326,8 +326,8 @@ C:   000000FE  _shift_left                        main
 C:   00000132  _shift_right                       main
 C:   0000015C  _light_up                          main
 C:   00000186  _main                              main
-C:   000003F3  _delay_ms                          delay
-C:   00000400  __sdcc_external_startup            _startup
+C:   00000495  _delay_ms                          delay
+C:   000004A2  __sdcc_external_startup            _startup
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 16.
 
