@@ -9,12 +9,10 @@
 ; Public variables in this module
 ;--------------------------------------------------------
 	.globl _main
-	.globl _row3
-	.globl _row2
-	.globl _row1
 	.globl _light_up
 	.globl _shift_right
 	.globl _shift_left
+	.globl _scan_row
 	.globl _delay_ms
 	.globl _CY
 	.globl _AC
@@ -236,23 +234,14 @@ _shift_right_PARM_2:
 	.ds 1
 _light_up_PARM_2:
 	.ds 1
-_main_patt_65536_17:
-	.ds 1
-_main_sloc0_1_0:
-	.ds 2
-_main_sloc1_1_0:
-	.ds 2
-_main_sloc2_1_0:
-	.ds 2
-_main_sloc3_1_0:
-	.ds 2
-_main_sloc4_1_0:
-	.ds 2
-_main_sloc5_1_0:
+_main_preINPUT_65536_16:
+	.ds 20
+_main_i_131072_17:
 	.ds 2
 ;--------------------------------------------------------
 ; overlayable items in internal ram
 ;--------------------------------------------------------
+	.area	OSEG    (OVR,DATA)
 ;--------------------------------------------------------
 ; Stack segment in internal ram
 ;--------------------------------------------------------
@@ -333,16 +322,15 @@ __sdcc_program_startup:
 ;--------------------------------------------------------
 	.area CSEG    (CODE)
 ;------------------------------------------------------------
-;Allocation info for local variables in function 'shift_left'
+;Allocation info for local variables in function 'scan_row'
 ;------------------------------------------------------------
-;patt                      Allocated with name '_shift_left_PARM_2'
-;bit                       Allocated to registers r6 r7 
+;row                       Allocated to registers r6 r7 
 ;------------------------------------------------------------
-;	./src/main.c:13: unsigned char shift_left(unsigned int bit, unsigned char patt)
+;	./src/main.c:13: void scan_row(unsigned int row)
 ;	-----------------------------------------
-;	 function shift_left
+;	 function scan_row
 ;	-----------------------------------------
-_shift_left:
+_scan_row:
 	ar7 = 0x07
 	ar6 = 0x06
 	ar5 = 0x05
@@ -352,32 +340,112 @@ _shift_left:
 	ar1 = 0x01
 	ar0 = 0x00
 	mov	r6,dpl
-;	./src/main.c:15: patt = patt >> bit;
-	mov	b,r6
-	inc	b
+	mov	r7,dph
+;	./src/main.c:15: switch (row)
+	cjne	r6,#0x01,00120$
+	cjne	r7,#0x00,00120$
+	sjmp	00101$
+00120$:
+	cjne	r6,#0x02,00121$
+	cjne	r7,#0x00,00121$
+	sjmp	00102$
+00121$:
+;	./src/main.c:17: case 1:
+	cjne	r6,#0x03,00106$
+	cjne	r7,#0x00,00106$
+	sjmp	00103$
+00101$:
+;	./src/main.c:19: OUTPUT1 = 0; // row1 output 0
+;	assignBit
+	clr	_P0_4
+;	./src/main.c:20: OUTPUT2 = 1; // row2 output 1
+;	assignBit
+	setb	_P0_3
+;	./src/main.c:21: OUTPUT3 = 1; // row3 output 1
+;	assignBit
+	setb	_P0_2
+;	./src/main.c:22: break;
+;	./src/main.c:24: case 2:
+	ret
+00102$:
+;	./src/main.c:25: OUTPUT1 = 1; // row1 output 1
+;	assignBit
+	setb	_P0_4
+;	./src/main.c:26: OUTPUT2 = 0; // row2 output 0
+;	assignBit
+	clr	_P0_3
+;	./src/main.c:27: OUTPUT3 = 1; // row3 output 1
+;	assignBit
+	setb	_P0_2
+;	./src/main.c:28: break;
+;	./src/main.c:30: case 3:
+	ret
+00103$:
+;	./src/main.c:31: OUTPUT1 = 1; // row1 output 1
+;	assignBit
+	setb	_P0_4
+;	./src/main.c:32: OUTPUT2 = 1; // row2 output 1
+;	assignBit
+	setb	_P0_3
+;	./src/main.c:33: OUTPUT3 = 0; // row3 output 0
+;	assignBit
+	clr	_P0_2
+;	./src/main.c:38: }
+00106$:
+;	./src/main.c:39: }
+	ret
+;------------------------------------------------------------
+;Allocation info for local variables in function 'shift_left'
+;------------------------------------------------------------
+;patt                      Allocated with name '_shift_left_PARM_2'
+;bit                       Allocated to registers r6 r7 
+;i                         Allocated to registers r4 r5 
+;------------------------------------------------------------
+;	./src/main.c:40: unsigned char shift_left(unsigned int bit, unsigned char patt)
+;	-----------------------------------------
+;	 function shift_left
+;	-----------------------------------------
+_shift_left:
+	mov	r6,dpl
+	mov	r7,dph
+;	./src/main.c:42: for (int i = 0; i < bit; i++)
+	mov	r4,#0x00
+	mov	r5,#0x00
+00105$:
+	mov	ar2,r4
+	mov	ar3,r5
+	clr	c
+	mov	a,r2
+	subb	a,r6
+	mov	a,r3
+	subb	a,r7
+	jnc	00103$
+;	./src/main.c:44: patt = patt >> 1;
 	mov	a,_shift_left_PARM_2
-	sjmp	00110$
-00109$:
 	clr	c
 	rrc	a
-00110$:
-	djnz	b,00109$
-;	./src/main.c:16: if (patt == 0x00)
+;	./src/main.c:45: if (patt == 0x00)
 	mov	_shift_left_PARM_2,a
-	jnz	00102$
-;	./src/main.c:17: patt = 0x80;
+	jnz	00106$
+;	./src/main.c:46: patt = 0x80;
 	mov	_shift_left_PARM_2,#0x80
-00102$:
-;	./src/main.c:19: led = ~patt;
+00106$:
+;	./src/main.c:42: for (int i = 0; i < bit; i++)
+	inc	r4
+	cjne	r4,#0x00,00105$
+	inc	r5
+	sjmp	00105$
+00103$:
+;	./src/main.c:49: led = ~patt;
 	mov	a,_shift_left_PARM_2
 	cpl	a
 	mov	_P1,a
-;	./src/main.c:20: delay_ms(20);
+;	./src/main.c:50: delay_ms(20);
 	mov	dptr,#0x0014
 	lcall	_delay_ms
-;	./src/main.c:21: return patt;
+;	./src/main.c:51: return patt;
 	mov	dpl,_shift_left_PARM_2
-;	./src/main.c:22: }
+;	./src/main.c:52: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'shift_right'
@@ -385,20 +453,20 @@ _shift_left:
 ;patt                      Allocated with name '_shift_right_PARM_2'
 ;bit                       Allocated to registers r6 r7 
 ;------------------------------------------------------------
-;	./src/main.c:23: unsigned char shift_right(unsigned int bit, unsigned char patt)
+;	./src/main.c:53: unsigned char shift_right(unsigned int bit, unsigned char patt)
 ;	-----------------------------------------
 ;	 function shift_right
 ;	-----------------------------------------
 _shift_right:
 	mov	r6,dpl
-;	./src/main.c:25: if (patt == 0x80)
+;	./src/main.c:55: if (patt == 0x80)
 	mov	a,#0x80
 	cjne	a,_shift_right_PARM_2,00102$
-;	./src/main.c:26: patt = 0x00 + 1;
+;	./src/main.c:56: patt = 0x00 + 1;
 	mov	_shift_right_PARM_2,#0x01
 	sjmp	00103$
 00102$:
-;	./src/main.c:28: patt = patt << bit;
+;	./src/main.c:58: patt = patt << bit;
 	mov	b,r6
 	inc	b
 	mov	a,_shift_right_PARM_2
@@ -409,16 +477,16 @@ _shift_right:
 	djnz	b,00112$
 	mov	_shift_right_PARM_2,a
 00103$:
-;	./src/main.c:30: led = ~patt;
+;	./src/main.c:60: led = ~patt;
 	mov	a,_shift_right_PARM_2
 	cpl	a
 	mov	_P1,a
-;	./src/main.c:31: delay_ms(20);
+;	./src/main.c:61: delay_ms(20);
 	mov	dptr,#0x0014
 	lcall	_delay_ms
-;	./src/main.c:32: return patt;
+;	./src/main.c:62: return patt;
 	mov	dpl,_shift_right_PARM_2
-;	./src/main.c:33: }
+;	./src/main.c:63: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'light_up'
@@ -426,19 +494,19 @@ _shift_right:
 ;patt                      Allocated with name '_light_up_PARM_2'
 ;idx                       Allocated to registers r6 r7 
 ;------------------------------------------------------------
-;	./src/main.c:34: unsigned char light_up(unsigned int idx, unsigned char patt)
+;	./src/main.c:64: unsigned char light_up(unsigned int idx, unsigned char patt)
 ;	-----------------------------------------
 ;	 function light_up
 ;	-----------------------------------------
 _light_up:
 	mov	r6,dpl
 	mov	r7,dph
-;	./src/main.c:36: switch (idx)
+;	./src/main.c:66: switch (idx)
 	cjne	r6,#0x09,00110$
 	cjne	r7,#0x00,00110$
 	sjmp	00103$
 00110$:
-;	./src/main.c:42: patt = (0x00 + 1) << idx;
+;	./src/main.c:72: patt = (0x00 + 1) << idx;
 	mov	b,r6
 	inc	b
 	mov	a,#0x01
@@ -448,889 +516,566 @@ _light_up:
 00113$:
 	djnz	b,00111$
 	mov	_light_up_PARM_2,a
-;	./src/main.c:44: }
+;	./src/main.c:74: }
 00103$:
-;	./src/main.c:46: led = ~patt;
+;	./src/main.c:76: led = ~patt;
 	mov	a,_light_up_PARM_2
 	cpl	a
 	mov	_P1,a
-;	./src/main.c:47: delay_ms(20);
+;	./src/main.c:77: delay_ms(20);
 	mov	dptr,#0x0014
 	lcall	_delay_ms
-;	./src/main.c:48: return patt;
+;	./src/main.c:78: return patt;
 	mov	dpl,_light_up_PARM_2
-;	./src/main.c:49: }
-	ret
-;------------------------------------------------------------
-;Allocation info for local variables in function 'row1'
-;------------------------------------------------------------
-;	./src/main.c:51: void row1(void)
-;	-----------------------------------------
-;	 function row1
-;	-----------------------------------------
-_row1:
-;	./src/main.c:53: OUTPUT1 = 0; // row1 output 0
-;	assignBit
-	clr	_P0_4
-;	./src/main.c:54: OUTPUT2 = 1; // row2 output 1
-;	assignBit
-	setb	_P0_3
-;	./src/main.c:55: OUTPUT3 = 1; // row3 output 1
-;	assignBit
-	setb	_P0_2
-;	./src/main.c:56: }
-	ret
-;------------------------------------------------------------
-;Allocation info for local variables in function 'row2'
-;------------------------------------------------------------
-;	./src/main.c:57: void row2(void)
-;	-----------------------------------------
-;	 function row2
-;	-----------------------------------------
-_row2:
-;	./src/main.c:59: OUTPUT1 = 1; // row1 output 1
-;	assignBit
-	setb	_P0_4
-;	./src/main.c:60: OUTPUT2 = 0; // row2 output 0
-;	assignBit
-	clr	_P0_3
-;	./src/main.c:61: OUTPUT3 = 1; // row3 output 1
-;	assignBit
-	setb	_P0_2
-;	./src/main.c:62: }
-	ret
-;------------------------------------------------------------
-;Allocation info for local variables in function 'row3'
-;------------------------------------------------------------
-;	./src/main.c:63: void row3(void)
-;	-----------------------------------------
-;	 function row3
-;	-----------------------------------------
-_row3:
-;	./src/main.c:65: OUTPUT1 = 1; // row1 output 1
-;	assignBit
-	setb	_P0_4
-;	./src/main.c:66: OUTPUT2 = 1; // row2 output 1
-;	assignBit
-	setb	_P0_3
-;	./src/main.c:67: OUTPUT3 = 0; // row3 output 0
-;	assignBit
-	clr	_P0_2
-;	./src/main.c:68: }
+;	./src/main.c:79: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'main'
 ;------------------------------------------------------------
-;preINPUT1                 Allocated to registers r6 r7 
-;preINPUT2                 Allocated to registers r4 r5 
-;preINPUT3                 Allocated to registers r2 r3 
-;preINPUT4                 Allocated with name '_main_sloc5_1_0'
-;preINPUT5                 Allocated with name '_main_sloc0_1_0'
-;preINPUT6                 Allocated with name '_main_sloc1_1_0'
-;preINPUT7                 Allocated with name '_main_sloc2_1_0'
-;preINPUT8                 Allocated with name '_main_sloc3_1_0'
-;preINPUT9                 Allocated with name '_main_sloc4_1_0'
-;preINPUT0                 Allocated to registers 
-;prebut1                   Allocated to registers 
-;prebut2                   Allocated to registers 
-;prebut3                   Allocated to registers 
-;prebut4                   Allocated to registers 
-;patt                      Allocated with name '_main_patt_65536_17'
-;cnt                       Allocated to registers r0 r1 
-;sloc0                     Allocated with name '_main_sloc0_1_0'
-;sloc1                     Allocated with name '_main_sloc1_1_0'
-;sloc2                     Allocated with name '_main_sloc2_1_0'
-;sloc3                     Allocated with name '_main_sloc3_1_0'
-;sloc4                     Allocated with name '_main_sloc4_1_0'
-;sloc5                     Allocated with name '_main_sloc5_1_0'
+;preINPUT                  Allocated with name '_main_preINPUT_65536_16'
+;patt                      Allocated to registers r7 
+;cnt                       Allocated to registers r5 r6 
+;i                         Allocated with name '_main_i_131072_17'
 ;------------------------------------------------------------
-;	./src/main.c:70: void main(void)
+;	./src/main.c:81: void main(void)
 ;	-----------------------------------------
 ;	 function main
 ;	-----------------------------------------
 _main:
-;	./src/main.c:73: unsigned int preINPUT1 = 1, preINPUT2 = 1, preINPUT3 = 1, preINPUT4 = 1, preINPUT5 = 1, preINPUT6 = 1, preINPUT7 = 1, preINPUT8 = 1, preINPUT9 = 1, preINPUT0 = 1;
-	mov	r6,#0x01
-	mov	r7,#0x00
-	mov	r4,#0x01
-	mov	r5,#0x00
-	mov	r2,#0x01
-	mov	r3,#0x00
-;	1-genFromRTrack replaced	mov	_main_sloc5_1_0,#0x01
-	mov	_main_sloc5_1_0,r6
-;	1-genFromRTrack replaced	mov	(_main_sloc5_1_0 + 1),#0x00
-	mov	(_main_sloc5_1_0 + 1),r7
-;	1-genFromRTrack replaced	mov	_main_sloc0_1_0,#0x01
-	mov	_main_sloc0_1_0,r6
-;	1-genFromRTrack replaced	mov	(_main_sloc0_1_0 + 1),#0x00
-	mov	(_main_sloc0_1_0 + 1),r7
-;	1-genFromRTrack replaced	mov	_main_sloc1_1_0,#0x01
-	mov	_main_sloc1_1_0,r6
-;	1-genFromRTrack replaced	mov	(_main_sloc1_1_0 + 1),#0x00
-	mov	(_main_sloc1_1_0 + 1),r7
-;	1-genFromRTrack replaced	mov	_main_sloc2_1_0,#0x01
-	mov	_main_sloc2_1_0,r6
-;	1-genFromRTrack replaced	mov	(_main_sloc2_1_0 + 1),#0x00
-	mov	(_main_sloc2_1_0 + 1),r7
-;	1-genFromRTrack replaced	mov	_main_sloc3_1_0,#0x01
-	mov	_main_sloc3_1_0,r6
-;	1-genFromRTrack replaced	mov	(_main_sloc3_1_0 + 1),#0x00
-	mov	(_main_sloc3_1_0 + 1),r7
-;	1-genFromRTrack replaced	mov	_main_sloc4_1_0,#0x01
-	mov	_main_sloc4_1_0,r6
-;	1-genFromRTrack replaced	mov	(_main_sloc4_1_0 + 1),#0x00
-	mov	(_main_sloc4_1_0 + 1),r7
-;	./src/main.c:75: unsigned char patt = 0x80; // led value
-	mov	_main_patt_65536_17,#0x80
-;	./src/main.c:76: unsigned int cnt = 0;
-	mov	r0,#0x00
-	mov	r1,#0x00
-;	./src/main.c:78: while (1)
-00162$:
-;	./src/main.c:81: row1();
+;	./src/main.c:85: unsigned char patt = 0x80; // led value
+	mov	r7,#0x80
+;	./src/main.c:86: unsigned int cnt = 0;
+;	./src/main.c:89: for (int i = 0; i < 10; i++)
+	clr	a
+	mov	r5,a
+	mov	r6,a
+	mov	_main_i_131072_17,a
+	mov	(_main_i_131072_17 + 1),a
+00168$:
+	clr	c
+	mov	a,_main_i_131072_17
+	subb	a,#0x0a
+	mov	a,(_main_i_131072_17 + 1)
+	xrl	a,#0x80
+	subb	a,#0x80
+	jnc	00165$
+;	./src/main.c:91: preINPUT[i] = 1;
+	mov	a,_main_i_131072_17
+	add	a,_main_i_131072_17
+	mov	r2,a
+	mov	a,(_main_i_131072_17 + 1)
+	rlc	a
+	mov	r4,a
+	mov	a,r2
+	add	a,#_main_preINPUT_65536_16
+	mov	r0,a
+	mov	@r0,#0x01
+	inc	r0
+	mov	@r0,#0x00
+;	./src/main.c:89: for (int i = 0; i < 10; i++)
+	inc	_main_i_131072_17
+	clr	a
+;	./src/main.c:94: while (1)
+	cjne	a,_main_i_131072_17,00168$
+	inc	(_main_i_131072_17 + 1)
+	sjmp	00168$
+00165$:
+;	./src/main.c:96: scan_row(1);
+	mov	dptr,#0x0001
 	push	ar7
 	push	ar6
 	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
-	lcall	_row1
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
+	lcall	_scan_row
 	pop	ar5
 	pop	ar6
 	pop	ar7
-;	./src/main.c:84: if ((INPUT1 == 0) && (preINPUT1 == 1))
-	jnb	_P0_7,00302$
-	ljmp	00107$
-00302$:
-	cjne	r6,#0x01,00303$
-	cjne	r7,#0x00,00303$
-	sjmp	00304$
-00303$:
-	ljmp	00107$
-00304$:
-;	./src/main.c:86: delay_ms(20);
-	mov	dptr,#0x0014
-	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
-	lcall	_delay_ms
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
-	pop	ar5
-;	./src/main.c:87: if (INPUT1 == 0)
-	jb	_P0_7,00107$
-;	./src/main.c:89: delay_ms(1500);
-	mov	dptr,#0x05dc
-	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
-	lcall	_delay_ms
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
-	pop	ar5
-;	./src/main.c:90: if (INPUT1 != 0)
-	jnb	_P0_7,00102$
-;	./src/main.c:91: patt = shift_left(1, patt);
-	mov	_shift_left_PARM_2,_main_patt_65536_17
-	mov	dptr,#0x0001
-	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
-	lcall	_shift_left
-	mov	_main_patt_65536_17,dpl
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
-	pop	ar5
-	sjmp	00107$
-00102$:
-;	./src/main.c:93: patt = light_up(9, patt);
-	mov	_light_up_PARM_2,_main_patt_65536_17
-	mov	dptr,#0x0009
-	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
-	lcall	_light_up
-	mov	_main_patt_65536_17,dpl
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
-	pop	ar5
-00107$:
-;	./src/main.c:96: preINPUT1 = INPUT1;
-	mov	c,_P0_7
-	clr	a
-	rlc	a
-	mov	r6,a
-	mov	r7,#0x00
-;	./src/main.c:99: if ((INPUT2 == 0) && (preINPUT2 == 1))
-	jb	_P0_6,00112$
-	cjne	r4,#0x01,00112$
-	cjne	r5,#0x00,00112$
+;	./src/main.c:99: if ((INPUT1 == 0) && (preINPUT[1] == 1))
+	jb	_P0_7,00108$
+	mov	a,#0x01
+	cjne	a,(_main_preINPUT_65536_16 + 0x0002),00324$
+	dec	a
+	cjne	a,((_main_preINPUT_65536_16 + 0x0002) + 1),00324$
+	sjmp	00325$
+00324$:
+	sjmp	00108$
+00325$:
 ;	./src/main.c:101: delay_ms(20);
 	mov	dptr,#0x0014
 	push	ar7
 	push	ar6
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
+	push	ar5
 	lcall	_delay_ms
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
+	pop	ar5
 	pop	ar6
 	pop	ar7
-;	./src/main.c:102: if (INPUT2 == 0)
-	jb	_P0_6,00112$
-;	./src/main.c:103: patt = light_up(0, patt);
-	mov	_light_up_PARM_2,_main_patt_65536_17
-	mov	dptr,#0x0000
+;	./src/main.c:102: if (INPUT1 == 0)
+	jb	_P0_7,00108$
+;	./src/main.c:104: delay_ms(1500);
+	mov	dptr,#0x05dc
 	push	ar7
 	push	ar6
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
-	lcall	_light_up
-	mov	_main_patt_65536_17,dpl
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
+	push	ar5
+	lcall	_delay_ms
+	pop	ar5
 	pop	ar6
 	pop	ar7
-00112$:
-;	./src/main.c:105: preINPUT2 = INPUT2;
+;	./src/main.c:105: if (INPUT1 != 0)
+	jnb	_P0_7,00103$
+;	./src/main.c:106: patt = shift_left(1, patt);
+	mov	_shift_left_PARM_2,r7
+	mov	dptr,#0x0001
+	push	ar6
+	push	ar5
+	lcall	_shift_left
+	mov	r7,dpl
+	pop	ar5
+	pop	ar6
+	sjmp	00108$
+00103$:
+;	./src/main.c:108: patt = light_up(9, patt);
+	mov	_light_up_PARM_2,r7
+	mov	dptr,#0x0009
+	push	ar6
+	push	ar5
+	lcall	_light_up
+	mov	r7,dpl
+	pop	ar5
+	pop	ar6
+00108$:
+;	./src/main.c:111: preINPUT[1] = INPUT1;
+	mov	c,_P0_7
+	clr	a
+	rlc	a
+	mov	r3,a
+	mov	r4,#0x00
+	mov	((_main_preINPUT_65536_16 + 0x0002) + 0),r3
+	mov	((_main_preINPUT_65536_16 + 0x0002) + 1),r4
+;	./src/main.c:114: if ((INPUT2 == 0) && (preINPUT[2] == 1))
+	jb	_P0_6,00113$
+	mov	a,#0x01
+	cjne	a,(_main_preINPUT_65536_16 + 0x0004),00329$
+	dec	a
+	cjne	a,((_main_preINPUT_65536_16 + 0x0004) + 1),00329$
+	sjmp	00330$
+00329$:
+	sjmp	00113$
+00330$:
+;	./src/main.c:116: delay_ms(20);
+	mov	dptr,#0x0014
+	push	ar7
+	push	ar6
+	push	ar5
+	lcall	_delay_ms
+	pop	ar5
+	pop	ar6
+	pop	ar7
+;	./src/main.c:117: if (INPUT2 == 0)
+	jb	_P0_6,00113$
+;	./src/main.c:118: patt = light_up(0, patt);
+	mov	_light_up_PARM_2,r7
+	mov	dptr,#0x0000
+	push	ar6
+	push	ar5
+	lcall	_light_up
+	mov	r7,dpl
+	pop	ar5
+	pop	ar6
+00113$:
+;	./src/main.c:120: preINPUT[2] = INPUT2;
 	mov	c,_P0_6
 	clr	a
 	rlc	a
-	mov	r4,a
-	mov	r5,#0x00
-;	./src/main.c:108: if ((INPUT3 == 0) && (preINPUT3 == 1))
-	jb	_P0_5,00117$
-	cjne	r2,#0x01,00117$
-	cjne	r3,#0x00,00117$
-;	./src/main.c:110: delay_ms(20);
+	mov	r3,a
+	mov	r4,#0x00
+	mov	((_main_preINPUT_65536_16 + 0x0004) + 0),r3
+	mov	((_main_preINPUT_65536_16 + 0x0004) + 1),r4
+;	./src/main.c:123: if ((INPUT3 == 0) && (preINPUT[3] == 1))
+	jb	_P0_5,00118$
+	mov	a,#0x01
+	cjne	a,(_main_preINPUT_65536_16 + 0x0006),00333$
+	dec	a
+	cjne	a,((_main_preINPUT_65536_16 + 0x0006) + 1),00333$
+	sjmp	00334$
+00333$:
+	sjmp	00118$
+00334$:
+;	./src/main.c:125: delay_ms(20);
 	mov	dptr,#0x0014
 	push	ar7
 	push	ar6
 	push	ar5
-	push	ar4
-	push	ar1
-	push	ar0
 	lcall	_delay_ms
-	pop	ar0
-	pop	ar1
-	pop	ar4
 	pop	ar5
 	pop	ar6
 	pop	ar7
-;	./src/main.c:111: if (INPUT3 == 0)
-	jb	_P0_5,00117$
-;	./src/main.c:112: patt = light_up(1, patt);
-	mov	_light_up_PARM_2,_main_patt_65536_17
+;	./src/main.c:126: if (INPUT3 == 0)
+	jb	_P0_5,00118$
+;	./src/main.c:127: patt = light_up(1, patt);
+	mov	_light_up_PARM_2,r7
 	mov	dptr,#0x0001
-	push	ar7
 	push	ar6
 	push	ar5
-	push	ar4
-	push	ar1
-	push	ar0
 	lcall	_light_up
-	mov	_main_patt_65536_17,dpl
-	pop	ar0
-	pop	ar1
-	pop	ar4
+	mov	r7,dpl
 	pop	ar5
 	pop	ar6
-	pop	ar7
-00117$:
-;	./src/main.c:114: preINPUT3 = INPUT3;
+00118$:
+;	./src/main.c:129: preINPUT[3] = INPUT3;
 	mov	c,_P0_5
 	clr	a
 	rlc	a
-	mov	r2,a
-	mov	r3,#0x00
-;	./src/main.c:117: row2();
-	push	ar7
-	push	ar6
-	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
-	lcall	_row2
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
-	pop	ar5
-	pop	ar6
-	pop	ar7
-;	./src/main.c:120: if ((INPUT1 == 0) && (preINPUT4 == 1))
-	jb	_P0_7,00122$
-	mov	a,#0x01
-	cjne	a,_main_sloc5_1_0,00316$
-	dec	a
-	cjne	a,(_main_sloc5_1_0 + 1),00316$
-	sjmp	00317$
-00316$:
-	sjmp	00122$
-00317$:
-;	./src/main.c:122: delay_ms(20);
-	mov	dptr,#0x0014
-	push	ar7
-	push	ar6
-	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
-	lcall	_delay_ms
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
-	pop	ar5
-	pop	ar6
-	pop	ar7
-;	./src/main.c:123: if (INPUT1 == 0)
-	jb	_P0_7,00122$
-;	./src/main.c:124: patt = light_up(2, patt);
-	mov	_light_up_PARM_2,_main_patt_65536_17
+	mov	r3,a
+	mov	r4,#0x00
+	mov	((_main_preINPUT_65536_16 + 0x0006) + 0),r3
+	mov	((_main_preINPUT_65536_16 + 0x0006) + 1),r4
+;	./src/main.c:132: scan_row(2);
 	mov	dptr,#0x0002
 	push	ar7
 	push	ar6
 	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
-	lcall	_light_up
-	mov	_main_patt_65536_17,dpl
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
+	lcall	_scan_row
 	pop	ar5
 	pop	ar6
 	pop	ar7
-00122$:
-;	./src/main.c:126: preINPUT4 = INPUT1;
-	mov	c,_P0_7
-	clr	a
-	rlc	a
-	mov	_main_sloc5_1_0,a
-	mov	(_main_sloc5_1_0 + 1),#0x00
-;	./src/main.c:129: if ((INPUT2 == 0) && (preINPUT5 == 1))
-	jnb	_P0_6,00319$
-	ljmp	00129$
-00319$:
+;	./src/main.c:135: if ((INPUT1 == 0) && (preINPUT[4] == 1))
+	jb	_P0_7,00123$
 	mov	a,#0x01
-	cjne	a,_main_sloc0_1_0,00320$
+	cjne	a,(_main_preINPUT_65536_16 + 0x0008),00337$
 	dec	a
-	cjne	a,(_main_sloc0_1_0 + 1),00320$
-	sjmp	00321$
-00320$:
-	ljmp	00129$
-00321$:
-;	./src/main.c:131: delay_ms(20);
+	cjne	a,((_main_preINPUT_65536_16 + 0x0008) + 1),00337$
+	sjmp	00338$
+00337$:
+	sjmp	00123$
+00338$:
+;	./src/main.c:137: delay_ms(20);
 	mov	dptr,#0x0014
 	push	ar7
 	push	ar6
 	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
 	lcall	_delay_ms
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
 	pop	ar5
 	pop	ar6
 	pop	ar7
-;	./src/main.c:132: if (INPUT2 == 0)
-	jb	_P0_6,00129$
-;	./src/main.c:134: delay_ms(1500);
+;	./src/main.c:138: if (INPUT1 == 0)
+	jb	_P0_7,00123$
+;	./src/main.c:139: patt = light_up(2, patt);
+	mov	_light_up_PARM_2,r7
+	mov	dptr,#0x0002
+	push	ar6
+	push	ar5
+	lcall	_light_up
+	mov	r7,dpl
+	pop	ar5
+	pop	ar6
+00123$:
+;	./src/main.c:141: preINPUT[4] = INPUT1;
+	mov	c,_P0_7
+	clr	a
+	rlc	a
+	mov	r3,a
+	mov	r4,#0x00
+	mov	((_main_preINPUT_65536_16 + 0x0008) + 0),r3
+	mov	((_main_preINPUT_65536_16 + 0x0008) + 1),r4
+;	./src/main.c:144: if ((INPUT2 == 0) && (preINPUT[5] == 1))
+	jb	_P0_6,00134$
+	mov	a,#0x01
+	cjne	a,(_main_preINPUT_65536_16 + 0x000a),00341$
+	dec	a
+	cjne	a,((_main_preINPUT_65536_16 + 0x000a) + 1),00341$
+	sjmp	00342$
+00341$:
+	sjmp	00134$
+00342$:
+;	./src/main.c:146: delay_ms(20);
+	mov	dptr,#0x0014
+	push	ar7
+	push	ar6
+	push	ar5
+	lcall	_delay_ms
+	pop	ar5
+	pop	ar6
+	pop	ar7
+;	./src/main.c:147: if (INPUT2 == 0)
+	jb	_P0_6,00135$
+;	./src/main.c:149: delay_ms(1500);
 	mov	dptr,#0x05dc
 	push	ar7
 	push	ar6
 	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
 	lcall	_delay_ms
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
 	pop	ar5
 	pop	ar6
 	pop	ar7
-;	./src/main.c:135: if (INPUT1 != 0)
-	jnb	_P0_7,00129$
-;	./src/main.c:137: patt = shift_right(1, patt);
-	mov	_shift_right_PARM_2,_main_patt_65536_17
+;	./src/main.c:150: if (INPUT1 != 0)
+	jnb	_P0_7,00135$
+;	./src/main.c:152: patt = shift_right(1, patt);
+	mov	_shift_right_PARM_2,r7
 	mov	dptr,#0x0001
-	push	ar7
 	push	ar6
 	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
 	lcall	_shift_right
-	mov	_main_patt_65536_17,dpl
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
+	mov	r7,dpl
 	pop	ar5
 	pop	ar6
-	pop	ar7
-;	./src/main.c:138: cnt++;
-	inc	r0
-	cjne	r0,#0x00,00324$
-	inc	r1
-00324$:
-00129$:
-;	./src/main.c:143: if ((INPUT2 == 0) && cnt)
-	jb	_P0_6,00132$
-	mov	a,r0
-	orl	a,r1
-	jz	00132$
-;	./src/main.c:145: patt = shift_right(1, patt);
-	mov	_shift_right_PARM_2,_main_patt_65536_17
+;	./src/main.c:153: cnt++;
+	inc	r5
+	cjne	r5,#0x00,00135$
+	inc	r6
+	sjmp	00135$
+00134$:
+;	./src/main.c:158: else if ((INPUT2 == 0) && cnt)
+	jb	_P0_6,00130$
+	mov	a,r5
+	orl	a,r6
+	jz	00130$
+;	./src/main.c:160: patt = shift_right(1, patt);
+	mov	_shift_right_PARM_2,r7
 	mov	dptr,#0x0001
-	push	ar7
 	push	ar6
 	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
 	lcall	_shift_right
-	mov	_main_patt_65536_17,dpl
-;	./src/main.c:146: delay_ms(100);
+	mov	r7,dpl
+	pop	ar5
+	pop	ar6
+;	./src/main.c:161: delay_ms(100);
 	mov	dptr,#0x0064
+	push	ar7
+	push	ar6
+	push	ar5
 	lcall	_delay_ms
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
 	pop	ar5
 	pop	ar6
 	pop	ar7
-	sjmp	00133$
-00132$:
-;	./src/main.c:150: cnt = 0;
-	mov	r0,#0x00
-	mov	r1,#0x00
-00133$:
-;	./src/main.c:152: preINPUT5 = INPUT2;
+	sjmp	00135$
+00130$:
+;	./src/main.c:165: cnt = 0;
+	mov	r5,#0x00
+	mov	r6,#0x00
+00135$:
+;	./src/main.c:167: preINPUT[5] = INPUT2;
 	mov	c,_P0_6
 	clr	a
 	rlc	a
-	mov	_main_sloc0_1_0,a
-	mov	(_main_sloc0_1_0 + 1),#0x00
-;	./src/main.c:155: if ((INPUT3 == 0) && (preINPUT6 == 1))
-	jb	_P0_5,00138$
+	mov	r3,a
+	mov	r4,#0x00
+	mov	((_main_preINPUT_65536_16 + 0x000a) + 0),r3
+	mov	((_main_preINPUT_65536_16 + 0x000a) + 1),r4
+;	./src/main.c:170: if ((INPUT3 == 0) && (preINPUT[6] == 1))
+	jb	_P0_5,00140$
 	mov	a,#0x01
-	cjne	a,_main_sloc1_1_0,00328$
+	cjne	a,(_main_preINPUT_65536_16 + 0x000c),00349$
 	dec	a
-	cjne	a,(_main_sloc1_1_0 + 1),00328$
-	sjmp	00329$
-00328$:
-	sjmp	00138$
-00329$:
-;	./src/main.c:157: delay_ms(20);
+	cjne	a,((_main_preINPUT_65536_16 + 0x000c) + 1),00349$
+	sjmp	00350$
+00349$:
+	sjmp	00140$
+00350$:
+;	./src/main.c:172: delay_ms(20);
 	mov	dptr,#0x0014
 	push	ar7
 	push	ar6
 	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
 	lcall	_delay_ms
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
 	pop	ar5
 	pop	ar6
 	pop	ar7
-;	./src/main.c:158: if (INPUT3 == 0)
-	jb	_P0_5,00138$
-;	./src/main.c:159: patt = light_up(4, patt);
-	mov	_light_up_PARM_2,_main_patt_65536_17
+;	./src/main.c:173: if (INPUT3 == 0)
+	jb	_P0_5,00140$
+;	./src/main.c:174: patt = light_up(4, patt);
+	mov	_light_up_PARM_2,r7
 	mov	dptr,#0x0004
-	push	ar7
 	push	ar6
 	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
 	lcall	_light_up
-	mov	_main_patt_65536_17,dpl
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
+	mov	r7,dpl
 	pop	ar5
 	pop	ar6
-	pop	ar7
-00138$:
-;	./src/main.c:161: preINPUT6 = INPUT3;
+00140$:
+;	./src/main.c:176: preINPUT[6] = INPUT3;
 	mov	c,_P0_5
 	clr	a
 	rlc	a
-	mov	_main_sloc1_1_0,a
-	mov	(_main_sloc1_1_0 + 1),#0x00
-;	./src/main.c:164: row3();
-	push	ar7
-	push	ar6
-	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
-	lcall	_row3
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
-	pop	ar5
-	pop	ar6
-	pop	ar7
-;	./src/main.c:167: if ((INPUT1 == 0) && (preINPUT7 == 1))
-	jb	_P0_7,00143$
-	mov	a,#0x01
-	cjne	a,_main_sloc2_1_0,00332$
-	dec	a
-	cjne	a,(_main_sloc2_1_0 + 1),00332$
-	sjmp	00333$
-00332$:
-	sjmp	00143$
-00333$:
-;	./src/main.c:169: delay_ms(20);
-	mov	dptr,#0x0014
-	push	ar7
-	push	ar6
-	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
-	lcall	_delay_ms
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
-	pop	ar5
-	pop	ar6
-	pop	ar7
-;	./src/main.c:170: if (INPUT1 == 0)
-	jb	_P0_7,00143$
-;	./src/main.c:171: patt = light_up(5, patt);
-	mov	_light_up_PARM_2,_main_patt_65536_17
-	mov	dptr,#0x0005
-	push	ar7
-	push	ar6
-	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
-	lcall	_light_up
-	mov	_main_patt_65536_17,dpl
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
-	pop	ar5
-	pop	ar6
-	pop	ar7
-00143$:
-;	./src/main.c:173: preINPUT7 = INPUT1;
-	mov	c,_P0_7
-	clr	a
-	rlc	a
-	mov	_main_sloc2_1_0,a
-	mov	(_main_sloc2_1_0 + 1),#0x00
-;	./src/main.c:176: if ((INPUT2 == 0) && (preINPUT8 == 1))
-	jb	_P0_6,00148$
-	mov	a,#0x01
-	cjne	a,_main_sloc3_1_0,00336$
-	dec	a
-	cjne	a,(_main_sloc3_1_0 + 1),00336$
-	sjmp	00337$
-00336$:
-	sjmp	00148$
-00337$:
-;	./src/main.c:178: delay_ms(20);
-	mov	dptr,#0x0014
-	push	ar7
-	push	ar6
-	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
-	lcall	_delay_ms
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
-	pop	ar5
-	pop	ar6
-	pop	ar7
-;	./src/main.c:179: if (INPUT2 == 0)
-	jb	_P0_6,00148$
-;	./src/main.c:180: patt = light_up(6, patt);
-	mov	_light_up_PARM_2,_main_patt_65536_17
-	mov	dptr,#0x0006
-	push	ar7
-	push	ar6
-	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
-	lcall	_light_up
-	mov	_main_patt_65536_17,dpl
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
-	pop	ar5
-	pop	ar6
-	pop	ar7
-00148$:
-;	./src/main.c:182: preINPUT8 = INPUT2;
-	mov	c,_P0_6
-	clr	a
-	rlc	a
-	mov	_main_sloc3_1_0,a
-	mov	(_main_sloc3_1_0 + 1),#0x00
-;	./src/main.c:185: if ((INPUT3 == 0) && (preINPUT9 == 1))
-	jnb	_P0_5,00339$
-	ljmp	00159$
-00339$:
-	mov	a,#0x01
-	cjne	a,_main_sloc4_1_0,00340$
-	dec	a
-	cjne	a,(_main_sloc4_1_0 + 1),00340$
-	sjmp	00341$
-00340$:
-	ljmp	00159$
-00341$:
-;	./src/main.c:187: delay_ms(20);
-	mov	dptr,#0x0014
-	push	ar7
-	push	ar6
-	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
-	lcall	_delay_ms
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
-	pop	ar5
-	pop	ar6
-	pop	ar7
-;	./src/main.c:188: if (INPUT3 == 0)
-	jnb	_P0_5,00342$
-	ljmp	00159$
-00342$:
-;	./src/main.c:190: delay_ms(1500);
-	mov	dptr,#0x05dc
-	push	ar7
-	push	ar6
-	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
-	lcall	_delay_ms
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
-	pop	ar5
-	pop	ar6
-	pop	ar7
-;	./src/main.c:191: if (INPUT1 != 0)
-	jb	_P0_7,00343$
-	ljmp	00154$
-00343$:
-;	./src/main.c:193: delay_ms(20);
-	mov	dptr,#0x0014
-	push	ar7
-	push	ar6
-	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
-	lcall	_delay_ms
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
-	pop	ar5
-	pop	ar6
-	pop	ar7
-;	./src/main.c:194: if (INPUT1 == 0)
-	jb	_P0_7,00151$
-;	./src/main.c:195: patt = shift_left(3, patt);
-	mov	_shift_left_PARM_2,_main_patt_65536_17
+	mov	r3,a
+	mov	r4,#0x00
+	mov	((_main_preINPUT_65536_16 + 0x000c) + 0),r3
+	mov	((_main_preINPUT_65536_16 + 0x000c) + 1),r4
+;	./src/main.c:178: scan_row(3);
 	mov	dptr,#0x0003
 	push	ar7
 	push	ar6
 	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
-	lcall	_shift_left
-	mov	_main_patt_65536_17,dpl
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
+	lcall	_scan_row
 	pop	ar5
 	pop	ar6
 	pop	ar7
-	sjmp	00159$
-00151$:
-;	./src/main.c:197: patt = shift_left(1, patt);
-	mov	_shift_left_PARM_2,_main_patt_65536_17
+;	./src/main.c:181: if ((INPUT1 == 0) && (preINPUT[7] == 1))
+	jb	_P0_7,00145$
+	mov	a,#0x01
+	cjne	a,(_main_preINPUT_65536_16 + 0x000e),00353$
+	dec	a
+	cjne	a,((_main_preINPUT_65536_16 + 0x000e) + 1),00353$
+	sjmp	00354$
+00353$:
+	sjmp	00145$
+00354$:
+;	./src/main.c:183: delay_ms(20);
+	mov	dptr,#0x0014
+	push	ar7
+	push	ar6
+	push	ar5
+	lcall	_delay_ms
+	pop	ar5
+	pop	ar6
+	pop	ar7
+;	./src/main.c:184: if (INPUT1 == 0)
+	jb	_P0_7,00145$
+;	./src/main.c:185: patt = light_up(5, patt);
+	mov	_light_up_PARM_2,r7
+	mov	dptr,#0x0005
+	push	ar6
+	push	ar5
+	lcall	_light_up
+	mov	r7,dpl
+	pop	ar5
+	pop	ar6
+00145$:
+;	./src/main.c:187: preINPUT[7] = INPUT1;
+	mov	c,_P0_7
+	clr	a
+	rlc	a
+	mov	r3,a
+	mov	r4,#0x00
+	mov	((_main_preINPUT_65536_16 + 0x000e) + 0),r3
+	mov	((_main_preINPUT_65536_16 + 0x000e) + 1),r4
+;	./src/main.c:190: if ((INPUT2 == 0) && (preINPUT[8] == 1))
+	jb	_P0_6,00150$
+	mov	a,#0x01
+	cjne	a,(_main_preINPUT_65536_16 + 0x0010),00357$
+	dec	a
+	cjne	a,((_main_preINPUT_65536_16 + 0x0010) + 1),00357$
+	sjmp	00358$
+00357$:
+	sjmp	00150$
+00358$:
+;	./src/main.c:192: delay_ms(20);
+	mov	dptr,#0x0014
+	push	ar7
+	push	ar6
+	push	ar5
+	lcall	_delay_ms
+	pop	ar5
+	pop	ar6
+	pop	ar7
+;	./src/main.c:193: if (INPUT2 == 0)
+	jb	_P0_6,00150$
+;	./src/main.c:194: patt = light_up(6, patt);
+	mov	_light_up_PARM_2,r7
+	mov	dptr,#0x0006
+	push	ar6
+	push	ar5
+	lcall	_light_up
+	mov	r7,dpl
+	pop	ar5
+	pop	ar6
+00150$:
+;	./src/main.c:196: preINPUT[8] = INPUT2;
+	mov	c,_P0_6
+	clr	a
+	rlc	a
+	mov	r3,a
+	mov	r4,#0x00
+	mov	((_main_preINPUT_65536_16 + 0x0010) + 0),r3
+	mov	((_main_preINPUT_65536_16 + 0x0010) + 1),r4
+;	./src/main.c:199: if ((INPUT3 == 0) && (preINPUT[9] == 1) && (cnt == 0))
+	jnb	_P0_5,00360$
+	ljmp	00161$
+00360$:
+	mov	a,#0x01
+	cjne	a,(_main_preINPUT_65536_16 + 0x0012),00361$
+	dec	a
+	cjne	a,((_main_preINPUT_65536_16 + 0x0012) + 1),00361$
+	sjmp	00362$
+00361$:
+	ljmp	00161$
+00362$:
+	mov	a,r5
+	orl	a,r6
+	jnz	00161$
+;	./src/main.c:201: delay_ms(20);
+	mov	dptr,#0x0014
+	push	ar7
+	push	ar6
+	push	ar5
+	lcall	_delay_ms
+	pop	ar5
+	pop	ar6
+	pop	ar7
+;	./src/main.c:202: if (INPUT3 == 0)
+	jb	_P0_5,00161$
+;	./src/main.c:204: delay_ms(500);
+	mov	dptr,#0x01f4
+	push	ar7
+	push	ar6
+	push	ar5
+	lcall	_delay_ms
+	pop	ar5
+	pop	ar6
+	pop	ar7
+;	./src/main.c:205: if (INPUT3 != 0)
+	jnb	_P0_5,00156$
+;	./src/main.c:206: patt = shift_left(1, patt);
+	mov	_shift_left_PARM_2,r7
 	mov	dptr,#0x0001
-	push	ar7
 	push	ar6
 	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
 	lcall	_shift_left
-	mov	_main_patt_65536_17,dpl
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
+	mov	r7,dpl
 	pop	ar5
 	pop	ar6
-	pop	ar7
-	sjmp	00159$
-00154$:
-;	./src/main.c:200: patt = shift_right(2, patt);
-	mov	_shift_right_PARM_2,_main_patt_65536_17
-	mov	dptr,#0x0002
+	sjmp	00161$
+00156$:
+;	./src/main.c:209: delay_ms(500);
+	mov	dptr,#0x01f4
 	push	ar7
 	push	ar6
 	push	ar5
-	push	ar4
-	push	ar3
-	push	ar2
-	push	ar1
-	push	ar0
-	lcall	_shift_right
-	mov	_main_patt_65536_17,dpl
-	pop	ar0
-	pop	ar1
-	pop	ar2
-	pop	ar3
-	pop	ar4
+	lcall	_delay_ms
 	pop	ar5
 	pop	ar6
 	pop	ar7
-00159$:
-;	./src/main.c:203: preINPUT9 = INPUT3;
+;	./src/main.c:210: if (INPUT3 != 0)
+	jnb	_P0_5,00153$
+;	./src/main.c:211: patt = shift_left(3, patt);
+	mov	_shift_left_PARM_2,r7
+	mov	dptr,#0x0003
+	push	ar6
+	push	ar5
+	lcall	_shift_left
+	mov	r7,dpl
+	pop	ar5
+	pop	ar6
+	sjmp	00161$
+00153$:
+;	./src/main.c:213: patt = shift_left(2, patt);
+	mov	_shift_left_PARM_2,r7
+	mov	dptr,#0x0002
+	push	ar6
+	push	ar5
+	lcall	_shift_left
+	mov	r7,dpl
+	pop	ar5
+	pop	ar6
+00161$:
+;	./src/main.c:217: preINPUT[9] = INPUT3;
 	mov	c,_P0_5
 	clr	a
 	rlc	a
-	mov	_main_sloc4_1_0,a
-	mov	(_main_sloc4_1_0 + 1),#0x00
-;	./src/main.c:205: }
-	ljmp	00162$
+	mov	r3,a
+	mov	r4,#0x00
+	mov	((_main_preINPUT_65536_16 + 0x0012) + 0),r3
+	mov	((_main_preINPUT_65536_16 + 0x0012) + 1),r4
+;	./src/main.c:219: }
+	ljmp	00165$
 	.area CSEG    (CODE)
 	.area CONST   (CODE)
 	.area XINIT   (CODE)

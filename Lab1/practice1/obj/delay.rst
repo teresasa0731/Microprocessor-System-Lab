@@ -96,7 +96,7 @@
                                      96 ;	-----------------------------------------
                                      97 ;	 function delay_ms
                                      98 ;	-----------------------------------------
-      000692                         99 _delay_ms:
+      0004A8                         99 _delay_ms:
                            000007   100 	ar7 = 0x07
                            000006   101 	ar6 = 0x06
                            000005   102 	ar5 = 0x05
@@ -106,18 +106,18 @@
                            000001   106 	ar1 = 0x01
                            000000   107 	ar0 = 0x00
                                     108 ;	./src/delay.c:14: __endasm;			// end of assembly code, don't forget to add ";"
-      000692                        109 DELAY:
-      000692 AD 82            [24]  110 	MOV R5,dpl
-      000694                        111 DL1:
-      000694 7E 02            [12]  112 	MOV R6,#2
-      000696                        113 DL2:
-      000696 7F E6            [12]  114 	MOV R7,#230
-      000698                        115 DL3:
-      000698 DF FE            [24]  116 	DJNZ R7,DL3
-      00069A DE FA            [24]  117 	DJNZ	R6,DL2
-      00069C DD F6            [24]  118 	DJNZ	R5,DL1
+      0004A8                        109 DELAY:
+      0004A8 AD 82            [24]  110 	MOV R5,dpl
+      0004AA                        111 DL1:
+      0004AA 7E 02            [12]  112 	MOV R6,#2
+      0004AC                        113 DL2:
+      0004AC 7F E6            [12]  114 	MOV R7,#230
+      0004AE                        115 DL3:
+      0004AE DF FE            [24]  116 	DJNZ R7,DL3
+      0004B0 DE FA            [24]  117 	DJNZ	R6,DL2
+      0004B2 DD F6            [24]  118 	DJNZ	R5,DL1
                                     119 ;	./src/delay.c:15: }
-      00069E 22               [24]  120 	ret
+      0004B4 22               [24]  120 	ret
                                     121 	.area CSEG    (CODE)
                                     122 	.area CONST   (CODE)
                                     123 	.area XINIT   (CODE)
