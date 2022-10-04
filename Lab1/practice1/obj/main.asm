@@ -327,7 +327,7 @@ __interrupt_vect:
 	.globl __mcs51_genXINIT
 	.globl __mcs51_genXRAMCLEAR
 	.globl __mcs51_genRAMCLEAR
-;	./src/main.c:23: unsigned char patt = 0x80; // led value
+;	./src/main.c:25: unsigned char patt = 0x80; // led value
 	mov	_patt,#0x80
 	.area GSFINAL (CODE)
 	ljmp	__sdcc_program_startup
@@ -348,7 +348,7 @@ __sdcc_program_startup:
 ;------------------------------------------------------------
 ;row                       Allocated to registers r6 r7 
 ;------------------------------------------------------------
-;	./src/main.c:26: void scan_row(unsigned int row)
+;	./src/main.c:28: void scan_row(unsigned int row)
 ;	-----------------------------------------
 ;	 function scan_row
 ;	-----------------------------------------
@@ -363,7 +363,7 @@ _scan_row:
 	ar0 = 0x00
 	mov	r6,dpl
 	mov	r7,dph
-;	./src/main.c:28: switch (row)
+;	./src/main.c:30: switch (row)
 	cjne	r6,#0x00,00120$
 	cjne	r7,#0x00,00120$
 	sjmp	00101$
@@ -372,21 +372,21 @@ _scan_row:
 	cjne	r7,#0x00,00121$
 	sjmp	00102$
 00121$:
-;	./src/main.c:30: case 0:
+;	./src/main.c:32: case 0:
 	cjne	r6,#0x02,00106$
 	cjne	r7,#0x00,00106$
 	sjmp	00103$
 00101$:
-;	./src/main.c:32: OUTPUT0 = 0; // row1 output 0
+;	./src/main.c:33: OUTPUT0 = 0; // row1 output 0
 ;	assignBit
 	clr	_P0_4
-;	./src/main.c:33: OUTPUT1 = 1; // row2 output 1
+;	./src/main.c:34: OUTPUT1 = 1; // row2 output 1
 ;	assignBit
 	setb	_P0_3
-;	./src/main.c:34: OUTPUT2 = 1; // row3 output 1
+;	./src/main.c:35: OUTPUT2 = 1; // row3 output 1
 ;	assignBit
 	setb	_P0_2
-;	./src/main.c:35: break;
+;	./src/main.c:36: break;
 ;	./src/main.c:37: case 1:
 	ret
 00102$:
@@ -400,33 +400,33 @@ _scan_row:
 ;	assignBit
 	setb	_P0_2
 ;	./src/main.c:41: break;
-;	./src/main.c:43: case 2:
+;	./src/main.c:42: case 2:
 	ret
 00103$:
-;	./src/main.c:44: OUTPUT0 = 1; // row1 output 1
+;	./src/main.c:43: OUTPUT0 = 1; // row1 output 1
 ;	assignBit
 	setb	_P0_4
-;	./src/main.c:45: OUTPUT1 = 1; // row2 output 1
+;	./src/main.c:44: OUTPUT1 = 1; // row2 output 1
 ;	assignBit
 	setb	_P0_3
-;	./src/main.c:46: OUTPUT2 = 0; // row3 output 0
+;	./src/main.c:45: OUTPUT2 = 0; // row3 output 0
 ;	assignBit
 	clr	_P0_2
-;	./src/main.c:51: }
+;	./src/main.c:49: }
 00106$:
-;	./src/main.c:52: }
+;	./src/main.c:50: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'read_curINPUT'
 ;------------------------------------------------------------
 ;i                         Allocated to registers r6 r7 
 ;------------------------------------------------------------
-;	./src/main.c:53: void read_curINPUT(void)
+;	./src/main.c:51: void read_curINPUT(void)
 ;	-----------------------------------------
 ;	 function read_curINPUT
 ;	-----------------------------------------
 _read_curINPUT:
-;	./src/main.c:55: for (int i = 0; i < 3; i++)
+;	./src/main.c:53: for (int i = 0; i < 3; i++)
 	mov	r6,#0x00
 	mov	r7,#0x00
 00103$:
@@ -437,7 +437,7 @@ _read_curINPUT:
 	xrl	a,#0x80
 	subb	a,#0x80
 	jnc	00105$
-;	./src/main.c:57: scan_row(i);
+;	./src/main.c:55: scan_row(i);
 	mov	dpl,r6
 	mov	dph,r7
 	push	ar7
@@ -445,7 +445,7 @@ _read_curINPUT:
 	lcall	_scan_row
 	pop	ar6
 	pop	ar7
-;	./src/main.c:58: curINPUT[i * 3 + 0] = INPUT0;
+;	./src/main.c:56: curINPUT[i * 3 + 0] = INPUT0;
 	mov	ar5,r6
 	mov	a,r5
 	mov	b,#0x03
@@ -463,7 +463,7 @@ _read_curINPUT:
 	inc	r1
 	mov	@r1,ar4
 	dec	r1
-;	./src/main.c:59: curINPUT[i * 3 + 1] = INPUT1;
+;	./src/main.c:57: curINPUT[i * 3 + 1] = INPUT1;
 	mov	a,r5
 	inc	a
 	add	a,acc
@@ -478,7 +478,7 @@ _read_curINPUT:
 	inc	r1
 	mov	@r1,ar4
 	dec	r1
-;	./src/main.c:60: curINPUT[i * 3 + 2] = INPUT2;
+;	./src/main.c:58: curINPUT[i * 3 + 2] = INPUT2;
 	inc	r5
 	inc	r5
 	mov	a,r5
@@ -494,13 +494,13 @@ _read_curINPUT:
 	inc	r1
 	mov	@r1,ar5
 	dec	r1
-;	./src/main.c:55: for (int i = 0; i < 3; i++)
+;	./src/main.c:53: for (int i = 0; i < 3; i++)
 	inc	r6
 	cjne	r6,#0x00,00103$
 	inc	r7
 	sjmp	00103$
 00105$:
-;	./src/main.c:62: }
+;	./src/main.c:60: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'shift_left'
@@ -509,14 +509,14 @@ _read_curINPUT:
 ;bit                       Allocated to registers r6 r7 
 ;i                         Allocated to registers r4 r5 
 ;------------------------------------------------------------
-;	./src/main.c:63: unsigned char shift_left(unsigned int bit, unsigned char patt)
+;	./src/main.c:61: unsigned char shift_left(unsigned int bit, unsigned char patt)
 ;	-----------------------------------------
 ;	 function shift_left
 ;	-----------------------------------------
 _shift_left:
 	mov	r6,dpl
 	mov	r7,dph
-;	./src/main.c:65: for (int i = 0; i < bit; i++)
+;	./src/main.c:63: for (int i = 0; i < bit; i++)
 	mov	r4,#0x00
 	mov	r5,#0x00
 00105$:
@@ -528,32 +528,32 @@ _shift_left:
 	mov	a,r3
 	subb	a,r7
 	jnc	00103$
-;	./src/main.c:67: patt = patt >> 1;
+;	./src/main.c:65: patt = patt >> 1;
 	mov	a,_shift_left_PARM_2
 	clr	c
 	rrc	a
-;	./src/main.c:68: if (patt == 0x00)
+;	./src/main.c:66: if (patt == 0x00)
 	mov	_shift_left_PARM_2,a
 	jnz	00106$
-;	./src/main.c:69: patt = 0x80;
+;	./src/main.c:67: patt = 0x80;
 	mov	_shift_left_PARM_2,#0x80
 00106$:
-;	./src/main.c:65: for (int i = 0; i < bit; i++)
+;	./src/main.c:63: for (int i = 0; i < bit; i++)
 	inc	r4
 	cjne	r4,#0x00,00105$
 	inc	r5
 	sjmp	00105$
 00103$:
-;	./src/main.c:72: led = ~patt;
+;	./src/main.c:69: led = ~patt;
 	mov	a,_shift_left_PARM_2
 	cpl	a
 	mov	_P1,a
-;	./src/main.c:73: delay_ms(20);
+;	./src/main.c:70: delay_ms(20);
 	mov	dptr,#0x0014
 	lcall	_delay_ms
-;	./src/main.c:74: return patt;
+;	./src/main.c:71: return patt;
 	mov	dpl,_shift_left_PARM_2
-;	./src/main.c:75: }
+;	./src/main.c:72: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'shift_right'
@@ -561,20 +561,20 @@ _shift_left:
 ;patt                      Allocated with name '_shift_right_PARM_2'
 ;bit                       Allocated to registers r6 r7 
 ;------------------------------------------------------------
-;	./src/main.c:76: unsigned char shift_right(unsigned int bit, unsigned char patt)
+;	./src/main.c:73: unsigned char shift_right(unsigned int bit, unsigned char patt)
 ;	-----------------------------------------
 ;	 function shift_right
 ;	-----------------------------------------
 _shift_right:
 	mov	r6,dpl
-;	./src/main.c:78: if (patt == 0x80)
+;	./src/main.c:75: if (patt == 0x80)
 	mov	a,#0x80
 	cjne	a,_shift_right_PARM_2,00102$
-;	./src/main.c:79: patt = 0x00 + 1;
+;	./src/main.c:76: patt = 0x00 + 1;
 	mov	_shift_right_PARM_2,#0x01
 	sjmp	00103$
 00102$:
-;	./src/main.c:81: patt = patt << bit;
+;	./src/main.c:78: patt = patt << bit;
 	mov	b,r6
 	inc	b
 	mov	a,_shift_right_PARM_2
@@ -585,16 +585,16 @@ _shift_right:
 	djnz	b,00112$
 	mov	_shift_right_PARM_2,a
 00103$:
-;	./src/main.c:83: led = ~patt;
+;	./src/main.c:79: led = ~patt;
 	mov	a,_shift_right_PARM_2
 	cpl	a
 	mov	_P1,a
-;	./src/main.c:84: delay_ms(20);
+;	./src/main.c:80: delay_ms(20);
 	mov	dptr,#0x0014
 	lcall	_delay_ms
-;	./src/main.c:85: return patt;
+;	./src/main.c:81: return patt;
 	mov	dpl,_shift_right_PARM_2
-;	./src/main.c:86: }
+;	./src/main.c:82: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'light_up'
@@ -602,19 +602,19 @@ _shift_right:
 ;patt                      Allocated with name '_light_up_PARM_2'
 ;idx                       Allocated to registers r6 r7 
 ;------------------------------------------------------------
-;	./src/main.c:87: unsigned char light_up(unsigned int idx, unsigned char patt)
+;	./src/main.c:83: unsigned char light_up(unsigned int idx, unsigned char patt)
 ;	-----------------------------------------
 ;	 function light_up
 ;	-----------------------------------------
 _light_up:
 	mov	r6,dpl
 	mov	r7,dph
-;	./src/main.c:89: switch (idx)
+;	./src/main.c:85: switch (idx)
 	cjne	r6,#0x09,00110$
 	cjne	r7,#0x00,00110$
 	sjmp	00103$
 00110$:
-;	./src/main.c:95: patt = (0x00 + 1) << idx;
+;	./src/main.c:91: patt = (0x00 + 1) << idx;
 	mov	b,r6
 	inc	b
 	mov	a,#0x01
@@ -624,18 +624,18 @@ _light_up:
 00113$:
 	djnz	b,00111$
 	mov	_light_up_PARM_2,a
-;	./src/main.c:97: }
+;	./src/main.c:93: }
 00103$:
-;	./src/main.c:99: led = ~patt;
+;	./src/main.c:94: led = ~patt;
 	mov	a,_light_up_PARM_2
 	cpl	a
 	mov	_P1,a
-;	./src/main.c:100: delay_ms(20);
+;	./src/main.c:95: delay_ms(20);
 	mov	dptr,#0x0014
 	lcall	_delay_ms
-;	./src/main.c:101: return patt;
+;	./src/main.c:96: return patt;
 	mov	dpl,_light_up_PARM_2
-;	./src/main.c:102: }
+;	./src/main.c:97: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'main'
@@ -647,12 +647,12 @@ _light_up:
 ;i                         Allocated to registers r6 r7 
 ;sloc0                     Allocated with name '_main_sloc0_1_0'
 ;------------------------------------------------------------
-;	./src/main.c:104: void main(void)
+;	./src/main.c:99: void main(void)
 ;	-----------------------------------------
 ;	 function main
 ;	-----------------------------------------
 _main:
-;	./src/main.c:107: int long_flag = 0, double_cnt = 0, double_flag = 0;
+;	./src/main.c:101: int long_flag = 0, double_cnt = 0, double_flag = 0;
 	clr	a
 	mov	_main_long_flag_65536_20,a
 	mov	(_main_long_flag_65536_20 + 1),a
@@ -660,7 +660,7 @@ _main:
 	mov	(_main_double_cnt_65536_20 + 1),a
 	mov	_main_double_flag_65536_20,a
 	mov	(_main_double_flag_65536_20 + 1),a
-;	./src/main.c:109: for (int i = 0; i < 9; i++)
+;	./src/main.c:104: for (int i = 0; i < 9; i++)
 	mov	r6,#0x00
 	mov	r7,#0x00
 00161$:
@@ -671,7 +671,7 @@ _main:
 	xrl	a,#0x80
 	subb	a,#0x80
 	jnc	00158$
-;	./src/main.c:111: curINPUT[i] = LEVEL_HIGH;
+;	./src/main.c:106: curINPUT[i] = LEVEL_HIGH;
 	mov	a,r6
 	add	a,r6
 	mov	r2,a
@@ -684,40 +684,40 @@ _main:
 	mov	@r0,#0x01
 	inc	r0
 	mov	@r0,#0x00
-;	./src/main.c:112: state[i] = BTN_RELEASED;
+;	./src/main.c:107: state[i] = BTN_RELEASED;
 	mov	a,r2
 	add	a,#_state
 	mov	r0,a
 	mov	@r0,#0x00
 	inc	r0
 	mov	@r0,#0x00
-;	./src/main.c:113: prestate[i] = BTN_RELEASED;
+;	./src/main.c:108: prestate[i] = BTN_RELEASED;
 	mov	a,r2
 	add	a,#_prestate
 	mov	r0,a
 	mov	@r0,#0x00
 	inc	r0
 	mov	@r0,#0x00
-;	./src/main.c:114: count[i] = 0;
+;	./src/main.c:109: count[i] = 0;
 	mov	a,r2
 	add	a,#_count
 	mov	r0,a
 	mov	@r0,#0x00
 	inc	r0
 	mov	@r0,#0x00
-;	./src/main.c:109: for (int i = 0; i < 9; i++)
+;	./src/main.c:104: for (int i = 0; i < 9; i++)
 	inc	r6
-;	./src/main.c:117: while (1)
+;	./src/main.c:112: while (1)
 	cjne	r6,#0x00,00161$
 	inc	r7
 	sjmp	00161$
 00158$:
-;	./src/main.c:119: delay_ms(20);
+;	./src/main.c:114: delay_ms(20);
 	mov	dptr,#0x0014
 	lcall	_delay_ms
-;	./src/main.c:120: read_curINPUT();
+;	./src/main.c:115: read_curINPUT();
 	lcall	_read_curINPUT
-;	./src/main.c:123: for (int i = 0; i < 9; i++)
+;	./src/main.c:116: for (int i = 0; i < 9; i++)
 	mov	r6,#0x00
 	mov	r7,#0x00
 00164$:
@@ -728,7 +728,7 @@ _main:
 	xrl	a,#0x80
 	subb	a,#0x80
 	jnc	00158$
-;	./src/main.c:125: switch (state[i])
+;	./src/main.c:120: switch (state[i])
 	mov	a,r6
 	add	a,r6
 	mov	r2,a
@@ -760,9 +760,9 @@ _main:
 	ljmp	00106$
 	ljmp	00110$
 	ljmp	00117$
-;	./src/main.c:127: case BTN_RELEASED:
+;	./src/main.c:122: case BTN_RELEASED:
 00102$:
-;	./src/main.c:128: if (curINPUT[i] == LEVEL_LOW)
+;	./src/main.c:123: if (curINPUT[i] == LEVEL_LOW)
 	mov	a,r2
 	add	a,#_curINPUT
 	mov	r0,a
@@ -773,24 +773,24 @@ _main:
 	mov	a,r4
 	orl	a,r5
 	jnz	00104$
-;	./src/main.c:129: state[i] = BTN_DEBOUNCED;
+;	./src/main.c:124: state[i] = BTN_DEBOUNCED;
 	mov	@r1,#0x01
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
 	ljmp	00122$
 00104$:
-;	./src/main.c:131: double_cnt++;
+;	./src/main.c:126: double_cnt++;
 	inc	_main_double_cnt_65536_20
 	clr	a
 	cjne	a,_main_double_cnt_65536_20,00267$
 	inc	(_main_double_cnt_65536_20 + 1)
 00267$:
-;	./src/main.c:133: break;
+;	./src/main.c:128: break;
 	ljmp	00122$
-;	./src/main.c:134: case BTN_DEBOUNCED:
+;	./src/main.c:129: case BTN_DEBOUNCED:
 00106$:
-;	./src/main.c:135: if (curINPUT[i] == LEVEL_LOW)
+;	./src/main.c:130: if (curINPUT[i] == LEVEL_LOW)
 	mov	a,r2
 	add	a,#_curINPUT
 	mov	r0,a
@@ -801,23 +801,23 @@ _main:
 	mov	a,r4
 	orl	a,r5
 	jnz	00108$
-;	./src/main.c:137: state[i] = BTN_PRESSED;
+;	./src/main.c:132: state[i] = BTN_PRESSED;
 	mov	@r1,#0x02
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
 	ljmp	00122$
 00108$:
-;	./src/main.c:140: state[i] = BTN_RELEASED;
+;	./src/main.c:135: state[i] = BTN_RELEASED;
 	mov	@r1,#0x00
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
-;	./src/main.c:141: break;
-;	./src/main.c:142: case BTN_PRESSED:
+;	./src/main.c:136: break;
+;	./src/main.c:137: case BTN_PRESSED:
 	sjmp	00122$
 00110$:
-;	./src/main.c:143: if (curINPUT[i] == LEVEL_LOW)
+;	./src/main.c:138: if (curINPUT[i] == LEVEL_LOW)
 	mov	a,r2
 	add	a,#_curINPUT
 	mov	r0,a
@@ -828,7 +828,7 @@ _main:
 	mov	a,r4
 	orl	a,r5
 	jnz	00115$
-;	./src/main.c:145: count[i]++;
+;	./src/main.c:140: count[i]++;
 	mov	a,r2
 	add	a,#_count
 	mov	r0,a
@@ -844,40 +844,40 @@ _main:
 	inc	r0
 	mov	@r0,ar5
 	dec	r0
-;	./src/main.c:146: if (count[i] > 50)
+;	./src/main.c:141: if (count[i] > 50)
 	clr	c
 	mov	a,#0x32
 	subb	a,r4
 	clr	a
 	subb	a,r5
 	jnc	00112$
-;	./src/main.c:148: state[i] = BTN_LONG_PRESSED;
+;	./src/main.c:143: state[i] = BTN_LONG_PRESSED;
 	mov	@r1,#0x03
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
-;	./src/main.c:149: long_flag = 1;
+;	./src/main.c:144: long_flag = 1;
 	mov	_main_long_flag_65536_20,#0x01
 	mov	(_main_long_flag_65536_20 + 1),#0x00
 	sjmp	00122$
 00112$:
-;	./src/main.c:153: state[i] = BTN_PRESSED;
+;	./src/main.c:148: state[i] = BTN_PRESSED;
 	mov	@r1,#0x02
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
 	sjmp	00122$
 00115$:
-;	./src/main.c:156: state[i] = BTN_RELEASED;
+;	./src/main.c:151: state[i] = BTN_RELEASED;
 	mov	@r1,#0x00
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
-;	./src/main.c:158: break;
-;	./src/main.c:159: case BTN_LONG_PRESSED:
+;	./src/main.c:153: break;
+;	./src/main.c:154: case BTN_LONG_PRESSED:
 	sjmp	00122$
 00117$:
-;	./src/main.c:160: if (curINPUT[i] == LEVEL_LOW)
+;	./src/main.c:155: if (curINPUT[i] == LEVEL_LOW)
 	mov	a,r2
 	add	a,#_curINPUT
 	mov	r0,a
@@ -888,28 +888,28 @@ _main:
 	mov	a,r4
 	orl	a,r5
 	jnz	00119$
-;	./src/main.c:161: state[i] = BTN_LONG_PRESSED;
+;	./src/main.c:156: state[i] = BTN_LONG_PRESSED;
 	mov	@r1,#0x03
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
 	sjmp	00122$
 00119$:
-;	./src/main.c:164: state[i] = BTN_RELEASED;
+;	./src/main.c:159: state[i] = BTN_RELEASED;
 	mov	@r1,#0x00
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
-;	./src/main.c:165: count[i] = 0;
+;	./src/main.c:160: count[i] = 0;
 	mov	a,r2
 	add	a,#_count
 	mov	r0,a
 	mov	@r0,#0x00
 	inc	r0
 	mov	@r0,#0x00
-;	./src/main.c:170: }
+;	./src/main.c:165: }
 00122$:
-;	./src/main.c:173: if (((state[i] == BTN_RELEASED) && (prestate[i] == BTN_PRESSED)) || (double_flag && (i == 8) && (double_cnt > 100)))
+;	./src/main.c:170: if (((state[i] == BTN_RELEASED) && (prestate[i] == BTN_PRESSED)) || (double_flag && (i == 8) && (double_cnt > 100)))
 	mov	a,r6
 	add	a,r6
 	mov	r4,a
@@ -960,7 +960,7 @@ _main:
 	ljmp	00150$
 00278$:
 00149$:
-;	./src/main.c:175: switch (i)
+;	./src/main.c:172: switch (i)
 	mov	a,r7
 	jnb	acc.7,00279$
 	ljmp	00139$
@@ -1005,9 +1005,9 @@ _main:
 	.db	00129$>>8
 	.db	00130$>>8
 	.db	00131$>>8
-;	./src/main.c:177: case 0:
+;	./src/main.c:174: case 0:
 00123$:
-;	./src/main.c:178: patt = shift_left(1, patt);
+;	./src/main.c:175: patt = shift_left(1, patt);
 	mov	_shift_left_PARM_2,_patt
 	mov	dptr,#0x0001
 	push	ar7
@@ -1016,11 +1016,11 @@ _main:
 	mov	_patt,dpl
 	pop	ar6
 	pop	ar7
-;	./src/main.c:179: break;
+;	./src/main.c:176: break;
 	ljmp	00139$
-;	./src/main.c:180: case 1:
+;	./src/main.c:177: case 1:
 00124$:
-;	./src/main.c:181: patt = light_up(0, patt);
+;	./src/main.c:178: patt = light_up(0, patt);
 	mov	_light_up_PARM_2,_patt
 	mov	dptr,#0x0000
 	push	ar7
@@ -1029,11 +1029,11 @@ _main:
 	mov	_patt,dpl
 	pop	ar6
 	pop	ar7
-;	./src/main.c:182: break;
+;	./src/main.c:179: break;
 	ljmp	00139$
-;	./src/main.c:183: case 2:
+;	./src/main.c:180: case 2:
 00125$:
-;	./src/main.c:184: patt = light_up(1, patt);
+;	./src/main.c:181: patt = light_up(1, patt);
 	mov	_light_up_PARM_2,_patt
 	mov	dptr,#0x0001
 	push	ar7
@@ -1042,11 +1042,11 @@ _main:
 	mov	_patt,dpl
 	pop	ar6
 	pop	ar7
-;	./src/main.c:185: break;
+;	./src/main.c:182: break;
 	ljmp	00139$
-;	./src/main.c:186: case 3:
+;	./src/main.c:183: case 3:
 00126$:
-;	./src/main.c:187: patt = light_up(2, patt);
+;	./src/main.c:184: patt = light_up(2, patt);
 	mov	_light_up_PARM_2,_patt
 	mov	dptr,#0x0002
 	push	ar7
@@ -1055,11 +1055,11 @@ _main:
 	mov	_patt,dpl
 	pop	ar6
 	pop	ar7
-;	./src/main.c:188: break;
+;	./src/main.c:185: break;
 	ljmp	00139$
-;	./src/main.c:189: case 4:
+;	./src/main.c:186: case 4:
 00127$:
-;	./src/main.c:190: patt = shift_right(1, patt);
+;	./src/main.c:187: patt = shift_right(1, patt);
 	mov	_shift_right_PARM_2,_patt
 	mov	dptr,#0x0001
 	push	ar7
@@ -1068,11 +1068,11 @@ _main:
 	mov	_patt,dpl
 	pop	ar6
 	pop	ar7
-;	./src/main.c:191: break;
+;	./src/main.c:188: break;
 	ljmp	00139$
-;	./src/main.c:192: case 5:
+;	./src/main.c:189: case 5:
 00128$:
-;	./src/main.c:193: patt = light_up(4, patt);
+;	./src/main.c:190: patt = light_up(4, patt);
 	mov	_light_up_PARM_2,_patt
 	mov	dptr,#0x0004
 	push	ar7
@@ -1081,11 +1081,11 @@ _main:
 	mov	_patt,dpl
 	pop	ar6
 	pop	ar7
-;	./src/main.c:194: break;
+;	./src/main.c:191: break;
 	ljmp	00139$
-;	./src/main.c:195: case 6:
+;	./src/main.c:192: case 6:
 00129$:
-;	./src/main.c:196: patt = light_up(5, patt);
+;	./src/main.c:193: patt = light_up(5, patt);
 	mov	_light_up_PARM_2,_patt
 	mov	dptr,#0x0005
 	push	ar7
@@ -1094,11 +1094,11 @@ _main:
 	mov	_patt,dpl
 	pop	ar6
 	pop	ar7
-;	./src/main.c:197: break;
-;	./src/main.c:198: case 7:
+;	./src/main.c:194: break;
+;	./src/main.c:195: case 7:
 	sjmp	00139$
 00130$:
-;	./src/main.c:199: patt = light_up(6, patt);
+;	./src/main.c:196: patt = light_up(6, patt);
 	mov	_light_up_PARM_2,_patt
 	mov	dptr,#0x0006
 	push	ar7
@@ -1107,15 +1107,15 @@ _main:
 	mov	_patt,dpl
 	pop	ar6
 	pop	ar7
-;	./src/main.c:200: break;
-;	./src/main.c:201: case 8:
+;	./src/main.c:197: break;
+;	./src/main.c:198: case 8:
 	sjmp	00139$
 00131$:
-;	./src/main.c:202: if (double_flag)
+;	./src/main.c:199: if (double_flag)
 	mov	a,_main_double_flag_65536_20
 	orl	a,(_main_double_flag_65536_20 + 1)
 	jz	00136$
-;	./src/main.c:204: if (double_cnt < 100)
+;	./src/main.c:201: if (double_cnt < 100)
 	clr	c
 	mov	a,_main_double_cnt_65536_20
 	subb	a,#0x64
@@ -1123,7 +1123,7 @@ _main:
 	xrl	a,#0x80
 	subb	a,#0x80
 	jnc	00133$
-;	./src/main.c:205: patt = shift_left(3, patt);
+;	./src/main.c:202: patt = shift_left(3, patt);
 	mov	_shift_left_PARM_2,_patt
 	mov	dptr,#0x0003
 	push	ar7
@@ -1134,7 +1134,7 @@ _main:
 	pop	ar7
 	sjmp	00134$
 00133$:
-;	./src/main.c:207: patt = shift_left(1, patt);
+;	./src/main.c:204: patt = shift_left(1, patt);
 	mov	_shift_left_PARM_2,_patt
 	mov	dptr,#0x0001
 	push	ar7
@@ -1144,22 +1144,22 @@ _main:
 	pop	ar6
 	pop	ar7
 00134$:
-;	./src/main.c:208: double_flag = 0;
+;	./src/main.c:205: double_flag = 0;
 	clr	a
 	mov	_main_double_flag_65536_20,a
 	mov	(_main_double_flag_65536_20 + 1),a
 	sjmp	00139$
 00136$:
-;	./src/main.c:212: double_flag = 1;
+;	./src/main.c:209: double_flag = 1;
 	mov	_main_double_flag_65536_20,#0x01
-;	./src/main.c:213: double_cnt = 0;
+;	./src/main.c:210: double_cnt = 0;
 	clr	a
 	mov	(_main_double_flag_65536_20 + 1),a
 	mov	_main_double_cnt_65536_20,a
 	mov	(_main_double_cnt_65536_20 + 1),a
-;	./src/main.c:219: }
+;	./src/main.c:216: }
 00139$:
-;	./src/main.c:220: count[i] = 0;
+;	./src/main.c:217: count[i] = 0;
 	mov	a,r6
 	add	a,r6
 	mov	r4,a
@@ -1174,7 +1174,7 @@ _main:
 	mov	@r0,#0x00
 	ljmp	00151$
 00150$:
-;	./src/main.c:222: else if (state[i] == BTN_LONG_PRESSED)
+;	./src/main.c:220: else if (state[i] == BTN_LONG_PRESSED)
 	mov	a,r6
 	add	a,r6
 	mov	r4,a
@@ -1189,7 +1189,7 @@ _main:
 	dec	r1
 	cjne	r4,#0x03,00151$
 	cjne	r5,#0x00,00151$
-;	./src/main.c:224: switch (i)
+;	./src/main.c:222: switch (i)
 	cjne	r6,#0x00,00287$
 	cjne	r7,#0x00,00287$
 	sjmp	00140$
@@ -1198,12 +1198,12 @@ _main:
 	cjne	r7,#0x00,00288$
 	sjmp	00141$
 00288$:
-;	./src/main.c:226: case 0:
+;	./src/main.c:224: case 0:
 	cjne	r6,#0x08,00151$
 	cjne	r7,#0x00,00151$
 	sjmp	00142$
 00140$:
-;	./src/main.c:227: patt = light_up(9, patt);
+;	./src/main.c:225: patt = light_up(9, patt);
 	mov	_light_up_PARM_2,_patt
 	mov	dptr,#0x0009
 	push	ar7
@@ -1212,11 +1212,11 @@ _main:
 	mov	_patt,dpl
 	pop	ar6
 	pop	ar7
-;	./src/main.c:228: break;
-;	./src/main.c:229: case 4:
+;	./src/main.c:226: break;
+;	./src/main.c:227: case 4:
 	sjmp	00151$
 00141$:
-;	./src/main.c:230: patt = shift_right(1, patt);
+;	./src/main.c:228: patt = shift_right(1, patt);
 	mov	_shift_right_PARM_2,_patt
 	mov	dptr,#0x0001
 	push	ar7
@@ -1225,15 +1225,15 @@ _main:
 	mov	_patt,dpl
 	pop	ar6
 	pop	ar7
-;	./src/main.c:231: break;
-;	./src/main.c:232: case 8:
+;	./src/main.c:229: break;
+;	./src/main.c:230: case 8:
 	sjmp	00151$
 00142$:
-;	./src/main.c:233: if (long_flag)
+;	./src/main.c:231: if (long_flag)
 	mov	a,_main_long_flag_65536_20
 	orl	a,(_main_long_flag_65536_20 + 1)
 	jz	00151$
-;	./src/main.c:235: patt = shift_left(2, patt);
+;	./src/main.c:233: patt = shift_left(2, patt);
 	mov	_shift_left_PARM_2,_patt
 	mov	dptr,#0x0002
 	push	ar7
@@ -1242,13 +1242,13 @@ _main:
 	mov	_patt,dpl
 	pop	ar6
 	pop	ar7
-;	./src/main.c:236: long_flag = 0;
+;	./src/main.c:234: long_flag = 0;
 	clr	a
 	mov	_main_long_flag_65536_20,a
 	mov	(_main_long_flag_65536_20 + 1),a
-;	./src/main.c:241: }
+;	./src/main.c:239: }
 00151$:
-;	./src/main.c:244: prestate[i] = state[i];
+;	./src/main.c:242: prestate[i] = state[i];
 	mov	a,r6
 	add	a,r6
 	mov	r4,a
@@ -1268,12 +1268,12 @@ _main:
 	inc	r1
 	mov	@r1,ar5
 	dec	r1
-;	./src/main.c:123: for (int i = 0; i < 9; i++)
+;	./src/main.c:116: for (int i = 0; i < 9; i++)
 	inc	r6
 	cjne	r6,#0x00,00291$
 	inc	r7
 00291$:
-;	./src/main.c:247: }
+;	./src/main.c:245: }
 	ljmp	00164$
 	.area CSEG    (CODE)
 	.area CONST   (CODE)

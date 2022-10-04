@@ -113,7 +113,7 @@ void main(void)
 	{
 		delay_ms(20);
 		read_curINPUT();
-		dfsdf for (int i = 0; i < 9; i++)
+		for (int i = 0; i < 9; i++)
 		{
 
 			// finate state machine
