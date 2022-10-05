@@ -9,8 +9,9 @@
 ; Public variables in this module
 ;--------------------------------------------------------
 	.globl _main
-	.globl _shiftdraw
+	.globl _Writesingle7219
 	.globl _Initial
+	.globl _delay_ms
 	.globl _CY
 	.globl _AC
 	.globl _F0
@@ -222,9 +223,11 @@ _CY	=	0x00d7
 ; internal ram data
 ;--------------------------------------------------------
 	.area DSEG    (DATA)
-_main_seg_65536_7:
-	.ds 8
-_main_hi_65536_7:
+_main_seg_65536_9:
+	.ds 20
+_main_snakeshift_65536_9:
+	.ds 20
+_main_hi_65536_9:
 	.ds 16
 ;--------------------------------------------------------
 ; overlayable items in internal ram
@@ -311,9 +314,11 @@ __sdcc_program_startup:
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'main'
 ;------------------------------------------------------------
-;seg                       Allocated with name '_main_seg_65536_7'
-;hi                        Allocated with name '_main_hi_65536_7'
+;seg                       Allocated with name '_main_seg_65536_9'
+;snakeshift                Allocated with name '_main_snakeshift_65536_9'
+;hi                        Allocated with name '_main_hi_65536_9'
 ;i                         Allocated to registers 
+;i                         Allocated to registers r6 r7 
 ;------------------------------------------------------------
 ;	./src/main.c:6: void main(void)
 ;	-----------------------------------------
@@ -329,41 +334,109 @@ _main:
 	ar1 = 0x01
 	ar0 = 0x00
 ;	./src/main.c:9: unsigned char seg[] = {
-	mov	_main_seg_65536_7,#0xb0
-	mov	(_main_seg_65536_7 + 0x0001),#0xed
-	mov	(_main_seg_65536_7 + 0x0002),#0xf9
-	mov	(_main_seg_65536_7 + 0x0003),#0xb3
-	mov	(_main_seg_65536_7 + 0x0004),#0xdb
-	mov	(_main_seg_65536_7 + 0x0005),#0xdf
-	mov	(_main_seg_65536_7 + 0x0006),#0xf0
-	mov	(_main_seg_65536_7 + 0x0007),#0xff
-;	./src/main.c:21: unsigned char hi[] = {
-	mov	_main_hi_65536_7,#0xff
-	mov	(_main_hi_65536_7 + 0x0001),#0x10
-	mov	(_main_hi_65536_7 + 0x0002),#0x10
-	mov	(_main_hi_65536_7 + 0x0003),#0xff
-	mov	(_main_hi_65536_7 + 0x0004),#0x00
-	mov	(_main_hi_65536_7 + 0x0005),#0x81
-	mov	(_main_hi_65536_7 + 0x0006),#0xff
-	mov	(_main_hi_65536_7 + 0x0007),#0x81
-	mov	(_main_hi_65536_7 + 0x0008),#0x00
-	mov	(_main_hi_65536_7 + 0x0009),#0x0e
-	mov	(_main_hi_65536_7 + 0x000a),#0x1c
-	mov	(_main_hi_65536_7 + 0x000b),#0x38
-	mov	(_main_hi_65536_7 + 0x000c),#0x1c
-	mov	(_main_hi_65536_7 + 0x000d),#0x0e
-	mov	(_main_hi_65536_7 + 0x000e),#0x00
-	mov	(_main_hi_65536_7 + 0x000f),#0x00
-;	./src/main.c:43: Initial();              // MAX7219 initialize
+	mov	_main_seg_65536_9,#0x40
+	mov	(_main_seg_65536_9 + 0x0001),#0x40
+	mov	(_main_seg_65536_9 + 0x0002),#0x40
+	mov	(_main_seg_65536_9 + 0x0003),#0x40
+	mov	(_main_seg_65536_9 + 0x0004),#0x40
+	mov	(_main_seg_65536_9 + 0x0005),#0x40
+	mov	(_main_seg_65536_9 + 0x0006),#0x40
+	mov	(_main_seg_65536_9 + 0x0007),#0x40
+	mov	(_main_seg_65536_9 + 0x0008),#0x02
+	mov	(_main_seg_65536_9 + 0x0009),#0x04
+	mov	(_main_seg_65536_9 + 0x000a),#0x08
+	mov	(_main_seg_65536_9 + 0x000b),#0x08
+	mov	(_main_seg_65536_9 + 0x000c),#0x08
+	mov	(_main_seg_65536_9 + 0x000d),#0x08
+	mov	(_main_seg_65536_9 + 0x000e),#0x08
+	mov	(_main_seg_65536_9 + 0x000f),#0x08
+	mov	(_main_seg_65536_9 + 0x0010),#0x08
+	mov	(_main_seg_65536_9 + 0x0011),#0x08
+	mov	(_main_seg_65536_9 + 0x0012),#0x10
+	mov	(_main_seg_65536_9 + 0x0013),#0x20
+;	./src/main.c:11: unsigned char snakeshift[] = {1,2,3,4,5,6,7,8,8,8,8,7,6,5,4,3,2,1,1,1};
+	mov	_main_snakeshift_65536_9,#0x01
+	mov	(_main_snakeshift_65536_9 + 0x0001),#0x02
+	mov	(_main_snakeshift_65536_9 + 0x0002),#0x03
+	mov	(_main_snakeshift_65536_9 + 0x0003),#0x04
+	mov	(_main_snakeshift_65536_9 + 0x0004),#0x05
+	mov	(_main_snakeshift_65536_9 + 0x0005),#0x06
+	mov	(_main_snakeshift_65536_9 + 0x0006),#0x07
+	mov	(_main_snakeshift_65536_9 + 0x0007),#0x08
+	mov	(_main_snakeshift_65536_9 + 0x0008),#0x08
+	mov	(_main_snakeshift_65536_9 + 0x0009),#0x08
+	mov	(_main_snakeshift_65536_9 + 0x000a),#0x08
+	mov	(_main_snakeshift_65536_9 + 0x000b),#0x07
+	mov	(_main_snakeshift_65536_9 + 0x000c),#0x06
+	mov	(_main_snakeshift_65536_9 + 0x000d),#0x05
+	mov	(_main_snakeshift_65536_9 + 0x000e),#0x04
+	mov	(_main_snakeshift_65536_9 + 0x000f),#0x03
+	mov	(_main_snakeshift_65536_9 + 0x0010),#0x02
+	mov	(_main_snakeshift_65536_9 + 0x0011),#0x01
+	mov	(_main_snakeshift_65536_9 + 0x0012),#0x01
+	mov	(_main_snakeshift_65536_9 + 0x0013),#0x01
+;	./src/main.c:14: unsigned char hi[] = {0xFF, 0x10, 0x10, 0xFF, 0x00, 0x81, 0xFF, 0x81, 0x00, 0x0E, 0x1C, 0x38, 0x1C, 0x0E, 0x00, 0x00};
+	mov	_main_hi_65536_9,#0xff
+	mov	(_main_hi_65536_9 + 0x0001),#0x10
+	mov	(_main_hi_65536_9 + 0x0002),#0x10
+	mov	(_main_hi_65536_9 + 0x0003),#0xff
+	mov	(_main_hi_65536_9 + 0x0004),#0x00
+	mov	(_main_hi_65536_9 + 0x0005),#0x81
+	mov	(_main_hi_65536_9 + 0x0006),#0xff
+	mov	(_main_hi_65536_9 + 0x0007),#0x81
+	mov	(_main_hi_65536_9 + 0x0008),#0x00
+	mov	(_main_hi_65536_9 + 0x0009),#0x0e
+	mov	(_main_hi_65536_9 + 0x000a),#0x1c
+	mov	(_main_hi_65536_9 + 0x000b),#0x38
+	mov	(_main_hi_65536_9 + 0x000c),#0x1c
+	mov	(_main_hi_65536_9 + 0x000d),#0x0e
+	mov	(_main_hi_65536_9 + 0x000e),#0x00
+	mov	(_main_hi_65536_9 + 0x000f),#0x00
+;	./src/main.c:18: Initial(); // MAX7219 initialize
 	lcall	_Initial
-;	./src/main.c:45: while(1)
-00102$:
-;	./src/main.c:47: shiftdraw(seg); 	// display 12345678
-	mov	dptr,#_main_seg_65536_7
-	mov	b,#0x40
-	lcall	_shiftdraw
-;	./src/main.c:49: }
-	sjmp	00102$
+;	./src/main.c:22: for(int i=0;i<20;i++){
+00112$:
+	mov	r6,#0x00
+	mov	r7,#0x00
+00106$:
+	clr	c
+	mov	a,r6
+	subb	a,#0x14
+	mov	a,r7
+	xrl	a,#0x80
+	subb	a,#0x80
+	jnc	00112$
+;	./src/main.c:23: Writesingle7219(1,snakeshift[i], seg[i]);
+	mov	a,r6
+	add	a,#_main_snakeshift_65536_9
+	mov	r1,a
+	mov	_Writesingle7219_PARM_2,@r1
+	mov	a,r6
+	add	a,#_main_seg_65536_9
+	mov	r0,a
+	mov	_Writesingle7219_PARM_3,@r0
+	mov	dpl,#0x01
+	push	ar7
+	push	ar6
+	push	ar1
+	lcall	_Writesingle7219
+;	./src/main.c:24: delay_ms(500);
+	mov	dptr,#0x01f4
+	lcall	_delay_ms
+	pop	ar1
+;	./src/main.c:25: Writesingle7219(1,snakeshift[i], 0);
+	mov	_Writesingle7219_PARM_2,@r1
+	mov	_Writesingle7219_PARM_3,#0x00
+	mov	dpl,#0x01
+	lcall	_Writesingle7219
+	pop	ar6
+	pop	ar7
+;	./src/main.c:22: for(int i=0;i<20;i++){
+	inc	r6
+	cjne	r6,#0x00,00106$
+	inc	r7
+;	./src/main.c:91: }
+	sjmp	00106$
 	.area CSEG    (CODE)
 	.area CONST   (CODE)
 	.area XINIT   (CODE)

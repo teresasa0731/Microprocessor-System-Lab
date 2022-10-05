@@ -225,12 +225,12 @@
                                     225 ; internal ram data
                                     226 ;--------------------------------------------------------
                                     227 	.area DSEG    (DATA)
-      000020                        228 _Write7219_PARM_2:
-      000020                        229 	.ds 1
-      000021                        230 _Writesingle7219_PARM_2:
-      000021                        231 	.ds 1
-      000022                        232 _Writesingle7219_PARM_3:
-      000022                        233 	.ds 1
+      000040                        228 _Write7219_PARM_2:
+      000040                        229 	.ds 1
+      000041                        230 _Writesingle7219_PARM_2:
+      000041                        231 	.ds 1
+      000042                        232 _Writesingle7219_PARM_3:
+      000042                        233 	.ds 1
                                     234 ;--------------------------------------------------------
                                     235 ; overlayable items in internal ram
                                     236 ;--------------------------------------------------------
@@ -300,7 +300,7 @@
                                     300 ;	-----------------------------------------
                                     301 ;	 function Write7219
                                     302 ;	-----------------------------------------
-      0000FF                        303 _Write7219:
+      000196                        303 _Write7219:
                            000007   304 	ar7 = 0x07
                            000006   305 	ar6 = 0x06
                            000005   306 	ar5 = 0x05
@@ -309,31 +309,31 @@
                            000002   309 	ar2 = 0x02
                            000001   310 	ar1 = 0x01
                            000000   311 	ar0 = 0x00
-      0000FF AF 82            [24]  312 	mov	r7,dpl
+      000196 AF 82            [24]  312 	mov	r7,dpl
                                     313 ;	./src/write.c:9: LOAD = 0;
                                     314 ;	assignBit
-      000101 C2 A1            [12]  315 	clr	_P2_1
+      000198 C2 A1            [12]  315 	clr	_P2_1
                                     316 ;	./src/write.c:11: for(cnt=1; cnt<=matrixnum; cnt++)       // send address and data according to the nuber of your matrix
-      000103 7E 01            [12]  317 	mov	r6,#0x01
-      000105                        318 00102$:
+      00019A 7E 01            [12]  317 	mov	r6,#0x01
+      00019C                        318 00102$:
                                     319 ;	./src/write.c:13: sendbyte(address, dat);
-      000105 85 20 27         [24]  320 	mov	_sendbyte_PARM_2,_Write7219_PARM_2
-      000108 8F 82            [24]  321 	mov	dpl,r7
-      00010A C0 07            [24]  322 	push	ar7
-      00010C C0 06            [24]  323 	push	ar6
-      00010E 12 00 BB         [24]  324 	lcall	_sendbyte
-      000111 D0 06            [24]  325 	pop	ar6
-      000113 D0 07            [24]  326 	pop	ar7
+      00019C 85 40 6C         [24]  320 	mov	_sendbyte_PARM_2,_Write7219_PARM_2
+      00019F 8F 82            [24]  321 	mov	dpl,r7
+      0001A1 C0 07            [24]  322 	push	ar7
+      0001A3 C0 06            [24]  323 	push	ar6
+      0001A5 12 01 52         [24]  324 	lcall	_sendbyte
+      0001A8 D0 06            [24]  325 	pop	ar6
+      0001AA D0 07            [24]  326 	pop	ar7
                                     327 ;	./src/write.c:11: for(cnt=1; cnt<=matrixnum; cnt++)       // send address and data according to the nuber of your matrix
-      000115 0E               [12]  328 	inc	r6
-      000116 EE               [12]  329 	mov	a,r6
-      000117 24 FE            [12]  330 	add	a,#0xff - 0x01
-      000119 50 EA            [24]  331 	jnc	00102$
+      0001AC 0E               [12]  328 	inc	r6
+      0001AD EE               [12]  329 	mov	a,r6
+      0001AE 24 FE            [12]  330 	add	a,#0xff - 0x01
+      0001B0 50 EA            [24]  331 	jnc	00102$
                                     332 ;	./src/write.c:16: LOAD = 1;                               // after the load becomes 1, will the 7-segment display display
                                     333 ;	assignBit
-      00011B D2 A1            [12]  334 	setb	_P2_1
+      0001B2 D2 A1            [12]  334 	setb	_P2_1
                                     335 ;	./src/write.c:17: }
-      00011D 22               [24]  336 	ret
+      0001B4 22               [24]  336 	ret
                                     337 ;------------------------------------------------------------
                                     338 ;Allocation info for local variables in function 'Writesingle7219'
                                     339 ;------------------------------------------------------------
@@ -346,57 +346,57 @@
                                     346 ;	-----------------------------------------
                                     347 ;	 function Writesingle7219
                                     348 ;	-----------------------------------------
-      00011E                        349 _Writesingle7219:
-      00011E AF 82            [24]  350 	mov	r7,dpl
+      0001B5                        349 _Writesingle7219:
+      0001B5 AF 82            [24]  350 	mov	r7,dpl
                                     351 ;	./src/write.c:23: LOAD = 0;
                                     352 ;	assignBit
-      000120 C2 A1            [12]  353 	clr	_P2_1
+      0001B7 C2 A1            [12]  353 	clr	_P2_1
                                     354 ;	./src/write.c:25: for(cnt=matrixnum; cnt>chosen; cnt--) { // write data into the selected matrix
-      000122 7E 01            [12]  355 	mov	r6,#0x01
-      000124                        356 00104$:
-      000124 C3               [12]  357 	clr	c
-      000125 EF               [12]  358 	mov	a,r7
-      000126 9E               [12]  359 	subb	a,r6
-      000127 50 14            [24]  360 	jnc	00101$
+      0001B9 7E 01            [12]  355 	mov	r6,#0x01
+      0001BB                        356 00104$:
+      0001BB C3               [12]  357 	clr	c
+      0001BC EF               [12]  358 	mov	a,r7
+      0001BD 9E               [12]  359 	subb	a,r6
+      0001BE 50 14            [24]  360 	jnc	00101$
                                     361 ;	./src/write.c:26: sendbyte(0x00, 0x00);               // write 0 to no-op
-      000129 75 27 00         [24]  362 	mov	_sendbyte_PARM_2,#0x00
-      00012C 75 82 00         [24]  363 	mov	dpl,#0x00
-      00012F C0 07            [24]  364 	push	ar7
-      000131 C0 06            [24]  365 	push	ar6
-      000133 12 00 BB         [24]  366 	lcall	_sendbyte
-      000136 D0 06            [24]  367 	pop	ar6
-      000138 D0 07            [24]  368 	pop	ar7
+      0001C0 75 6C 00         [24]  362 	mov	_sendbyte_PARM_2,#0x00
+      0001C3 75 82 00         [24]  363 	mov	dpl,#0x00
+      0001C6 C0 07            [24]  364 	push	ar7
+      0001C8 C0 06            [24]  365 	push	ar6
+      0001CA 12 01 52         [24]  366 	lcall	_sendbyte
+      0001CD D0 06            [24]  367 	pop	ar6
+      0001CF D0 07            [24]  368 	pop	ar7
                                     369 ;	./src/write.c:25: for(cnt=matrixnum; cnt>chosen; cnt--) { // write data into the selected matrix
-      00013A 1E               [12]  370 	dec	r6
-      00013B 80 E7            [24]  371 	sjmp	00104$
-      00013D                        372 00101$:
+      0001D1 1E               [12]  370 	dec	r6
+      0001D2 80 E7            [24]  371 	sjmp	00104$
+      0001D4                        372 00101$:
                                     373 ;	./src/write.c:28: sendbyte(address, dat);             // sent data to chosen led-matrix
-      00013D 85 22 27         [24]  374 	mov	_sendbyte_PARM_2,_Writesingle7219_PARM_3
-      000140 85 21 82         [24]  375 	mov	dpl,_Writesingle7219_PARM_2
-      000143 C0 07            [24]  376 	push	ar7
-      000145 12 00 BB         [24]  377 	lcall	_sendbyte
-      000148 D0 07            [24]  378 	pop	ar7
+      0001D4 85 42 6C         [24]  374 	mov	_sendbyte_PARM_2,_Writesingle7219_PARM_3
+      0001D7 85 41 82         [24]  375 	mov	dpl,_Writesingle7219_PARM_2
+      0001DA C0 07            [24]  376 	push	ar7
+      0001DC 12 01 52         [24]  377 	lcall	_sendbyte
+      0001DF D0 07            [24]  378 	pop	ar7
                                     379 ;	./src/write.c:30: for (cnt=chosen-1; cnt>=1; cnt--) { 
-      00014A 1F               [12]  380 	dec	r7
-      00014B                        381 00107$:
-      00014B BF 01 00         [24]  382 	cjne	r7,#0x01,00130$
-      00014E                        383 00130$:
-      00014E 40 10            [24]  384 	jc	00102$
+      0001E1 1F               [12]  380 	dec	r7
+      0001E2                        381 00107$:
+      0001E2 BF 01 00         [24]  382 	cjne	r7,#0x01,00130$
+      0001E5                        383 00130$:
+      0001E5 40 10            [24]  384 	jc	00102$
                                     385 ;	./src/write.c:31: sendbyte(0x00, 0x00);               // write 0 to no-op
-      000150 75 27 00         [24]  386 	mov	_sendbyte_PARM_2,#0x00
-      000153 75 82 00         [24]  387 	mov	dpl,#0x00
-      000156 C0 07            [24]  388 	push	ar7
-      000158 12 00 BB         [24]  389 	lcall	_sendbyte
-      00015B D0 07            [24]  390 	pop	ar7
+      0001E7 75 6C 00         [24]  386 	mov	_sendbyte_PARM_2,#0x00
+      0001EA 75 82 00         [24]  387 	mov	dpl,#0x00
+      0001ED C0 07            [24]  388 	push	ar7
+      0001EF 12 01 52         [24]  389 	lcall	_sendbyte
+      0001F2 D0 07            [24]  390 	pop	ar7
                                     391 ;	./src/write.c:30: for (cnt=chosen-1; cnt>=1; cnt--) { 
-      00015D 1F               [12]  392 	dec	r7
-      00015E 80 EB            [24]  393 	sjmp	00107$
-      000160                        394 00102$:
+      0001F4 1F               [12]  392 	dec	r7
+      0001F5 80 EB            [24]  393 	sjmp	00107$
+      0001F7                        394 00102$:
                                     395 ;	./src/write.c:34: LOAD = 1;
                                     396 ;	assignBit
-      000160 D2 A1            [12]  397 	setb	_P2_1
+      0001F7 D2 A1            [12]  397 	setb	_P2_1
                                     398 ;	./src/write.c:35: }
-      000162 22               [24]  399 	ret
+      0001F9 22               [24]  399 	ret
                                     400 	.area CSEG    (CODE)
                                     401 	.area CONST   (CODE)
                                     402 	.area XINIT   (CODE)

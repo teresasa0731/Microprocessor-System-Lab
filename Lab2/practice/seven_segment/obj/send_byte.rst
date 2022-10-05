@@ -225,8 +225,8 @@
                                     225 ; overlayable items in internal ram
                                     226 ;--------------------------------------------------------
                                     227 	.area	OSEG    (OVR,DATA)
-      000027                        228 _sendbyte_PARM_2:
-      000027                        229 	.ds 1
+      00006C                        228 _sendbyte_PARM_2:
+      00006C                        229 	.ds 1
                                     230 ;--------------------------------------------------------
                                     231 ; indirectly addressable internal ram data
                                     232 ;--------------------------------------------------------
@@ -293,7 +293,7 @@
                                     293 ;	-----------------------------------------
                                     294 ;	 function sendbyte
                                     295 ;	-----------------------------------------
-      0000BB                        296 _sendbyte:
+      000152                        296 _sendbyte:
                            000007   297 	ar7 = 0x07
                            000006   298 	ar6 = 0x06
                            000005   299 	ar5 = 0x05
@@ -302,60 +302,60 @@
                            000002   302 	ar2 = 0x02
                            000001   303 	ar1 = 0x01
                            000000   304 	ar0 = 0x00
-      0000BB AF 82            [24]  305 	mov	r7,dpl
+      000152 AF 82            [24]  305 	mov	r7,dpl
                                     306 ;	./src/send_byte.c:9: for (i=0; i<8; i++) {         // get last 8 bits(address)
-      0000BD 7E 00            [12]  307 	mov	r6,#0x00
-      0000BF                        308 00103$:
+      000154 7E 00            [12]  307 	mov	r6,#0x00
+      000156                        308 00103$:
                                     309 ;	./src/send_byte.c:10: CLK = 0; 
                                     310 ;	assignBit
-      0000BF C2 A0            [12]  311 	clr	_P2_0
+      000156 C2 A0            [12]  311 	clr	_P2_0
                                     312 ;	./src/send_byte.c:11: DOUT = (address & 0x80);   // get msb and shift left
-      0000C1 EF               [12]  313 	mov	a,r7
-      0000C2 23               [12]  314 	rl	a
-      0000C3 54 01            [12]  315 	anl	a,#0x01
+      000158 EF               [12]  313 	mov	a,r7
+      000159 23               [12]  314 	rl	a
+      00015A 54 01            [12]  315 	anl	a,#0x01
                                     316 ;	assignBit
-      0000C5 24 FF            [12]  317 	add	a,#0xff
-      0000C7 92 A2            [24]  318 	mov	_P2_2,c
+      00015C 24 FF            [12]  317 	add	a,#0xff
+      00015E 92 A2            [24]  318 	mov	_P2_2,c
                                     319 ;	./src/send_byte.c:12: address <<= 1; 
-      0000C9 8F 05            [24]  320 	mov	ar5,r7
-      0000CB ED               [12]  321 	mov	a,r5
-      0000CC 2D               [12]  322 	add	a,r5
-      0000CD FF               [12]  323 	mov	r7,a
+      000160 8F 05            [24]  320 	mov	ar5,r7
+      000162 ED               [12]  321 	mov	a,r5
+      000163 2D               [12]  322 	add	a,r5
+      000164 FF               [12]  323 	mov	r7,a
                                     324 ;	./src/send_byte.c:13: CLK = 1; 
                                     325 ;	assignBit
-      0000CE D2 A0            [12]  326 	setb	_P2_0
+      000165 D2 A0            [12]  326 	setb	_P2_0
                                     327 ;	./src/send_byte.c:9: for (i=0; i<8; i++) {         // get last 8 bits(address)
-      0000D0 0E               [12]  328 	inc	r6
-      0000D1 BE 08 00         [24]  329 	cjne	r6,#0x08,00123$
-      0000D4                        330 00123$:
-      0000D4 40 E9            [24]  331 	jc	00103$
+      000167 0E               [12]  328 	inc	r6
+      000168 BE 08 00         [24]  329 	cjne	r6,#0x08,00123$
+      00016B                        330 00123$:
+      00016B 40 E9            [24]  331 	jc	00103$
                                     332 ;	./src/send_byte.c:16: for (i=0; i<8; i++) {         // get first 8 bits(data)
-      0000D6 7F 00            [12]  333 	mov	r7,#0x00
-      0000D8                        334 00105$:
+      00016D 7F 00            [12]  333 	mov	r7,#0x00
+      00016F                        334 00105$:
                                     335 ;	./src/send_byte.c:17: CLK = 0; 
                                     336 ;	assignBit
-      0000D8 C2 A0            [12]  337 	clr	_P2_0
+      00016F C2 A0            [12]  337 	clr	_P2_0
                                     338 ;	./src/send_byte.c:18: DOUT = (dat & 0x80);       // get msb and shit left
-      0000DA E5 27            [12]  339 	mov	a,_sendbyte_PARM_2
-      0000DC 23               [12]  340 	rl	a
-      0000DD 54 01            [12]  341 	anl	a,#0x01
+      000171 E5 6C            [12]  339 	mov	a,_sendbyte_PARM_2
+      000173 23               [12]  340 	rl	a
+      000174 54 01            [12]  341 	anl	a,#0x01
                                     342 ;	assignBit
-      0000DF 24 FF            [12]  343 	add	a,#0xff
-      0000E1 92 A2            [24]  344 	mov	_P2_2,c
+      000176 24 FF            [12]  343 	add	a,#0xff
+      000178 92 A2            [24]  344 	mov	_P2_2,c
                                     345 ;	./src/send_byte.c:19: dat <<= 1;
-      0000E3 E5 27            [12]  346 	mov	a,_sendbyte_PARM_2
-      0000E5 25 E0            [12]  347 	add	a,acc
-      0000E7 F5 27            [12]  348 	mov	_sendbyte_PARM_2,a
+      00017A E5 6C            [12]  346 	mov	a,_sendbyte_PARM_2
+      00017C 25 E0            [12]  347 	add	a,acc
+      00017E F5 6C            [12]  348 	mov	_sendbyte_PARM_2,a
                                     349 ;	./src/send_byte.c:20: CLK = 1;
                                     350 ;	assignBit
-      0000E9 D2 A0            [12]  351 	setb	_P2_0
+      000180 D2 A0            [12]  351 	setb	_P2_0
                                     352 ;	./src/send_byte.c:16: for (i=0; i<8; i++) {         // get first 8 bits(data)
-      0000EB 0F               [12]  353 	inc	r7
-      0000EC BF 08 00         [24]  354 	cjne	r7,#0x08,00125$
-      0000EF                        355 00125$:
-      0000EF 40 E7            [24]  356 	jc	00105$
+      000182 0F               [12]  353 	inc	r7
+      000183 BF 08 00         [24]  354 	cjne	r7,#0x08,00125$
+      000186                        355 00125$:
+      000186 40 E7            [24]  356 	jc	00105$
                                     357 ;	./src/send_byte.c:22: }
-      0000F1 22               [24]  358 	ret
+      000188 22               [24]  358 	ret
                                     359 	.area CSEG    (CODE)
                                     360 	.area CONST   (CODE)
                                     361 	.area XINIT   (CODE)
