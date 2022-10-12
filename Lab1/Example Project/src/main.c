@@ -1,89 +1,65 @@
 #include "8051.h"
 #include "delay.h"
 
-#define KEY_ROWS 3
-#define KEY_COLS 3
+#define led P1
+#define but1 P2_0 // left shift
+#define but2 P2_1	// right shift
+#define but3 INT0 // mode: 1b
+#define but4 INT1 // mode: 2b
 
-char map[KEY_ROWS][KEY_COLS] = {
-	{'1', '2', '3'},
-	{'4', '5', '6'},
-	{'7', '8', '9'}};
+void main(void)
+{ 
 
-// #define led P1
-// #define but1 P2_0 // left shift
-// #define but2 P2_1	// right shift
-// #define but3 INT0 // mode: 1b
-// #define but4 INT1 // mode: 2b
-
-#define row1 P0_4
-#define row2 P0_3
-#define row3 P0_2
-#define col1 P0_7
-#define col2 P0_6
-#define col3 P0_5
-
-int main(void)
-{
-	unsigned row[3] =
-		unsigned char patt = 0x80; // led value
-	unsigned int prebut1 = 0;	   // debounce
-	unsigned int prebut2 = 0;
+	unsigned char patt = 0x80; 	//led value
+	unsigned int prebut1 = 0;    		//debounce
+	unsigned int prebut2 = 0 ;
 	unsigned int mode;
-	but1 = 1; // initialize
+	but1 = 1;                 	//initialize
 	but2 = 1;
 	mode = 0;
 
-	while (1)
-	{
+	while(1) {
 		// shift one or two bits
-		if (but3 == 0) // one bits
+		if (but3 == 0)	// one bits
 			mode = 0;
-		else if (but4 == 0) // two bits
+		else if(but4 == 0)	// two bits
 			mode = 1;
 
 		// left shift
-		if ((but1 == 0) && (prebut1 == 1))
-		{
+		if((but1 == 0) && (prebut1 == 1)) {
 			delay_ms(10);
-			if (but1 == 0)
-			{
-				if (mode == 0)
-				{
+			if(but1 == 0) {
+				if(mode == 0){
 					patt = patt >> 1;
-					if (patt == 0x00) // reset
+					if(patt == 0x00)	// reset
 						patt = 0x80;
 				}
-				else
-				{
+				else {
 					patt = patt >> 2;
-					if (patt == 0x00) // reset
+					if(patt == 0x00)	// reset
 						patt = 0x80;
 				}
 			}
 		}
 
 		// right shift
-		if ((but2 == 0) && (prebut2 == 1))
-		{
+		if((but2 == 0) && (prebut2 == 1)) {
 			delay_ms(10);
-			if (but2 == 0)
-			{
-				if (mode == 0)
-				{
+			if(but2 == 0) {
+				if(mode == 0) {
 					patt = patt << 1;
-					if (patt == 0x00)
+					if(patt == 0x00)
 						patt = 0x01;
 				}
-				else
-				{
+				else {
 					patt = patt << 2;
-					if (patt == 0x00)
+					if(patt == 0x00)
 						patt = 0x01;
 				}
 			}
 		}
-
-		led = ~patt;
+		
+		led =~ patt;	
 		prebut1 = but1;
 		prebut2 = but2;
 		delay_ms(10);

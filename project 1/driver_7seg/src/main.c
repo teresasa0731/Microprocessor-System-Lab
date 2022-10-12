@@ -1,9 +1,12 @@
 #include "8051.h"
 #include "delay.h"
 
+//7-segment setting
 #define DIN P2_2
 #define LOAD P2_1
 #define CLK  P2_0
+
+//4*3 keyboard setting
 #define INPUT1 P0_0    //column 1
 #define INPUT2 P0_1    //column 2
 #define INPUT3 P0_2    //column 3
@@ -11,6 +14,8 @@
 #define OUTPUT2 P0_5   //row 2
 #define OUTPUT3 P0_4   //row 3
 #define OUTPUT0 P0_3   //row 0
+
+//but setting
 #define led P1
 #define but1 INT0      //OP
 #define but2 INT1      //<--
@@ -26,17 +31,16 @@
 #define BTN_DEBOUNCED 1
 #define BTN_PRESSED 2
 
-//define reigister
+//define max7219 reigister
 #define DECODE_MODE  0x09
 #define INTENSITY    0x0A
 #define SCAN_LIMIT   0x0B
 #define SHUT_DOWN    0x0C
 #define DISPLAY_TEST 0x0F
-#define matrixnum       1      //number of 7-segment display/dot matrix
+#define matrixnum       1
 
 //function declaration
 void Write7219(unsigned char address,unsigned char dat);
-void Writesingle7219(unsigned char chosen,unsigned char address,unsigned char dat);
 void sendbyte(unsigned char address,unsigned char dat);
 void Initial(void) ;
 void draw(unsigned char *picture);
@@ -45,7 +49,8 @@ void scan_row(unsigned int row);
 
 unsigned int curINPUT[14], state[14], prestate[14];
 unsigned char display[8];
-unsigned char patt = 0x80; // led value
+unsigned char patt = 0x08,patt1; // led value
+unsigned int op_cnt = 0;
 
 //send address and data into max7219
 void sendbyte(unsigned char address,unsigned char dat){
@@ -76,24 +81,6 @@ void Write7219(unsigned char address,unsigned char dat)
         sendbyte(address,dat);
     }
     LOAD=1;                              //after the load becomes 1, will the 7-segment display display
-}
-
-//when there are multiple 7-segment displays/dot matrices connected in series, we need to specify which 7-segment display/dot matrix to write.
-void Writesingle7219(unsigned char chosen,unsigned char address,unsigned char dat)
-{
-    unsigned char cnt;
-    LOAD=0;
-		for(cnt=matrixnum;cnt>chosen;cnt--)   //write data into the selected matrix
-		{
-   		sendbyte(0x00,0x00); //write 0 to no-op
-		}
-   	sendbyte(address, dat); //sent data to chosen led-matrix
-
-   	for (cnt=chosen-1;cnt>=1; cnt--)
-   	{
-			sendbyte(0x00,0x00); //write 0 to no-op
-    }
-		LOAD=1;
 }
 
 //MAX7219inintialize and setup inside register
@@ -156,11 +143,13 @@ void read_curINPUT(void)
 	for (int i = 0; i < 4; i++)
 	{
 		scan_row(i);
-		curINPUT[i * 3 + 0] = INPUT1;
-		curINPUT[i * 3 + 1] = INPUT2;
-		curINPUT[i * 3 + 2] = INPUT3;
 		if(i==3)
 			curINPUT[9] = INPUT2;
+		else{
+			curINPUT[i * 3 + 0] = INPUT1;
+			curINPUT[i * 3 + 1] = INPUT2;
+			curINPUT[i * 3 + 2] = INPUT3;
+		}
 	}
 	curINPUT[10] = but1;
 	curINPUT[11] = but2;
@@ -172,37 +161,43 @@ void sequence(void){
 	for(int a = 7; a > 0; a--){
 		display[a] = display[a-1];
 	}
-	patt = 0x00;
-	delay_ms(100);
-	// if(check == 1)
-	// 	Clean();
+	patt =0x00;
+	delay_ms(20);
 }
 
-void func_cal(unsigned int command){
-	switch (command)
+void func_cal(unsigned int cmd){
+
+	switch (cmd)
 	{
-	case 0:	//op_add+
-
+	case 10:	//op
+		if(patt == 0x80)
+			patt = 0x08;
+		else if (patt == 0x00)
+			patt = 0x08;
+		
+		patt = patt << 1;
+		led = ~patt;
+		delay_ms(20);
 		break;
-	case 1:	//op_sub-
-
+	case 11:	//back <-
+		patt1 = 0x01;
+		led = ~patt1;
+		delay_ms(20);
 		break;
-	case 2:	//op_mul*
-
-		break;
-	case 3:	//op_div/
-
-		break;
-	case 4:	//back <-
-
-		break;
-	case 5:	//AC
-		for(int a = 0; a <8; a++)
+	case 12:	//AC
+		for(int a = 0; a < 8; a++){
 			display[a] = 0x00;
-		Writesingle7219(1,0x01,0x08);
+			Write7219(a+1,0x00);
+		}
+		Write7219(0x01,0x08);
+		patt1 = 0x02;
+		led = ~patt1;
+		delay_ms(20);
 		break;
-	case 6:	//equal=
-
+	case 13:	//equal=
+		patt1 = 0x04;
+		led = ~patt1;
+		delay_ms(20);
 		break;
 	default:
 		break;
@@ -227,8 +222,6 @@ unsigned char display_seg[] = {
 
 
 
-
-
 void main(void)
 {
 	// initialize
@@ -239,7 +232,7 @@ void main(void)
 		state[i] = BTN_RELEASED;
 		prestate[i] = BTN_RELEASED;
 	}
-	func_cal(5);
+	func_cal(12);
 
 	while(1)
 	{
@@ -255,6 +248,8 @@ void main(void)
 				case BTN_RELEASED:
 					if (curINPUT[i] == LEVEL_LOW)
 						state[i] = BTN_DEBOUNCED;
+					else
+						state[i] = BTN_RELEASED;
 					break;
 				case BTN_DEBOUNCED:
 					if (curINPUT[i] == LEVEL_LOW)
@@ -264,7 +259,7 @@ void main(void)
 					break;
 				case BTN_PRESSED:
 					if (curINPUT[i] == LEVEL_LOW)
-							state[i] = BTN_PRESSED;
+						state[i] = BTN_PRESSED;
 					else
 						state[i] = BTN_RELEASED;
 					break;
@@ -272,16 +267,17 @@ void main(void)
 					break;
 			}
 
-			if (((state[i] == BTN_RELEASED) && (prestate[i] == BTN_PRESSED) && (i<10))){
-				sequence();
-				display[0] = display_seg[i];
-				draw(display);
-			}
+			if ((state[i] == BTN_RELEASED) && (prestate[i] == BTN_PRESSED)){
 
+				if (i < 10){
+					sequence();
+					display[0] = display_seg[i];
+					draw(display);
+				}else{
+					func_cal(i);
+				}
+			}
 			prestate[i] = state[i];
 		}
-
-
-		
 	}
 }

@@ -220,7 +220,7 @@ Symbol Table
     _IP                                                         =  0000B8 G
     _IT0                                                        =  000088 G
     _IT1                                                        =  00008A G
- 18 _Initial                                                       00009B GR
+ 18 _Initial                                                       000056 GR
     _OV                                                         =  0000D2 G
     _P                                                          =  0000D0 G
     _P0                                                         =  000080 G
@@ -306,10 +306,7 @@ Symbol Table
     _TXD                                                        =  0000B1 G
     _WR                                                         =  0000B6 G
  18 _Write7219                                                     000037 GR
-  5 _Write7219_PARM_2                                              000045 GR
- 18 _Writesingle7219                                               000056 GR
-  5 _Writesingle7219_PARM_2                                        000046 GR
-  5 _Writesingle7219_PARM_3                                        000047 GR
+  5 _Write7219_PARM_2                                              000060 GR
     __gptrget                                                      ****** GX
   F __interrupt_vect                                               000000 R
     __mcs51_genRAMCLEAR                                            ****** GX
@@ -320,19 +317,21 @@ Symbol Table
   7 __start__stack                                                 000000 GR
   5 _curINPUT                                                      000000 GR
     _delay_ms                                                      ****** GX
-  5 _display                                                       00003C GR
-  5 _display_seg                                                   000048 GR
- 18 _draw                                                          0000DD GR
- 18 _func_cal                                                      000205 GR
- 18 _main                                                          00024E GR
-  5 _patt                                                          000044 GR
-  5 _prestate                                                      000028 GR
- 18 _read_curINPUT                                                 00015B GR
- 18 _scan_row                                                      00011D GR
+  5 _display                                                       000054 GR
+  5 _display_seg                                                   000061 GR
+ 18 _draw                                                          000098 GR
+ 18 _func_cal                                                      0001EF GR
+ 18 _main                                                          000292 GR
+  5 _op_cnt                                                        00005E GR
+  5 _patt                                                          00005C GR
+  5 _patt1                                                         00005D GR
+  5 _prestate                                                      000038 GR
+ 18 _read_curINPUT                                                 000116 GR
+ 18 _scan_row                                                      0000D8 GR
  18 _sendbyte                                                      000000 GR
   6 _sendbyte_PARM_2                                               000000 GR
- 18 _sequence                                                      0001D4 GR
-  5 _state                                                         000014 GR
+ 18 _sequence                                                      0001BE GR
+  5 _state                                                         00001C GR
     a                                                           =  0000E0 L
     a.0                                                         =  0000E0 L
     a.1                                                         =  0000E1 L
@@ -358,12 +357,12 @@ Symbol Table
     ar3                                                         =  000003 
     ar4                                                         =  000004 
     ar5                                                         =  000005 
+    ar6                                                         =  000006 
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 7
 Hexadecimal [24-Bits]
 
 Symbol Table
 
-    ar6                                                         =  000006 
     ar7                                                         =  000007 
     b                                                           =  0000F0 L
     b.0                                                         =  0000F0 L
@@ -418,12 +417,12 @@ Symbol Table
     p0.2                                                        =  000082 L
     p0.3                                                        =  000083 L
     p0.4                                                        =  000084 L
+    p0.5                                                        =  000085 L
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 8
 Hexadecimal [24-Bits]
 
 Symbol Table
 
-    p0.5                                                        =  000085 L
     p0.6                                                        =  000086 L
     p0.7                                                        =  000087 L
     p1                                                          =  000090 L
@@ -478,12 +477,12 @@ Symbol Table
     rs0                                                         =  0000D3 L
     rs1                                                         =  0000D4 L
     rxd                                                         =  0000B0 L
+    sbuf                                                        =  000099 L
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)               Page 9
 Hexadecimal [24-Bits]
 
 Symbol Table
 
-    sbuf                                                        =  000099 L
     scon                                                        =  000098 L
     scon.0                                                      =  000098 L
     scon.1                                                      =  000099 L
@@ -533,6 +532,7 @@ Symbol Table
     tr2                                                         =  0000CA L
     txd                                                         =  0000B1 L
 
+
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051)              Page 10
 Hexadecimal [24-Bits]
 
@@ -543,7 +543,7 @@ Area Table
    2 RSEG0                                      size      0   flags    8
    3 RSEG1                                      size      0   flags    8
    4 REG_BANK_0                                 size      8   flags    4
-   5 DSEG                                       size     53   flags    0
+   5 DSEG                                       size     6C   flags    0
    6 OSEG                                       size      1   flags    4
    7 SSEG                                       size      1   flags    0
    8 ISEG                                       size      0   flags    0
@@ -560,9 +560,9 @@ Area Table
   13 GSINIT3                                    size      0   flags   20
   14 GSINIT4                                    size      0   flags   20
   15 GSINIT5                                    size      0   flags   20
-  16 GSINIT                                     size     24   flags   20
+  16 GSINIT                                     size     29   flags   20
   17 GSFINAL                                    size      3   flags   20
-  18 CSEG                                       size    386   flags   20
+  18 CSEG                                       size    3EE   flags   20
   19 CONST                                      size      0   flags   20
   1A XINIT                                      size      0   flags   20
   1B CABS                                       size      0   flags   28

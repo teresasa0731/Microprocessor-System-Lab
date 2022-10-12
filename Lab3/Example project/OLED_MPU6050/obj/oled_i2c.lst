@@ -1,0 +1,538 @@
+                                      1 ;--------------------------------------------------------
+                                      2 ; File Created by SDCC : free open source ISO C Compiler 
+                                      3 ; Version 4.2.8 #13684 (MINGW64)
+                                      4 ;--------------------------------------------------------
+                                      5 	.module oled_i2c
+                                      6 	.optsdcc -mmcs51 --model-small
+                                      7 	
+                                      8 ;--------------------------------------------------------
+                                      9 ; Public variables in this module
+                                     10 ;--------------------------------------------------------
+                                     11 	.globl _OledFontTable
+                                     12 	.globl _Single_WriteI2C
+                                     13 	.globl _OLED_SetCursor_PARM_2
+                                     14 	.globl _OLED_Init
+                                     15 	.globl _OLED_DisplayChar
+                                     16 	.globl _OLED_DisplayString
+                                     17 	.globl _OLED_Clear
+                                     18 	.globl _OLED_SetCursor
+                                     19 	.globl _oledSendCommand
+                                     20 	.globl _oledSendData
+                                     21 ;--------------------------------------------------------
+                                     22 ; special function registers
+                                     23 ;--------------------------------------------------------
+                                     24 	.area RSEG    (ABS,DATA)
+      000000                         25 	.org 0x0000
+                                     26 ;--------------------------------------------------------
+                                     27 ; special function bits
+                                     28 ;--------------------------------------------------------
+                                     29 	.area RSEG    (ABS,DATA)
+      000000                         30 	.org 0x0000
+                                     31 ;--------------------------------------------------------
+                                     32 ; overlayable register banks
+                                     33 ;--------------------------------------------------------
+                                     34 	.area REG_BANK_0	(REL,OVR,DATA)
+      000000                         35 	.ds 8
+                                     36 ;--------------------------------------------------------
+                                     37 ; internal ram data
+                                     38 ;--------------------------------------------------------
+                                     39 	.area DSEG    (DATA)
+      000000                         40 _OLED_SetCursor_PARM_2:
+      000000                         41 	.ds 1
+                                     42 ;--------------------------------------------------------
+                                     43 ; overlayable items in internal ram
+                                     44 ;--------------------------------------------------------
+                                     45 ;--------------------------------------------------------
+                                     46 ; indirectly addressable internal ram data
+                                     47 ;--------------------------------------------------------
+                                     48 	.area ISEG    (DATA)
+                                     49 ;--------------------------------------------------------
+                                     50 ; absolute internal ram data
+                                     51 ;--------------------------------------------------------
+                                     52 	.area IABS    (ABS,DATA)
+                                     53 	.area IABS    (ABS,DATA)
+                                     54 ;--------------------------------------------------------
+                                     55 ; bit data
+                                     56 ;--------------------------------------------------------
+                                     57 	.area BSEG    (BIT)
+                                     58 ;--------------------------------------------------------
+                                     59 ; paged external ram data
+                                     60 ;--------------------------------------------------------
+                                     61 	.area PSEG    (PAG,XDATA)
+                                     62 ;--------------------------------------------------------
+                                     63 ; uninitialized external ram data
+                                     64 ;--------------------------------------------------------
+                                     65 	.area XSEG    (XDATA)
+                                     66 ;--------------------------------------------------------
+                                     67 ; absolute external ram data
+                                     68 ;--------------------------------------------------------
+                                     69 	.area XABS    (ABS,XDATA)
+                                     70 ;--------------------------------------------------------
+                                     71 ; initialized external ram data
+                                     72 ;--------------------------------------------------------
+                                     73 	.area XISEG   (XDATA)
+                                     74 	.area HOME    (CODE)
+                                     75 	.area GSINIT0 (CODE)
+                                     76 	.area GSINIT1 (CODE)
+                                     77 	.area GSINIT2 (CODE)
+                                     78 	.area GSINIT3 (CODE)
+                                     79 	.area GSINIT4 (CODE)
+                                     80 	.area GSINIT5 (CODE)
+                                     81 	.area GSINIT  (CODE)
+                                     82 	.area GSFINAL (CODE)
+                                     83 	.area CSEG    (CODE)
+                                     84 ;--------------------------------------------------------
+                                     85 ; global & static initialisations
+                                     86 ;--------------------------------------------------------
+                                     87 	.area HOME    (CODE)
+                                     88 	.area GSINIT  (CODE)
+                                     89 	.area GSFINAL (CODE)
+                                     90 	.area GSINIT  (CODE)
+                                     91 ;--------------------------------------------------------
+                                     92 ; Home
+                                     93 ;--------------------------------------------------------
+                                     94 	.area HOME    (CODE)
+                                     95 	.area HOME    (CODE)
+                                     96 ;--------------------------------------------------------
+                                     97 ; code
+                                     98 ;--------------------------------------------------------
+                                     99 	.area CSEG    (CODE)
+                                    100 ;------------------------------------------------------------
+                                    101 ;Allocation info for local variables in function 'OLED_Init'
+                                    102 ;------------------------------------------------------------
+                                    103 ;	./src/oled_i2c.c:16: void OLED_Init(void)
+                                    104 ;	-----------------------------------------
+                                    105 ;	 function OLED_Init
+                                    106 ;	-----------------------------------------
+      000000                        107 _OLED_Init:
+                           000007   108 	ar7 = 0x07
+                           000006   109 	ar6 = 0x06
+                           000005   110 	ar5 = 0x05
+                           000004   111 	ar4 = 0x04
+                           000003   112 	ar3 = 0x03
+                           000002   113 	ar2 = 0x02
+                           000001   114 	ar1 = 0x01
+                           000000   115 	ar0 = 0x00
+                                    116 ;	./src/oled_i2c.c:24: oledSendCommand(0xa8);  //Set MUX Ratio
+      000000 75 82 A8         [24]  117 	mov	dpl,#0xa8
+      000003 12r01r98         [24]  118 	lcall	_oledSendCommand
+                                    119 ;	./src/oled_i2c.c:25: oledSendCommand(0x3f);  
+      000006 75 82 3F         [24]  120 	mov	dpl,#0x3f
+      000009 12r01r98         [24]  121 	lcall	_oledSendCommand
+                                    122 ;	./src/oled_i2c.c:26: oledSendCommand(0xd3);  //Set Display Offset
+      00000C 75 82 D3         [24]  123 	mov	dpl,#0xd3
+      00000F 12r01r98         [24]  124 	lcall	_oledSendCommand
+                                    125 ;	./src/oled_i2c.c:27: oledSendCommand(0x00);  
+      000012 75 82 00         [24]  126 	mov	dpl,#0x00
+      000015 12r01r98         [24]  127 	lcall	_oledSendCommand
+                                    128 ;	./src/oled_i2c.c:28: oledSendCommand(0x40);  //Set Display Start Line
+      000018 75 82 40         [24]  129 	mov	dpl,#0x40
+      00001B 12r01r98         [24]  130 	lcall	_oledSendCommand
+                                    131 ;	./src/oled_i2c.c:29: oledSendCommand(0xa1);  //Set Segment re-map A0h/A1h
+      00001E 75 82 A1         [24]  132 	mov	dpl,#0xa1
+      000021 12r01r98         [24]  133 	lcall	_oledSendCommand
+                                    134 ;	./src/oled_i2c.c:30: oledSendCommand(0xc8);  //Set COM OUTput
+      000024 75 82 C8         [24]  135 	mov	dpl,#0xc8
+      000027 12r01r98         [24]  136 	lcall	_oledSendCommand
+                                    137 ;	./src/oled_i2c.c:31: oledSendCommand(0xda); 
+      00002A 75 82 DA         [24]  138 	mov	dpl,#0xda
+      00002D 12r01r98         [24]  139 	lcall	_oledSendCommand
+                                    140 ;	./src/oled_i2c.c:32: oledSendCommand(0x12);
+      000030 75 82 12         [24]  141 	mov	dpl,#0x12
+      000033 12r01r98         [24]  142 	lcall	_oledSendCommand
+                                    143 ;	./src/oled_i2c.c:33: oledSendCommand(0x81);
+      000036 75 82 81         [24]  144 	mov	dpl,#0x81
+      000039 12r01r98         [24]  145 	lcall	_oledSendCommand
+                                    146 ;	./src/oled_i2c.c:34: oledSendCommand(0x7f);
+      00003C 75 82 7F         [24]  147 	mov	dpl,#0x7f
+      00003F 12r01r98         [24]  148 	lcall	_oledSendCommand
+                                    149 ;	./src/oled_i2c.c:35: oledSendCommand(0xa4);
+      000042 75 82 A4         [24]  150 	mov	dpl,#0xa4
+      000045 12r01r98         [24]  151 	lcall	_oledSendCommand
+                                    152 ;	./src/oled_i2c.c:36: oledSendCommand(0xa6);
+      000048 75 82 A6         [24]  153 	mov	dpl,#0xa6
+      00004B 12r01r98         [24]  154 	lcall	_oledSendCommand
+                                    155 ;	./src/oled_i2c.c:37: oledSendCommand(0xd5);
+      00004E 75 82 D5         [24]  156 	mov	dpl,#0xd5
+      000051 12r01r98         [24]  157 	lcall	_oledSendCommand
+                                    158 ;	./src/oled_i2c.c:38: oledSendCommand(0x80);
+      000054 75 82 80         [24]  159 	mov	dpl,#0x80
+      000057 12r01r98         [24]  160 	lcall	_oledSendCommand
+                                    161 ;	./src/oled_i2c.c:39: oledSendCommand(0x8d);
+      00005A 75 82 8D         [24]  162 	mov	dpl,#0x8d
+      00005D 12r01r98         [24]  163 	lcall	_oledSendCommand
+                                    164 ;	./src/oled_i2c.c:40: oledSendCommand(0x14);
+      000060 75 82 14         [24]  165 	mov	dpl,#0x14
+      000063 12r01r98         [24]  166 	lcall	_oledSendCommand
+                                    167 ;	./src/oled_i2c.c:41: oledSendCommand(0xaf);
+      000066 75 82 AF         [24]  168 	mov	dpl,#0xaf
+      000069 12r01r98         [24]  169 	lcall	_oledSendCommand
+                                    170 ;	./src/oled_i2c.c:43: OLED_Clear();  /* Clear the complete LCD during init */
+                                    171 ;	./src/oled_i2c.c:44: }
+      00006C 02r01r3D         [24]  172 	ljmp	_OLED_Clear
+                                    173 ;------------------------------------------------------------
+                                    174 ;Allocation info for local variables in function 'OLED_DisplayChar'
+                                    175 ;------------------------------------------------------------
+                                    176 ;ch                        Allocated to registers r7 
+                                    177 ;i                         Allocated to registers r5 
+                                    178 ;index                     Allocated to registers r6 r7 
+                                    179 ;------------------------------------------------------------
+                                    180 ;	./src/oled_i2c.c:61: void OLED_DisplayChar(char ch)
+                                    181 ;	-----------------------------------------
+                                    182 ;	 function OLED_DisplayChar
+                                    183 ;	-----------------------------------------
+      00006F                        184 _OLED_DisplayChar:
+      00006F AF 82            [24]  185 	mov	r7,dpl
+                                    186 ;	./src/oled_i2c.c:64: int index=0;
+      000071 7D 00            [12]  187 	mov	r5,#0x00
+      000073 7E 00            [12]  188 	mov	r6,#0x00
+                                    189 ;	./src/oled_i2c.c:66: if(ch != '\n') {  /* TODO */ 
+      000075 BF 0A 01         [24]  190 	cjne	r7,#0x0a,00193$
+      000078 22               [24]  191 	ret
+      000079                        192 00193$:
+                                    193 ;	./src/oled_i2c.c:68: if(ch == ' ') index = 0;
+      000079 BF 20 06         [24]  194 	cjne	r7,#0x20,00123$
+      00007C 7D 00            [12]  195 	mov	r5,#0x00
+      00007E 7E 00            [12]  196 	mov	r6,#0x00
+      000080 80 4C            [24]  197 	sjmp	00124$
+      000082                        198 00123$:
+                                    199 ;	./src/oled_i2c.c:69: else if(ch == '-') index = 1;
+      000082 BF 2D 06         [24]  200 	cjne	r7,#0x2d,00120$
+      000085 7D 01            [12]  201 	mov	r5,#0x01
+      000087 7E 00            [12]  202 	mov	r6,#0x00
+      000089 80 43            [24]  203 	sjmp	00124$
+      00008B                        204 00120$:
+                                    205 ;	./src/oled_i2c.c:70: else if(ch >= 0x30 && ch <= 0x39) index = (ch - 0x2e);
+      00008B BF 30 00         [24]  206 	cjne	r7,#0x30,00198$
+      00008E                        207 00198$:
+      00008E 40 13            [24]  208 	jc	00116$
+      000090 EF               [12]  209 	mov	a,r7
+      000091 24 C6            [12]  210 	add	a,#0xff - 0x39
+      000093 40 0E            [24]  211 	jc	00116$
+      000095 8F 03            [24]  212 	mov	ar3,r7
+      000097 7C 00            [12]  213 	mov	r4,#0x00
+      000099 EB               [12]  214 	mov	a,r3
+      00009A 24 D2            [12]  215 	add	a,#0xd2
+      00009C FD               [12]  216 	mov	r5,a
+      00009D EC               [12]  217 	mov	a,r4
+      00009E 34 FF            [12]  218 	addc	a,#0xff
+      0000A0 FE               [12]  219 	mov	r6,a
+      0000A1 80 2B            [24]  220 	sjmp	00124$
+      0000A3                        221 00116$:
+                                    222 ;	./src/oled_i2c.c:71: else if(ch == 'A') index = 12;
+      0000A3 BF 41 06         [24]  223 	cjne	r7,#0x41,00113$
+      0000A6 7D 0C            [12]  224 	mov	r5,#0x0c
+      0000A8 7E 00            [12]  225 	mov	r6,#0x00
+      0000AA 80 22            [24]  226 	sjmp	00124$
+      0000AC                        227 00113$:
+                                    228 ;	./src/oled_i2c.c:72: else if(ch == 'G') index = 13;
+      0000AC BF 47 06         [24]  229 	cjne	r7,#0x47,00110$
+      0000AF 7D 0D            [12]  230 	mov	r5,#0x0d
+      0000B1 7E 00            [12]  231 	mov	r6,#0x00
+      0000B3 80 19            [24]  232 	sjmp	00124$
+      0000B5                        233 00110$:
+                                    234 ;	./src/oled_i2c.c:73: else if(ch == 'X') index = 14;
+      0000B5 BF 58 06         [24]  235 	cjne	r7,#0x58,00107$
+      0000B8 7D 0E            [12]  236 	mov	r5,#0x0e
+      0000BA 7E 00            [12]  237 	mov	r6,#0x00
+      0000BC 80 10            [24]  238 	sjmp	00124$
+      0000BE                        239 00107$:
+                                    240 ;	./src/oled_i2c.c:74: else if(ch == 'Y') index = 15;
+      0000BE BF 59 06         [24]  241 	cjne	r7,#0x59,00104$
+      0000C1 7D 0F            [12]  242 	mov	r5,#0x0f
+      0000C3 7E 00            [12]  243 	mov	r6,#0x00
+      0000C5 80 07            [24]  244 	sjmp	00124$
+      0000C7                        245 00104$:
+                                    246 ;	./src/oled_i2c.c:75: else if(ch == 'Z') index = 16;
+      0000C7 BF 5A 04         [24]  247 	cjne	r7,#0x5a,00124$
+      0000CA 7D 10            [12]  248 	mov	r5,#0x10
+      0000CC 7E 00            [12]  249 	mov	r6,#0x00
+      0000CE                        250 00124$:
+                                    251 ;	./src/oled_i2c.c:77: index = index * 5; // As the lookup table starts from Space(0x20)
+      0000CE 8D*00            [24]  252 	mov	__mulint_PARM_2,r5
+      0000D0 8E*01            [24]  253 	mov	(__mulint_PARM_2 + 1),r6
+      0000D2 90 00 05         [24]  254 	mov	dptr,#0x0005
+      0000D5 12r00r00         [24]  255 	lcall	__mulint
+      0000D8 AE 82            [24]  256 	mov	r6,dpl
+      0000DA AF 83            [24]  257 	mov	r7,dph
+                                    258 ;	./src/oled_i2c.c:79: for(i = 0; i < 5; i ++)
+      0000DC 7D 00            [12]  259 	mov	r5,#0x00
+      0000DE                        260 00128$:
+                                    261 ;	./src/oled_i2c.c:80: oledSendData(OledFontTable[index + i]); /* Get the data to be displayed for LookUptable*/
+      0000DE 8E 04            [24]  262 	mov	ar4,r6
+      0000E0 8D 03            [24]  263 	mov	ar3,r5
+      0000E2 EB               [12]  264 	mov	a,r3
+      0000E3 2C               [12]  265 	add	a,r4
+      0000E4 FC               [12]  266 	mov	r4,a
+      0000E5 33               [12]  267 	rlc	a
+      0000E6 95 E0            [12]  268 	subb	a,acc
+      0000E8 FB               [12]  269 	mov	r3,a
+      0000E9 EC               [12]  270 	mov	a,r4
+      0000EA 24r00            [12]  271 	add	a,#_OledFontTable
+      0000EC F5 82            [12]  272 	mov	dpl,a
+      0000EE EB               [12]  273 	mov	a,r3
+      0000EF 34s00            [12]  274 	addc	a,#(_OledFontTable >> 8)
+      0000F1 F5 83            [12]  275 	mov	dph,a
+      0000F3 E4               [12]  276 	clr	a
+      0000F4 93               [24]  277 	movc	a,@a+dptr
+      0000F5 F5 82            [12]  278 	mov	dpl,a
+      0000F7 C0 07            [24]  279 	push	ar7
+      0000F9 C0 06            [24]  280 	push	ar6
+      0000FB C0 05            [24]  281 	push	ar5
+      0000FD 12r01rA4         [24]  282 	lcall	_oledSendData
+      000100 D0 05            [24]  283 	pop	ar5
+      000102 D0 06            [24]  284 	pop	ar6
+      000104 D0 07            [24]  285 	pop	ar7
+                                    286 ;	./src/oled_i2c.c:79: for(i = 0; i < 5; i ++)
+      000106 0D               [12]  287 	inc	r5
+      000107 BD 05 00         [24]  288 	cjne	r5,#0x05,00211$
+      00010A                        289 00211$:
+      00010A 40 D2            [24]  290 	jc	00128$
+                                    291 ;	./src/oled_i2c.c:82: oledSendData(0x00); /* Display the data and keep track of cursor */
+      00010C 75 82 00         [24]  292 	mov	dpl,#0x00
+                                    293 ;	./src/oled_i2c.c:84: }
+      00010F 02r01rA4         [24]  294 	ljmp	_oledSendData
+                                    295 ;------------------------------------------------------------
+                                    296 ;Allocation info for local variables in function 'OLED_DisplayString'
+                                    297 ;------------------------------------------------------------
+                                    298 ;ptr                       Allocated to registers 
+                                    299 ;------------------------------------------------------------
+                                    300 ;	./src/oled_i2c.c:104: void OLED_DisplayString(uint8_t *ptr)
+                                    301 ;	-----------------------------------------
+                                    302 ;	 function OLED_DisplayString
+                                    303 ;	-----------------------------------------
+      000112                        304 _OLED_DisplayString:
+      000112 AD 82            [24]  305 	mov	r5,dpl
+      000114 AE 83            [24]  306 	mov	r6,dph
+      000116 AF F0            [24]  307 	mov	r7,b
+                                    308 ;	./src/oled_i2c.c:106: while(*ptr)
+      000118                        309 00101$:
+      000118 8D 82            [24]  310 	mov	dpl,r5
+      00011A 8E 83            [24]  311 	mov	dph,r6
+      00011C 8F F0            [24]  312 	mov	b,r7
+      00011E 12r00r00         [24]  313 	lcall	__gptrget
+      000121 FC               [12]  314 	mov	r4,a
+      000122 60 18            [24]  315 	jz	00104$
+                                    316 ;	./src/oled_i2c.c:107: OLED_DisplayChar(*ptr++);
+      000124 8C 82            [24]  317 	mov	dpl,r4
+      000126 0D               [12]  318 	inc	r5
+      000127 BD 00 01         [24]  319 	cjne	r5,#0x00,00116$
+      00012A 0E               [12]  320 	inc	r6
+      00012B                        321 00116$:
+      00012B C0 07            [24]  322 	push	ar7
+      00012D C0 06            [24]  323 	push	ar6
+      00012F C0 05            [24]  324 	push	ar5
+      000131 12r00r6F         [24]  325 	lcall	_OLED_DisplayChar
+      000134 D0 05            [24]  326 	pop	ar5
+      000136 D0 06            [24]  327 	pop	ar6
+      000138 D0 07            [24]  328 	pop	ar7
+      00013A 80 DC            [24]  329 	sjmp	00101$
+      00013C                        330 00104$:
+                                    331 ;	./src/oled_i2c.c:108: }
+      00013C 22               [24]  332 	ret
+                                    333 ;------------------------------------------------------------
+                                    334 ;Allocation info for local variables in function 'OLED_Clear'
+                                    335 ;------------------------------------------------------------
+                                    336 ;oled_clean_col            Allocated to registers r6 
+                                    337 ;oled_clean_page           Allocated to registers r7 
+                                    338 ;------------------------------------------------------------
+                                    339 ;	./src/oled_i2c.c:120: void OLED_Clear(void)
+                                    340 ;	-----------------------------------------
+                                    341 ;	 function OLED_Clear
+                                    342 ;	-----------------------------------------
+      00013D                        343 _OLED_Clear:
+                                    344 ;	./src/oled_i2c.c:123: for(oled_clean_page = 0 ; oled_clean_page < 8 ; oled_clean_page ++) {
+      00013D 7F 00            [12]  345 	mov	r7,#0x00
+      00013F                        346 00105$:
+                                    347 ;	./src/oled_i2c.c:124: OLED_SetCursor(oled_clean_page,0);
+      00013F 75*00 00         [24]  348 	mov	_OLED_SetCursor_PARM_2,#0x00
+      000142 8F 82            [24]  349 	mov	dpl,r7
+      000144 C0 07            [24]  350 	push	ar7
+      000146 12r01r68         [24]  351 	lcall	_OLED_SetCursor
+      000149 D0 07            [24]  352 	pop	ar7
+                                    353 ;	./src/oled_i2c.c:125: for(oled_clean_col= 0 ; oled_clean_col < 128 ; oled_clean_col ++) {
+      00014B 7E 00            [12]  354 	mov	r6,#0x00
+      00014D                        355 00103$:
+                                    356 ;	./src/oled_i2c.c:126: oledSendData(0);
+      00014D 75 82 00         [24]  357 	mov	dpl,#0x00
+      000150 C0 07            [24]  358 	push	ar7
+      000152 C0 06            [24]  359 	push	ar6
+      000154 12r01rA4         [24]  360 	lcall	_oledSendData
+      000157 D0 06            [24]  361 	pop	ar6
+      000159 D0 07            [24]  362 	pop	ar7
+                                    363 ;	./src/oled_i2c.c:125: for(oled_clean_col= 0 ; oled_clean_col < 128 ; oled_clean_col ++) {
+      00015B 0E               [12]  364 	inc	r6
+      00015C BE 80 00         [24]  365 	cjne	r6,#0x80,00123$
+      00015F                        366 00123$:
+      00015F 40 EC            [24]  367 	jc	00103$
+                                    368 ;	./src/oled_i2c.c:123: for(oled_clean_page = 0 ; oled_clean_page < 8 ; oled_clean_page ++) {
+      000161 0F               [12]  369 	inc	r7
+      000162 BF 08 00         [24]  370 	cjne	r7,#0x08,00125$
+      000165                        371 00125$:
+      000165 40 D8            [24]  372 	jc	00105$
+                                    373 ;	./src/oled_i2c.c:129: }
+      000167 22               [24]  374 	ret
+                                    375 ;------------------------------------------------------------
+                                    376 ;Allocation info for local variables in function 'OLED_SetCursor'
+                                    377 ;------------------------------------------------------------
+                                    378 ;cursorPosition            Allocated with name '_OLED_SetCursor_PARM_2'
+                                    379 ;lineNumber                Allocated to registers r7 
+                                    380 ;------------------------------------------------------------
+                                    381 ;	./src/oled_i2c.c:145: void OLED_SetCursor(uint8_t lineNumber,uint8_t cursorPosition)
+                                    382 ;	-----------------------------------------
+                                    383 ;	 function OLED_SetCursor
+                                    384 ;	-----------------------------------------
+      000168                        385 _OLED_SetCursor:
+      000168 AF 82            [24]  386 	mov	r7,dpl
+                                    387 ;	./src/oled_i2c.c:147: cursorPosition = cursorPosition + 2;
+      00016A AE*00            [24]  388 	mov	r6,_OLED_SetCursor_PARM_2
+      00016C 74 02            [12]  389 	mov	a,#0x02
+      00016E 2E               [12]  390 	add	a,r6
+      00016F F5*00            [12]  391 	mov	_OLED_SetCursor_PARM_2,a
+                                    392 ;	./src/oled_i2c.c:148: oledSendCommand(0x0f&cursorPosition);
+      000171 AE*00            [24]  393 	mov	r6,_OLED_SetCursor_PARM_2
+      000173 74 0F            [12]  394 	mov	a,#0x0f
+      000175 5E               [12]  395 	anl	a,r6
+      000176 F5 82            [12]  396 	mov	dpl,a
+      000178 C0 07            [24]  397 	push	ar7
+      00017A C0 06            [24]  398 	push	ar6
+      00017C 12r01r98         [24]  399 	lcall	_oledSendCommand
+      00017F D0 06            [24]  400 	pop	ar6
+                                    401 ;	./src/oled_i2c.c:149: oledSendCommand(0x10|(cursorPosition>>4));
+      000181 EE               [12]  402 	mov	a,r6
+      000182 C4               [12]  403 	swap	a
+      000183 54 0F            [12]  404 	anl	a,#0x0f
+      000185 FE               [12]  405 	mov	r6,a
+      000186 74 10            [12]  406 	mov	a,#0x10
+      000188 4E               [12]  407 	orl	a,r6
+      000189 F5 82            [12]  408 	mov	dpl,a
+      00018B 12r01r98         [24]  409 	lcall	_oledSendCommand
+      00018E D0 07            [24]  410 	pop	ar7
+                                    411 ;	./src/oled_i2c.c:150: oledSendCommand(0xb0|lineNumber);
+      000190 74 B0            [12]  412 	mov	a,#0xb0
+      000192 4F               [12]  413 	orl	a,r7
+      000193 F5 82            [12]  414 	mov	dpl,a
+                                    415 ;	./src/oled_i2c.c:151: }
+      000195 02r01r98         [24]  416 	ljmp	_oledSendCommand
+                                    417 ;------------------------------------------------------------
+                                    418 ;Allocation info for local variables in function 'oledSendCommand'
+                                    419 ;------------------------------------------------------------
+                                    420 ;cmd                       Allocated to registers 
+                                    421 ;------------------------------------------------------------
+                                    422 ;	./src/oled_i2c.c:156: void oledSendCommand(uint8_t cmd)
+                                    423 ;	-----------------------------------------
+                                    424 ;	 function oledSendCommand
+                                    425 ;	-----------------------------------------
+      000198                        426 _oledSendCommand:
+      000198 85 82*00         [24]  427 	mov	_Single_WriteI2C_PARM_3,dpl
+                                    428 ;	./src/oled_i2c.c:158: Single_WriteI2C(OLED_SlaveAddress, SSD1306_COMMAND, cmd);
+      00019B 75*00 00         [24]  429 	mov	_Single_WriteI2C_PARM_2,#0x00
+      00019E 75 82 78         [24]  430 	mov	dpl,#0x78
+                                    431 ;	./src/oled_i2c.c:159: }
+      0001A1 02r00r00         [24]  432 	ljmp	_Single_WriteI2C
+                                    433 ;------------------------------------------------------------
+                                    434 ;Allocation info for local variables in function 'oledSendData'
+                                    435 ;------------------------------------------------------------
+                                    436 ;cmd                       Allocated to registers 
+                                    437 ;------------------------------------------------------------
+                                    438 ;	./src/oled_i2c.c:161: void oledSendData(uint8_t cmd)
+                                    439 ;	-----------------------------------------
+                                    440 ;	 function oledSendData
+                                    441 ;	-----------------------------------------
+      0001A4                        442 _oledSendData:
+      0001A4 85 82*00         [24]  443 	mov	_Single_WriteI2C_PARM_3,dpl
+                                    444 ;	./src/oled_i2c.c:163: Single_WriteI2C(OLED_SlaveAddress, SSD1306_DATA_CONTINUE, cmd);
+      0001A7 75*00 40         [24]  445 	mov	_Single_WriteI2C_PARM_2,#0x40
+      0001AA 75 82 78         [24]  446 	mov	dpl,#0x78
+                                    447 ;	./src/oled_i2c.c:164: }
+      0001AD 02r00r00         [24]  448 	ljmp	_Single_WriteI2C
+                                    449 	.area CSEG    (CODE)
+                                    450 	.area CONST   (CODE)
+      000000                        451 _OledFontTable:
+      000000 00                     452 	.db #0x00	; 0
+      000001 00                     453 	.db #0x00	; 0
+      000002 00                     454 	.db #0x00	; 0
+      000003 00                     455 	.db #0x00	; 0
+      000004 00                     456 	.db #0x00	; 0
+      000005 08                     457 	.db #0x08	; 8
+      000006 08                     458 	.db #0x08	; 8
+      000007 08                     459 	.db #0x08	; 8
+      000008 08                     460 	.db #0x08	; 8
+      000009 08                     461 	.db #0x08	; 8
+      00000A 3E                     462 	.db #0x3e	; 62
+      00000B 51                     463 	.db #0x51	; 81	'Q'
+      00000C 49                     464 	.db #0x49	; 73	'I'
+      00000D 45                     465 	.db #0x45	; 69	'E'
+      00000E 3E                     466 	.db #0x3e	; 62
+      00000F 00                     467 	.db #0x00	; 0
+      000010 42                     468 	.db #0x42	; 66	'B'
+      000011 7F                     469 	.db #0x7f	; 127
+      000012 40                     470 	.db #0x40	; 64
+      000013 00                     471 	.db #0x00	; 0
+      000014 42                     472 	.db #0x42	; 66	'B'
+      000015 61                     473 	.db #0x61	; 97	'a'
+      000016 51                     474 	.db #0x51	; 81	'Q'
+      000017 49                     475 	.db #0x49	; 73	'I'
+      000018 46                     476 	.db #0x46	; 70	'F'
+      000019 21                     477 	.db #0x21	; 33
+      00001A 41                     478 	.db #0x41	; 65	'A'
+      00001B 45                     479 	.db #0x45	; 69	'E'
+      00001C 4B                     480 	.db #0x4b	; 75	'K'
+      00001D 31                     481 	.db #0x31	; 49	'1'
+      00001E 18                     482 	.db #0x18	; 24
+      00001F 14                     483 	.db #0x14	; 20
+      000020 12                     484 	.db #0x12	; 18
+      000021 7F                     485 	.db #0x7f	; 127
+      000022 10                     486 	.db #0x10	; 16
+      000023 27                     487 	.db #0x27	; 39
+      000024 45                     488 	.db #0x45	; 69	'E'
+      000025 45                     489 	.db #0x45	; 69	'E'
+      000026 45                     490 	.db #0x45	; 69	'E'
+      000027 39                     491 	.db #0x39	; 57	'9'
+      000028 3C                     492 	.db #0x3c	; 60
+      000029 4A                     493 	.db #0x4a	; 74	'J'
+      00002A 49                     494 	.db #0x49	; 73	'I'
+      00002B 49                     495 	.db #0x49	; 73	'I'
+      00002C 30                     496 	.db #0x30	; 48	'0'
+      00002D 01                     497 	.db #0x01	; 1
+      00002E 71                     498 	.db #0x71	; 113	'q'
+      00002F 09                     499 	.db #0x09	; 9
+      000030 05                     500 	.db #0x05	; 5
+      000031 03                     501 	.db #0x03	; 3
+      000032 36                     502 	.db #0x36	; 54	'6'
+      000033 49                     503 	.db #0x49	; 73	'I'
+      000034 49                     504 	.db #0x49	; 73	'I'
+      000035 49                     505 	.db #0x49	; 73	'I'
+      000036 36                     506 	.db #0x36	; 54	'6'
+      000037 06                     507 	.db #0x06	; 6
+      000038 49                     508 	.db #0x49	; 73	'I'
+      000039 49                     509 	.db #0x49	; 73	'I'
+      00003A 29                     510 	.db #0x29	; 41
+      00003B 1E                     511 	.db #0x1e	; 30
+      00003C 7C                     512 	.db #0x7c	; 124
+      00003D 12                     513 	.db #0x12	; 18
+      00003E 11                     514 	.db #0x11	; 17
+      00003F 12                     515 	.db #0x12	; 18
+      000040 7C                     516 	.db #0x7c	; 124
+      000041 3E                     517 	.db #0x3e	; 62
+      000042 41                     518 	.db #0x41	; 65	'A'
+      000043 49                     519 	.db #0x49	; 73	'I'
+      000044 49                     520 	.db #0x49	; 73	'I'
+      000045 7A                     521 	.db #0x7a	; 122	'z'
+      000046 63                     522 	.db #0x63	; 99	'c'
+      000047 14                     523 	.db #0x14	; 20
+      000048 08                     524 	.db #0x08	; 8
+      000049 14                     525 	.db #0x14	; 20
+      00004A 63                     526 	.db #0x63	; 99	'c'
+      00004B 07                     527 	.db #0x07	; 7
+      00004C 08                     528 	.db #0x08	; 8
+      00004D 70                     529 	.db #0x70	; 112	'p'
+      00004E 08                     530 	.db #0x08	; 8
+      00004F 07                     531 	.db #0x07	; 7
+      000050 61                     532 	.db #0x61	; 97	'a'
+      000051 51                     533 	.db #0x51	; 81	'Q'
+      000052 49                     534 	.db #0x49	; 73	'I'
+      000053 45                     535 	.db #0x45	; 69	'E'
+      000054 43                     536 	.db #0x43	; 67	'C'
+                                    537 	.area XINIT   (CODE)
+                                    538 	.area CABS    (ABS,CODE)
