@@ -80,9 +80,9 @@ C:   00000088  s_GSFINAL
 C:   0000008B  l_SSEG                          
 C:   0000008B  s_CSEG                          
 C:   00000100  l_IRAM                          
-C:   0000041B  l_CSEG                          
-C:   000004A6  s_CONST                         
-C:   000004A6  s_XINIT                         
+C:   000003D7  l_CSEG                          
+C:   00000462  s_CONST                         
+C:   00000462  s_XINIT                         
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 3.
 Hexadecimal  [32-Bits]
@@ -200,9 +200,6 @@ Area                                    Addr        Size        Decimal Bytes (A
      000000D7  _CY                                main
      000000E0  _ACC                               main
      000000F0  _B                                 main
-     000000F5  _B_5                               _gptrget
-     000000F6  _B_6                               _gptrget
-     000000F7  _B_7                               _gptrget
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 5.
 Hexadecimal  [32-Bits]
@@ -330,7 +327,7 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-CSEG                                0000008B    0000041B =        1051. bytes (REL,CON,CODE)
+CSEG                                0000008B    000003D7 =         983. bytes (REL,CON,CODE)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -338,14 +335,14 @@ C:   0000008B  _sendbyte                          main
 C:   000000C2  _Write7219                         main
 C:   000000E1  _Initial                           main
 C:   00000123  _draw                              main
-C:   00000163  _scan_row                          main
-C:   000001A1  _read_curINPUT                     main
-C:   00000249  _sequence                          main
-C:   0000027A  _func_cal                          main
-C:   0000031D  _main                              main
-C:   00000479  _delay_ms                          delay
-C:   00000486  __gptrget                          _gptrget
-C:   000004A2  __sdcc_external_startup            _startup
+C:   0000013E  _scan_row                          main
+C:   0000017C  _read_curINPUT                     main
+C:   00000224  _sequence                          main
+C:   00000252  _func_call                         main
+C:   000002F5  _main                              main
+C:   00000451  _delay_ms                          delay
+C:   0000045E  __sdcc_external_startup            _startup
+
 ASxxxx Linker V03.00 + NoICE + sdld,  page 17.
 
 Files Linked                              [ module(s) ]
@@ -366,8 +363,6 @@ c:\Program Files\SDCC\bin\..\lib\small/mcs51.lib
                                           [ crtpagesfr.rel ]
 c:\Program Files\SDCC\bin\..\lib\small/mcs51.lib
                                           [ crtstart.rel ]
-c:\Program Files\SDCC\bin\..\lib\small/libsdcc.lib
-                                          [ _gptrget.rel ]
 c:\Program Files\SDCC\bin\..\lib\small/libsdcc.lib
                                           [ _startup.rel ]
 

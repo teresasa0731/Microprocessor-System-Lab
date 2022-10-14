@@ -2,9 +2,10 @@
 #include "delay.h"
 
 //7-segment setting
-#define DIN P2_2
+#define DOUT P2_2
 #define LOAD P2_1
 #define CLK  P2_0
+#define matrixnum   1      //number of 7-segment display/dot matrix
 
 //4*3 keyboard setting
 #define INPUT1 P0_0    //column 1
@@ -37,7 +38,6 @@
 #define SCAN_LIMIT   0x0B
 #define SHUT_DOWN    0x0C
 #define DISPLAY_TEST 0x0F
-#define matrixnum       1
 
 //function declaration
 void Write7219(unsigned char address,unsigned char dat);
@@ -54,39 +54,41 @@ unsigned int op_cnt = 0;
 
 //send address and data into max7219
 void sendbyte(unsigned char address,unsigned char dat){
- unsigned char i;
+ 	unsigned char i;
     for (i=0;i<8;i++)        //get last 8 bits(address)
     {
-       CLK=0;
-       DIN=(address&0x80);   //get msb and shift left
-       address<<=1;
-       CLK=1;
+       CLK = 0;
+       DOUT = ( address & 0x80);   //get msb and shift left
+       address <<= 1;
+       CLK = 1;
     }
     for (i=0;i<8;i++)      //get first 8 bits(data)
     {
-       CLK=0;
-       DIN=(dat&0x80);    //get msb and shit left
-       dat<<=1;
-       CLK=1;
+       CLK = 0;
+       DOUT=( dat & 0x80);    //get msb and shit left
+       dat <<= 1;
+       CLK = 1;
     }
  }
 
 //write a single digit/a single line in 7-segment display/dot matrix.
-void Write7219(unsigned char address,unsigned char dat)
+void Write7219(unsigned char address, unsigned char dat)
 {
     unsigned char cnt;
-    LOAD=0;
-  	for(cnt=1;cnt<=matrixnum;cnt++)      //send address and data according to the nuber of your matrix
-		{
-        sendbyte(address,dat);
+    LOAD = 0;
+
+  	for(cnt=1; cnt<=matrixnum; cnt++)       // send address and data according to the nuber of your matrix
+ 	{
+        sendbyte(address, dat);
     }
-    LOAD=1;                              //after the load becomes 1, will the 7-segment display display
+    
+    LOAD = 1;                               // after the load becomes 1, will the 7-segment display display
 }
 
 //MAX7219inintialize and setup inside register
 void Initial(void)
 {   
-		unsigned char i;
+	unsigned char i;
     Write7219(SHUT_DOWN,0x01);         //normal mode(0xX1)
     Write7219(DISPLAY_TEST,0x00);
     Write7219(DECODE_MODE,0x00);       //select non-decode mode
@@ -99,10 +101,13 @@ void Initial(void)
 
 //write all 8 digits/lines of a single 7-segment display/dot matrix.
 void draw(unsigned char *picture){
-  unsigned char i;
-  for(i=1;i<=8;i++){
-      Write7219(i,picture[i-1]);
-  }
+
+  	unsigned char i;
+	// unsigned char thePicture[];
+	// thePicture = picture;
+    for(i=1; i<=8; i++) {
+        Write7219(i, display[i-1]);
+    }
 }
 
 void scan_row(unsigned int row)
@@ -161,11 +166,11 @@ void sequence(void){
 	for(int a = 7; a > 0; a--){
 		display[a] = display[a-1];
 	}
-	patt =0x00;
-	delay_ms(20);
+	//patt =0x00;
+	delay_ms(100);
 }
 
-void func_cal(unsigned int cmd){
+void func_call(unsigned int cmd){
 
 	switch (cmd)
 	{
@@ -204,7 +209,6 @@ void func_cal(unsigned int cmd){
 	}
 }
 
-
 // 7-segment display
 unsigned char display_seg[] = {
 	0x30,  	// 1
@@ -232,7 +236,7 @@ void main(void)
 		state[i] = BTN_RELEASED;
 		prestate[i] = BTN_RELEASED;
 	}
-	func_cal(12);
+	func_call(12);
 
 	while(1)
 	{
@@ -274,7 +278,7 @@ void main(void)
 					display[0] = display_seg[i];
 					draw(display);
 				}else{
-					func_cal(i);
+					func_call(i);
 				}
 			}
 			prestate[i] = state[i];
