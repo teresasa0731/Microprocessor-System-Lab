@@ -103,10 +103,14 @@ void Initial(void)
 void draw(unsigned char *picture){
 
   	unsigned char i;
-	// unsigned char thePicture[];
-	// thePicture = picture;
+	if(picture == display){
+		patt = 0x80;
+		led = ~patt;
+		delay_ms(20);
+	}
     for(i=1; i<=8; i++) {
         Write7219(i, display[i-1]);
+		
     }
 }
 

@@ -335,7 +335,7 @@ __interrupt_vect:
 	clr	a
 	mov	_op_cnt,a
 	mov	(_op_cnt + 1),a
-;	./src/main.c:213: unsigned char display_seg[] = {
+;	./src/main.c:217: unsigned char display_seg[] = {
 	mov	_display_seg,#0x30
 	mov	(_display_seg + 0x0001),#0x6d
 	mov	(_display_seg + 0x0002),#0x79
@@ -521,7 +521,7 @@ _Initial:
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'draw'
 ;------------------------------------------------------------
-;picture                   Allocated to registers 
+;picture                   Allocated to registers r5 r6 r7 
 ;i                         Allocated to registers r7 
 ;------------------------------------------------------------
 ;	./src/main.c:103: void draw(unsigned char *picture){
@@ -529,10 +529,38 @@ _Initial:
 ;	 function draw
 ;	-----------------------------------------
 _draw:
-;	./src/main.c:108: for(i=1; i<=8; i++) {
+	mov	r5,dpl
+	mov	r6,dph
+	mov	r7,b
+;	./src/main.c:106: if(picture == display){
+	mov	a,#_display
+	push	acc
+	mov	a,#(_display >> 8)
+	push	acc
+	mov	a,#0x40
+	push	acc
+	mov	dpl,r5
+	mov	dph,r6
+	mov	b,r7
+	lcall	___gptr_cmp
+	dec	sp
+	dec	sp
+	dec	sp
+	jz	00118$
+	sjmp	00109$
+00118$:
+;	./src/main.c:107: patt = 0x80;
+	mov	_patt,#0x80
+;	./src/main.c:108: led = ~patt;
+	mov	_P1,#0x7f
+;	./src/main.c:109: delay_ms(20);
+	mov	dptr,#0x0014
+	lcall	_delay_ms
+;	./src/main.c:111: for(i=1; i<=8; i++) {
+00109$:
 	mov	r7,#0x01
-00102$:
-;	./src/main.c:109: Write7219(i, display[i-1]);
+00104$:
+;	./src/main.c:112: Write7219(i, display[i-1]);
 	mov	ar6,r7
 	mov	a,r6
 	dec	a
@@ -543,26 +571,26 @@ _draw:
 	push	ar7
 	lcall	_Write7219
 	pop	ar7
-;	./src/main.c:108: for(i=1; i<=8; i++) {
+;	./src/main.c:111: for(i=1; i<=8; i++) {
 	inc	r7
 	mov	a,r7
 	add	a,#0xff - 0x08
-	jnc	00102$
-;	./src/main.c:111: }
+	jnc	00104$
+;	./src/main.c:115: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'scan_row'
 ;------------------------------------------------------------
 ;row                       Allocated to registers r6 r7 
 ;------------------------------------------------------------
-;	./src/main.c:113: void scan_row(unsigned int row)
+;	./src/main.c:117: void scan_row(unsigned int row)
 ;	-----------------------------------------
 ;	 function scan_row
 ;	-----------------------------------------
 _scan_row:
 	mov	r6,dpl
 	mov	r7,dph
-;	./src/main.c:115: switch (row)
+;	./src/main.c:119: switch (row)
 	clr	c
 	mov	a,#0x03
 	subb	a,r6
@@ -571,7 +599,7 @@ _scan_row:
 	jc	00107$
 	mov	a,r6
 	add	a,r6
-;	./src/main.c:117: case 0:
+;	./src/main.c:121: case 0:
 	mov	dptr,#00114$
 	jmp	@a+dptr
 00114$:
@@ -580,81 +608,81 @@ _scan_row:
 	sjmp	00103$
 	sjmp	00104$
 00101$:
-;	./src/main.c:118: OUTPUT1 = 0; // row1 output 0
+;	./src/main.c:122: OUTPUT1 = 0; // row1 output 0
 ;	assignBit
 	clr	_P0_6
-;	./src/main.c:119: OUTPUT2 = 1; // row2 output 1
+;	./src/main.c:123: OUTPUT2 = 1; // row2 output 1
 ;	assignBit
 	setb	_P0_5
-;	./src/main.c:120: OUTPUT3 = 1; // row3 output 1
+;	./src/main.c:124: OUTPUT3 = 1; // row3 output 1
 ;	assignBit
 	setb	_P0_4
-;	./src/main.c:121: OUTPUT0 = 1; // row0 output 1
+;	./src/main.c:125: OUTPUT0 = 1; // row0 output 1
 ;	assignBit
 	setb	_P0_3
-;	./src/main.c:122: break;
-;	./src/main.c:123: case 1:
+;	./src/main.c:126: break;
+;	./src/main.c:127: case 1:
 	ret
 00102$:
-;	./src/main.c:124: OUTPUT1 = 1; // row1 output 1
+;	./src/main.c:128: OUTPUT1 = 1; // row1 output 1
 ;	assignBit
 	setb	_P0_6
-;	./src/main.c:125: OUTPUT2 = 0; // row2 output 0
+;	./src/main.c:129: OUTPUT2 = 0; // row2 output 0
 ;	assignBit
 	clr	_P0_5
-;	./src/main.c:126: OUTPUT3 = 1; // row3 output 1
+;	./src/main.c:130: OUTPUT3 = 1; // row3 output 1
 ;	assignBit
 	setb	_P0_4
-;	./src/main.c:127: OUTPUT0 = 1; // row0 output 1
+;	./src/main.c:131: OUTPUT0 = 1; // row0 output 1
 ;	assignBit
 	setb	_P0_3
-;	./src/main.c:128: break;
-;	./src/main.c:129: case 2:
+;	./src/main.c:132: break;
+;	./src/main.c:133: case 2:
 	ret
 00103$:
-;	./src/main.c:130: OUTPUT1 = 1; // row1 output 1
+;	./src/main.c:134: OUTPUT1 = 1; // row1 output 1
 ;	assignBit
 	setb	_P0_6
-;	./src/main.c:131: OUTPUT2 = 1; // row2 output 1
+;	./src/main.c:135: OUTPUT2 = 1; // row2 output 1
 ;	assignBit
 	setb	_P0_5
-;	./src/main.c:132: OUTPUT3 = 0; // row3 output 0
+;	./src/main.c:136: OUTPUT3 = 0; // row3 output 0
 ;	assignBit
 	clr	_P0_4
-;	./src/main.c:133: OUTPUT0 = 1; // row0 output 1
+;	./src/main.c:137: OUTPUT0 = 1; // row0 output 1
 ;	assignBit
 	setb	_P0_3
-;	./src/main.c:134: break;
-;	./src/main.c:135: case 3:
+;	./src/main.c:138: break;
+;	./src/main.c:139: case 3:
 	ret
 00104$:
-;	./src/main.c:136: OUTPUT1 = 1; // row1 output 1
+;	./src/main.c:140: OUTPUT1 = 1; // row1 output 1
 ;	assignBit
 	setb	_P0_6
-;	./src/main.c:137: OUTPUT2 = 1; // row2 output 1
+;	./src/main.c:141: OUTPUT2 = 1; // row2 output 1
 ;	assignBit
 	setb	_P0_5
-;	./src/main.c:138: OUTPUT3 = 1; // row3 output 1
+;	./src/main.c:142: OUTPUT3 = 1; // row3 output 1
 ;	assignBit
 	setb	_P0_4
-;	./src/main.c:139: OUTPUT0 = 0; // row0 output 0
+;	./src/main.c:143: OUTPUT0 = 0; // row0 output 0
 ;	assignBit
 	clr	_P0_3
-;	./src/main.c:143: }
+;	./src/main.c:147: }
 00107$:
-;	./src/main.c:144: }
+;	./src/main.c:148: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'read_curINPUT'
 ;------------------------------------------------------------
 ;i                         Allocated to registers r6 r7 
 ;------------------------------------------------------------
-;	./src/main.c:146: void read_curINPUT(void)
+;	./src/main.c:150: void read_curINPUT(void)
 ;	-----------------------------------------
 ;	 function read_curINPUT
 ;	-----------------------------------------
 _read_curINPUT:
-;	./src/main.c:148: for (int i = 0; i < 4; i++)
+;	./src/main.c:152: for (int i = 0; i < 4; i++)
 	mov	r6,#0x00
 	mov	r7,#0x00
 00106$:
@@ -665,7 +693,7 @@ _read_curINPUT:
 	xrl	a,#0x80
 	subb	a,#0x80
 	jnc	00104$
-;	./src/main.c:150: scan_row(i);
+;	./src/main.c:154: scan_row(i);
 	mov	dpl,r6
 	mov	dph,r7
 	push	ar7
@@ -673,10 +701,10 @@ _read_curINPUT:
 	lcall	_scan_row
 	pop	ar6
 	pop	ar7
-;	./src/main.c:151: if(i==3)
+;	./src/main.c:155: if(i==3)
 	cjne	r6,#0x03,00102$
 	cjne	r7,#0x00,00102$
-;	./src/main.c:152: curINPUT[9] = INPUT2;
+;	./src/main.c:156: curINPUT[9] = INPUT2;
 	mov	c,_P0_1
 	clr	a
 	rlc	a
@@ -686,7 +714,7 @@ _read_curINPUT:
 	mov	((_curINPUT + 0x0012) + 1),r5
 	sjmp	00107$
 00102$:
-;	./src/main.c:154: curINPUT[i * 3 + 0] = INPUT1;
+;	./src/main.c:158: curINPUT[i * 3 + 0] = INPUT1;
 	mov	ar5,r6
 	mov	a,r5
 	mov	b,#0x03
@@ -704,7 +732,7 @@ _read_curINPUT:
 	inc	r1
 	mov	@r1,ar4
 	dec	r1
-;	./src/main.c:155: curINPUT[i * 3 + 1] = INPUT2;
+;	./src/main.c:159: curINPUT[i * 3 + 1] = INPUT2;
 	mov	a,r5
 	inc	a
 	add	a,acc
@@ -719,7 +747,7 @@ _read_curINPUT:
 	inc	r1
 	mov	@r1,ar4
 	dec	r1
-;	./src/main.c:156: curINPUT[i * 3 + 2] = INPUT3;
+;	./src/main.c:160: curINPUT[i * 3 + 2] = INPUT3;
 	inc	r5
 	inc	r5
 	mov	a,r5
@@ -736,14 +764,14 @@ _read_curINPUT:
 	mov	@r1,ar5
 	dec	r1
 00107$:
-;	./src/main.c:148: for (int i = 0; i < 4; i++)
+;	./src/main.c:152: for (int i = 0; i < 4; i++)
 	inc	r6
 	cjne	r6,#0x00,00126$
 	inc	r7
 00126$:
 	ljmp	00106$
 00104$:
-;	./src/main.c:159: curINPUT[10] = but1;
+;	./src/main.c:163: curINPUT[10] = but1;
 	mov	c,_INT0
 	clr	a
 	rlc	a
@@ -751,7 +779,7 @@ _read_curINPUT:
 	mov	r7,#0x00
 	mov	((_curINPUT + 0x0014) + 0),r6
 	mov	((_curINPUT + 0x0014) + 1),r7
-;	./src/main.c:160: curINPUT[11] = but2;
+;	./src/main.c:164: curINPUT[11] = but2;
 	mov	c,_INT1
 	clr	a
 	rlc	a
@@ -759,7 +787,7 @@ _read_curINPUT:
 	mov	r7,#0x00
 	mov	((_curINPUT + 0x0016) + 0),r6
 	mov	((_curINPUT + 0x0016) + 1),r7
-;	./src/main.c:161: curINPUT[12] = but3;
+;	./src/main.c:165: curINPUT[12] = but3;
 	mov	c,_P2_0
 	clr	a
 	rlc	a
@@ -767,7 +795,7 @@ _read_curINPUT:
 	mov	r7,#0x00
 	mov	((_curINPUT + 0x0018) + 0),r6
 	mov	((_curINPUT + 0x0018) + 1),r7
-;	./src/main.c:162: curINPUT[13] = but4;
+;	./src/main.c:166: curINPUT[13] = but4;
 	mov	c,_P2_1
 	clr	a
 	rlc	a
@@ -775,19 +803,19 @@ _read_curINPUT:
 	mov	r7,#0x00
 	mov	((_curINPUT + 0x001a) + 0),r6
 	mov	((_curINPUT + 0x001a) + 1),r7
-;	./src/main.c:163: }
+;	./src/main.c:167: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'sequence'
 ;------------------------------------------------------------
 ;a                         Allocated to registers r6 r7 
 ;------------------------------------------------------------
-;	./src/main.c:165: void sequence(void){
+;	./src/main.c:169: void sequence(void){
 ;	-----------------------------------------
 ;	 function sequence
 ;	-----------------------------------------
 _sequence:
-;	./src/main.c:166: for(int a = 7; a > 0; a--){
+;	./src/main.c:170: for(int a = 7; a > 0; a--){
 	mov	r6,#0x07
 	mov	r7,#0x00
 00103$:
@@ -799,7 +827,7 @@ _sequence:
 	xrl	b,#0x80
 	subb	a,b
 	jnc	00101$
-;	./src/main.c:167: display[a] = display[a-1];
+;	./src/main.c:171: display[a] = display[a-1];
 	mov	a,r6
 	add	a,#_display
 	mov	r1,a
@@ -810,16 +838,16 @@ _sequence:
 	mov	r0,a
 	mov	ar5,@r0
 	mov	@r1,ar5
-;	./src/main.c:166: for(int a = 7; a > 0; a--){
+;	./src/main.c:170: for(int a = 7; a > 0; a--){
 	dec	r6
 	cjne	r6,#0xff,00117$
 	dec	r7
 00117$:
 	sjmp	00103$
 00101$:
-;	./src/main.c:170: delay_ms(100);
+;	./src/main.c:174: delay_ms(100);
 	mov	dptr,#0x0064
-;	./src/main.c:171: }
+;	./src/main.c:175: }
 	ljmp	_delay_ms
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'func_call'
@@ -827,14 +855,14 @@ _sequence:
 ;cmd                       Allocated to registers r6 r7 
 ;a                         Allocated to registers r6 r7 
 ;------------------------------------------------------------
-;	./src/main.c:173: void func_call(unsigned int cmd){
+;	./src/main.c:177: void func_call(unsigned int cmd){
 ;	-----------------------------------------
 ;	 function func_call
 ;	-----------------------------------------
 _func_call:
 	mov	r6,dpl
 	mov	r7,dph
-;	./src/main.c:175: switch (cmd)
+;	./src/main.c:179: switch (cmd)
 	cjne	r6,#0x0a,00151$
 	cjne	r7,#0x00,00151$
 	sjmp	00101$
@@ -852,42 +880,42 @@ _func_call:
 	ljmp	00110$
 00154$:
 	ret
-;	./src/main.c:177: case 10:	//op
+;	./src/main.c:181: case 10:	//op
 00101$:
-;	./src/main.c:178: if(patt == 0x80)
+;	./src/main.c:182: if(patt == 0x80)
 	mov	a,#0x80
 	cjne	a,_patt,00105$
-;	./src/main.c:179: patt = 0x08;
+;	./src/main.c:183: patt = 0x08;
 	mov	_patt,#0x08
 	sjmp	00106$
 00105$:
-;	./src/main.c:180: else if (patt == 0x00)
+;	./src/main.c:184: else if (patt == 0x00)
 	mov	a,_patt
 	jnz	00106$
-;	./src/main.c:181: patt = 0x08;
+;	./src/main.c:185: patt = 0x08;
 	mov	_patt,#0x08
 00106$:
-;	./src/main.c:183: patt = patt << 1;
+;	./src/main.c:187: patt = patt << 1;
 	mov	a,_patt
 	add	a,acc
-;	./src/main.c:184: led = ~patt;
+;	./src/main.c:188: led = ~patt;
 	mov	_patt,a
 	cpl	a
 	mov	_P1,a
-;	./src/main.c:185: delay_ms(20);
+;	./src/main.c:189: delay_ms(20);
 	mov	dptr,#0x0014
-;	./src/main.c:186: break;
-;	./src/main.c:187: case 11:	//back <-
+;	./src/main.c:190: break;
+;	./src/main.c:191: case 11:	//back <-
 	ljmp	_delay_ms
 00107$:
-;	./src/main.c:188: patt1 = 0x01;
+;	./src/main.c:192: patt1 = 0x01;
 	mov	_patt1,#0x01
-;	./src/main.c:189: led = ~patt1;
+;	./src/main.c:193: led = ~patt1;
 	mov	_P1,#0xfe
-;	./src/main.c:190: delay_ms(20);
+;	./src/main.c:194: delay_ms(20);
 	mov	dptr,#0x0014
-;	./src/main.c:191: break;
-;	./src/main.c:193: for(int a = 0; a < 8; a++){
+;	./src/main.c:195: break;
+;	./src/main.c:197: for(int a = 0; a < 8; a++){
 	ljmp	_delay_ms
 00125$:
 	mov	r6,#0x00
@@ -900,12 +928,12 @@ _func_call:
 	xrl	a,#0x80
 	subb	a,#0x80
 	jnc	00109$
-;	./src/main.c:194: display[a] = 0x00;
+;	./src/main.c:198: display[a] = 0x00;
 	mov	a,r6
 	add	a,#_display
 	mov	r0,a
 	mov	@r0,#0x00
-;	./src/main.c:195: Write7219(a+1,0x00);
+;	./src/main.c:199: Write7219(a+1,0x00);
 	mov	ar5,r6
 	mov	a,r5
 	inc	a
@@ -916,34 +944,34 @@ _func_call:
 	lcall	_Write7219
 	pop	ar6
 	pop	ar7
-;	./src/main.c:193: for(int a = 0; a < 8; a++){
+;	./src/main.c:197: for(int a = 0; a < 8; a++){
 	inc	r6
 	cjne	r6,#0x00,00114$
 	inc	r7
 	sjmp	00114$
 00109$:
-;	./src/main.c:197: Write7219(0x01,0x08);
+;	./src/main.c:201: Write7219(0x01,0x08);
 	mov	_Write7219_PARM_2,#0x08
 	mov	dpl,#0x01
 	lcall	_Write7219
-;	./src/main.c:198: patt1 = 0x02;
+;	./src/main.c:202: patt1 = 0x02;
 	mov	_patt1,#0x02
-;	./src/main.c:199: led = ~patt1;
+;	./src/main.c:203: led = ~patt1;
 	mov	_P1,#0xfd
-;	./src/main.c:200: delay_ms(20);
+;	./src/main.c:204: delay_ms(20);
 	mov	dptr,#0x0014
-;	./src/main.c:201: break;
-;	./src/main.c:202: case 13:	//equal=
+;	./src/main.c:205: break;
+;	./src/main.c:206: case 13:	//equal=
 	ljmp	_delay_ms
 00110$:
-;	./src/main.c:203: patt1 = 0x04;
+;	./src/main.c:207: patt1 = 0x04;
 	mov	_patt1,#0x04
-;	./src/main.c:204: led = ~patt1;
+;	./src/main.c:208: led = ~patt1;
 	mov	_P1,#0xfb
-;	./src/main.c:205: delay_ms(20);
+;	./src/main.c:209: delay_ms(20);
 	mov	dptr,#0x0014
-;	./src/main.c:209: }
-;	./src/main.c:210: }
+;	./src/main.c:213: }
+;	./src/main.c:214: }
 	ljmp	_delay_ms
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'main'
@@ -951,14 +979,14 @@ _func_call:
 ;i                         Allocated to registers r6 r7 
 ;i                         Allocated to registers r6 r7 
 ;------------------------------------------------------------
-;	./src/main.c:229: void main(void)
+;	./src/main.c:233: void main(void)
 ;	-----------------------------------------
 ;	 function main
 ;	-----------------------------------------
 _main:
-;	./src/main.c:232: Initial();
+;	./src/main.c:236: Initial();
 	lcall	_Initial
-;	./src/main.c:233: for (int i = 0; i < 14; i++)
+;	./src/main.c:237: for (int i = 0; i < 14; i++)
 	mov	r6,#0x00
 	mov	r7,#0x00
 00127$:
@@ -969,7 +997,7 @@ _main:
 	xrl	a,#0x80
 	subb	a,#0x80
 	jnc	00101$
-;	./src/main.c:235: curINPUT[i] = LEVEL_HIGH;
+;	./src/main.c:239: curINPUT[i] = LEVEL_HIGH;
 	mov	a,r6
 	add	a,r6
 	mov	r4,a
@@ -981,37 +1009,37 @@ _main:
 	mov	@r0,#0x01
 	inc	r0
 	mov	@r0,#0x00
-;	./src/main.c:236: state[i] = BTN_RELEASED;
+;	./src/main.c:240: state[i] = BTN_RELEASED;
 	mov	a,r4
 	add	a,#_state
 	mov	r0,a
 	mov	@r0,#0x00
 	inc	r0
 	mov	@r0,#0x00
-;	./src/main.c:237: prestate[i] = BTN_RELEASED;
+;	./src/main.c:241: prestate[i] = BTN_RELEASED;
 	mov	a,r4
 	add	a,#_prestate
 	mov	r0,a
 	mov	@r0,#0x00
 	inc	r0
 	mov	@r0,#0x00
-;	./src/main.c:233: for (int i = 0; i < 14; i++)
+;	./src/main.c:237: for (int i = 0; i < 14; i++)
 	inc	r6
 	cjne	r6,#0x00,00127$
 	inc	r7
 	sjmp	00127$
 00101$:
-;	./src/main.c:239: func_call(12);
+;	./src/main.c:243: func_call(12);
 	mov	dptr,#0x000c
 	lcall	_func_call
-;	./src/main.c:241: while(1)
+;	./src/main.c:245: while(1)
 00124$:
-;	./src/main.c:243: delay_ms(20);
+;	./src/main.c:247: delay_ms(20);
 	mov	dptr,#0x0014
 	lcall	_delay_ms
-;	./src/main.c:246: read_curINPUT();
+;	./src/main.c:250: read_curINPUT();
 	lcall	_read_curINPUT
-;	./src/main.c:247: for (int i = 0; i < 14; i++)
+;	./src/main.c:251: for (int i = 0; i < 14; i++)
 	mov	r6,#0x00
 	mov	r7,#0x00
 00130$:
@@ -1022,7 +1050,7 @@ _main:
 	xrl	a,#0x80
 	subb	a,#0x80
 	jnc	00124$
-;	./src/main.c:250: switch (state[i])
+;	./src/main.c:254: switch (state[i])
 	mov	a,r6
 	add	a,r6
 	mov	r4,a
@@ -1044,12 +1072,12 @@ _main:
 	cjne	r3,#0x00,00195$
 	sjmp	00106$
 00195$:
-;	./src/main.c:252: case BTN_RELEASED:
+;	./src/main.c:256: case BTN_RELEASED:
 	cjne	r2,#0x02,00115$
 	cjne	r3,#0x00,00115$
 	sjmp	00110$
 00102$:
-;	./src/main.c:253: if (curINPUT[i] == LEVEL_LOW)
+;	./src/main.c:257: if (curINPUT[i] == LEVEL_LOW)
 	mov	a,r4
 	add	a,#_curINPUT
 	mov	r0,a
@@ -1060,23 +1088,23 @@ _main:
 	mov	a,r2
 	orl	a,r3
 	jnz	00104$
-;	./src/main.c:254: state[i] = BTN_DEBOUNCED;
+;	./src/main.c:258: state[i] = BTN_DEBOUNCED;
 	mov	@r1,#0x01
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
 	sjmp	00115$
 00104$:
-;	./src/main.c:256: state[i] = BTN_RELEASED;
+;	./src/main.c:260: state[i] = BTN_RELEASED;
 	mov	@r1,#0x00
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
-;	./src/main.c:257: break;
-;	./src/main.c:258: case BTN_DEBOUNCED:
+;	./src/main.c:261: break;
+;	./src/main.c:262: case BTN_DEBOUNCED:
 	sjmp	00115$
 00106$:
-;	./src/main.c:259: if (curINPUT[i] == LEVEL_LOW)
+;	./src/main.c:263: if (curINPUT[i] == LEVEL_LOW)
 	mov	a,r4
 	add	a,#_curINPUT
 	mov	r0,a
@@ -1087,23 +1115,23 @@ _main:
 	mov	a,r2
 	orl	a,r3
 	jnz	00108$
-;	./src/main.c:260: state[i] = BTN_PRESSED;
+;	./src/main.c:264: state[i] = BTN_PRESSED;
 	mov	@r1,#0x02
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
 	sjmp	00115$
 00108$:
-;	./src/main.c:262: state[i] = BTN_RELEASED;
+;	./src/main.c:266: state[i] = BTN_RELEASED;
 	mov	@r1,#0x00
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
-;	./src/main.c:263: break;
-;	./src/main.c:264: case BTN_PRESSED:
+;	./src/main.c:267: break;
+;	./src/main.c:268: case BTN_PRESSED:
 	sjmp	00115$
 00110$:
-;	./src/main.c:265: if (curINPUT[i] == LEVEL_LOW)
+;	./src/main.c:269: if (curINPUT[i] == LEVEL_LOW)
 	mov	a,r4
 	add	a,#_curINPUT
 	mov	r0,a
@@ -1114,21 +1142,21 @@ _main:
 	mov	a,r4
 	orl	a,r5
 	jnz	00112$
-;	./src/main.c:266: state[i] = BTN_PRESSED;
+;	./src/main.c:270: state[i] = BTN_PRESSED;
 	mov	@r1,#0x02
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
 	sjmp	00115$
 00112$:
-;	./src/main.c:268: state[i] = BTN_RELEASED;
+;	./src/main.c:272: state[i] = BTN_RELEASED;
 	mov	@r1,#0x00
 	inc	r1
 	mov	@r1,#0x00
 	dec	r1
-;	./src/main.c:272: }
+;	./src/main.c:276: }
 00115$:
-;	./src/main.c:274: if ((state[i] == BTN_RELEASED) && (prestate[i] == BTN_PRESSED)){
+;	./src/main.c:278: if ((state[i] == BTN_RELEASED) && (prestate[i] == BTN_PRESSED)){
 	mov	a,r6
 	add	a,r6
 	mov	r4,a
@@ -1154,7 +1182,7 @@ _main:
 	dec	r1
 	cjne	r4,#0x02,00120$
 	cjne	r5,#0x00,00120$
-;	./src/main.c:276: if (i < 10){
+;	./src/main.c:280: if (i < 10){
 	clr	c
 	mov	a,r6
 	subb	a,#0x0a
@@ -1162,19 +1190,19 @@ _main:
 	xrl	a,#0x80
 	subb	a,#0x80
 	jnc	00117$
-;	./src/main.c:277: sequence();
+;	./src/main.c:281: sequence();
 	push	ar7
 	push	ar6
 	lcall	_sequence
 	pop	ar6
 	pop	ar7
-;	./src/main.c:278: display[0] = display_seg[i];
+;	./src/main.c:282: display[0] = display_seg[i];
 	mov	a,r6
 	add	a,#_display_seg
 	mov	r1,a
 	mov	ar5,@r1
 	mov	_display,r5
-;	./src/main.c:279: draw(display);
+;	./src/main.c:283: draw(display);
 	mov	dptr,#_display
 	mov	b,#0x40
 	push	ar7
@@ -1184,7 +1212,7 @@ _main:
 	pop	ar7
 	sjmp	00120$
 00117$:
-;	./src/main.c:281: func_call(i);
+;	./src/main.c:285: func_call(i);
 	mov	dpl,r6
 	mov	dph,r7
 	push	ar7
@@ -1193,7 +1221,7 @@ _main:
 	pop	ar6
 	pop	ar7
 00120$:
-;	./src/main.c:284: prestate[i] = state[i];
+;	./src/main.c:288: prestate[i] = state[i];
 	mov	a,r6
 	add	a,r6
 	mov	r4,a
@@ -1213,12 +1241,12 @@ _main:
 	inc	r1
 	mov	@r1,ar5
 	dec	r1
-;	./src/main.c:247: for (int i = 0; i < 14; i++)
+;	./src/main.c:251: for (int i = 0; i < 14; i++)
 	inc	r6
 	cjne	r6,#0x00,00204$
 	inc	r7
 00204$:
-;	./src/main.c:287: }
+;	./src/main.c:291: }
 	ljmp	00130$
 	.area CSEG    (CODE)
 	.area CONST   (CODE)
