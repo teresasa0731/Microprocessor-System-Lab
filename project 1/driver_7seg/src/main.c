@@ -102,15 +102,20 @@ void Initial(void)
 //write all 8 digits/lines of a single 7-segment display/dot matrix.
 void draw(unsigned char *picture){
 
-  	unsigned char i;
-	if(picture == display){
-		patt = 0x80;
-		led = ~patt;
-		delay_ms(20);
-	}
+  	unsigned char value;
+   	unsigned char i;
     for(i=1; i<=8; i++) {
-        Write7219(i, display[i-1]);
-		
+		value = *(picture+i-1);
+		if(value == display[i-1]){
+			patt = 0x80;
+			led = ~patt;
+			delay_ms(20);
+		}else{
+			patt = 0x08;
+			led = ~patt;
+			delay_ms(20);
+		}
+        Write7219(i, value);
     }
 }
 
@@ -170,8 +175,6 @@ void sequence(void){
 	for(int a = 7; a > 0; a--){
 		display[a] = display[a-1];
 	}
-	//patt =0x00;
-	delay_ms(100);
 }
 
 void func_call(unsigned int cmd){
@@ -183,7 +186,11 @@ void func_call(unsigned int cmd){
 			patt = 0x08;
 		else if (patt == 0x00)
 			patt = 0x08;
-		
+
+		op_cnt++;
+		if(op_cnt > 4)
+			op_cnt = 0;
+
 		patt = patt << 1;
 		led = ~patt;
 		delay_ms(20);
