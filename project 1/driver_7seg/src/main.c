@@ -43,14 +43,32 @@
 void Write7219(unsigned char address,unsigned char dat);
 void sendbyte(unsigned char address,unsigned char dat);
 void Initial(void) ;
-void draw(unsigned char *picture);
+void draw(void);
 void delay_ms(unsigned int input_ms);
 void scan_row(unsigned int row);
+void sequence(unsigned int op);
+unsigned int turn_to_NUM(void);
+void func_call(unsigned int cmd);
+void Clean(void);
 
 unsigned int curINPUT[14], state[14], prestate[14];
 unsigned char display[8];
-unsigned char patt = 0x08,patt1; // led value
-unsigned int op_cnt = 0;
+unsigned char patt = 0x08; // led value
+unsigned int num1,num2,flag;
+unsigned char display_seg[] = {
+	0x30,  	// 1
+	0x6D,  	// 2
+	0x79,  	// 3
+	0x33,  	// 4
+	0x5B,  	// 5
+	0x5F,  	// 6
+	0x70,  	// 7
+	0x7F,  	// 8
+	0X7B,	// 9
+	0X7E,	// 0
+	0X4F	// E
+};
+
 
 //send address and data into max7219
 void sendbyte(unsigned char address,unsigned char dat){
@@ -100,25 +118,14 @@ void Initial(void)
 }
 
 //write all 8 digits/lines of a single 7-segment display/dot matrix.
-void draw(unsigned char *picture){
-
-  	unsigned char value;
-   	unsigned char i;
+void draw(void){
+  	unsigned char i;
     for(i=1; i<=8; i++) {
-		value = *(picture+i-1);
-		if(value == display[i-1]){
-			patt = 0x80;
-			led = ~patt;
-			delay_ms(20);
-		}else{
-			patt = 0x08;
-			led = ~patt;
-			delay_ms(20);
-		}
-        Write7219(i, value);
+        Write7219(i, display[i-1]);
     }
 }
 
+//cyclic scanning each row
 void scan_row(unsigned int row)
 {
 	switch (row)
@@ -152,9 +159,10 @@ void scan_row(unsigned int row)
 	}
 }
 
+//gain input data
 void read_curINPUT(void)
 {
-	for (int i = 0; i < 4; i++)
+	for (unsigned int i = 0; i < 4; i++)
 	{
 		scan_row(i);
 		if(i==3)
@@ -171,70 +179,135 @@ void read_curINPUT(void)
 	curINPUT[13] = but4;
 }
 
-void sequence(void){
-	for(int a = 7; a > 0; a--){
-		display[a] = display[a-1];
+//push(1) back(0) display sequence
+void sequence(unsigned int op){
+	unsigned int a;
+	if(op){
+		for(a = 7; a > 0; a--){
+			display[a] = display[a-1];
+		}
+	}else{
+		for(a = 0; a < 7; a++){
+			display[a] = display[a+1];
+			display[a+1] = 0x00;
+		}
 	}
 }
 
-void func_call(unsigned int cmd){
-
-	switch (cmd)
-	{
-	case 10:	//op
-		if(patt == 0x80)
-			patt = 0x08;
-		else if (patt == 0x00)
-			patt = 0x08;
-
-		op_cnt++;
-		if(op_cnt > 4)
-			op_cnt = 0;
-
-		patt = patt << 1;
-		led = ~patt;
-		delay_ms(20);
-		break;
-	case 11:	//back <-
-		patt1 = 0x01;
-		led = ~patt1;
-		delay_ms(20);
-		break;
-	case 12:	//AC
-		for(int a = 0; a < 8; a++){
-			display[a] = 0x00;
-			Write7219(a+1,0x00);
+//turn display into num
+unsigned int turn_to_NUM(void){
+	unsigned int num = 0,deg = 1,i,a;
+	for(i=0;i<8;i++){
+		if(display[i] == 0x00){
+			continue;
+		}else{
+			for(a=0;a<9;a++){
+				if(display[i] == display_seg[a]){
+					num = num + (a+1)*deg;
+					break;
+				}
+			}
+			if(display[i] == display_seg[9])
+				num = num*10;
+			deg = deg *10;
 		}
-		Write7219(0x01,0x08);
-		patt1 = 0x02;
-		led = ~patt1;
-		delay_ms(20);
+	}
+	Clean();
+	return num;
+}
+
+//do calculation by led signal
+void calculate_OP(unsigned char op){
+	switch (op)
+	{
+	case 0x08:
+		num1 = num1 + num2;
 		break;
-	case 13:	//equal=
-		patt1 = 0x04;
-		led = ~patt1;
-		delay_ms(20);
+	case 0x10:
+		num1 = num1 - num2;
+		break;
+	case 0x20:
+		num1 = num1 * num2;
+		break;
+	case 0x40:
+		num1 = num1 / num2;
 		break;
 	default:
 		break;
 	}
 }
 
-// 7-segment display
-unsigned char display_seg[] = {
-	0x30,  	// 1
-	0x6D,  	// 2
-	0x79,  	// 3
-	0x33,  	// 4
-	0x5B,  	// 5
-	0x5F,  	// 6
-	0x70,  	// 7
-	0x7F,  	// 8
-	0X7B,	// 9
-	0X7E,	// 0
-	0X4F	// E
-};
+//turn ans into display mode
+void turn_to_CHAR(int n){
+	unsigned int c,i;
+	for(i=0;i<8;i++){
+		c = n % 10;
+		if(c>0)
+			display[i] = display_seg[c];
+		else if (c == 0)
+			display[i] = display_seg[9];
+		n = n/10;
+		if(n == 0)
+			break;
+	}
+}
 
+//function operator
+void func_call(unsigned int cmd){
+	switch (cmd)
+	{
+	case 10:	//op
+		unsigned char op;
+		//led display 0x08->0x10->0x20->0x40
+		if(patt == 0x80)
+			patt = 0x08;
+		else if (patt == 0x00)
+			patt = 0x08;
+		patt = patt << 1;
+		led = ~patt;
+		delay_ms(20);
+
+		//flag = 1:start mode,flag = 0:get num2 and do operate
+		if(flag){
+			num1 = turn_to_NUM();
+			flag = 0;
+		}else{
+			num2 = turn_to_NUM();
+			op = patt >> 1;
+			if(op == 0x04)
+				op = 0x40;
+			calculate_OP(op);
+			turn_to_CHAR(num1);
+			draw();
+		}
+		break;
+	case 11:	//back <-
+		sequence(0);
+		draw();
+		break;
+	case 12:	//AC
+		Clean();
+		break;
+	case 13:	//equal=
+		num2 = turn_to_NUM();
+		calculate_OP(patt);
+		turn_to_CHAR(num1);
+		draw();
+		break;
+	default:
+		break;
+	}
+}
+
+
+void Clean(void){
+	for(unsigned int a = 0; a < 8; a++){
+		display[a] = 0x00;
+		Write7219(a+1,0x00);
+	}
+	Write7219(0x01,0x08);
+	flag = 1;
+}
 
 
 void main(void)
@@ -247,12 +320,11 @@ void main(void)
 		state[i] = BTN_RELEASED;
 		prestate[i] = BTN_RELEASED;
 	}
-	func_call(12);
+	Clean();
 
 	while(1)
 	{
 		delay_ms(20);
-		
 		//detect keyboard
 		read_curINPUT();
 		for (int i = 0; i < 14; i++)
@@ -283,11 +355,10 @@ void main(void)
 			}
 
 			if ((state[i] == BTN_RELEASED) && (prestate[i] == BTN_PRESSED)){
-
 				if (i < 10){
-					sequence();
+					sequence(1);
 					display[0] = display_seg[i];
-					draw(display);
+					draw();
 				}else{
 					func_call(i);
 				}
