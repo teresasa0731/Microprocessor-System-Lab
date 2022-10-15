@@ -51,10 +51,18 @@ unsigned int turn_to_NUM(void);
 void func_call(unsigned int cmd);
 void Clean(void);
 
-unsigned int curINPUT[14], state[14], prestate[14];
+typedef struct// 6 bytes
+{
+    unsigned char currINPUT : 1; // bit 0
+    unsigned char currState : 2; // bit 1,2
+    unsigned char prevState: 2; // bit 3,4
+}STATES;
+
+STATES states[14];
 unsigned int input[8];
 unsigned char patt = 0x08; // led value
 unsigned int num1,num2,flag;
+unsigned int a,c;
 static unsigned char display_seg[] = {
 	0X7E,	// 0
 	0x30,  	// 1
@@ -66,21 +74,21 @@ static unsigned char display_seg[] = {
 	0x70,  	// 7
 	0x7F,  	// 8
 	0X7B,	// 9
-	0X4F	// E
+	0X4F,	// E
+	0x00	//empty
 };
 
 
 //send address and data into max7219
 void sendbyte(unsigned char address,unsigned char dat){
- 	unsigned char i;
-    for (i=0;i<8;i++)        //get last 8 bits(address)
+    for (a=0;a<8;a++)        //get last 8 bits(address)
     {
        CLK = 0;
        DOUT = ( address & 0x80);   //get msb and shift left
        address <<= 1;
        CLK = 1;
     }
-    for (i=0;i<8;i++)      //get first 8 bits(data)
+    for (a=0;a<8;a++)      //get first 8 bits(data)
     {
        CLK = 0;
        DOUT=( dat & 0x80);    //get msb and shit left
@@ -119,14 +127,9 @@ void Initial(void)
 
 //write all 8 digits/lines of a single 7-segment display/dot matrix.
 void draw(void){
-  	unsigned char c,i;
-	for(i=0;i<8;i++){
-		for(c=0;c<10;c++){
-			if(input[i] == display_seg[c]){
-				Write7219(i, display_seg[c]);
-				break;
-			}
-		}
+	unsigned char i;
+	for(i = 1;i < 9;i++){
+		Write7219(i, display_seg[input[i-1]]);
 	}
 }
 
@@ -165,28 +168,27 @@ void scan_row(unsigned int row)
 }
 
 //gain input data
-void read_curINPUT(void)
+void read_currINPUT(void)
 {
-	for (unsigned int i = 0; i < 4; i++)
+	for (a = 0; a < 4; a++)
 	{
-		scan_row(i);
-		if(i==3)
-			curINPUT[9] = INPUT2;
+		scan_row(a);
+		if(a==3)
+			states[0].currINPUT= INPUT2;
 		else{
-			curINPUT[i * 3 + 0] = INPUT1;
-			curINPUT[i * 3 + 1] = INPUT2;
-			curINPUT[i * 3 + 2] = INPUT3;
+			states[a * 3 + 1].currINPUT = INPUT1;
+			states[a * 3 + 2].currINPUT = INPUT2;
+			states[a * 3 + 3].currINPUT = INPUT3;
 		}
 	}
-	curINPUT[10] = but1;
-	curINPUT[11] = but2;
-	curINPUT[12] = but3;
-	curINPUT[13] = but4;
+	states[10].currINPUT = but1;
+	states[11].currINPUT = but2;
+	states[12].currINPUT = but3;
+	states[13].currINPUT = but4;
 }
 
 //push(1) back(0) display sequence
 void sequence(unsigned int op){
-	unsigned int a;
 	if(op){
 		for(a = 7; a > 0; a--){
 			input[a] = input[a-1];
@@ -194,16 +196,16 @@ void sequence(unsigned int op){
 	}else{
 		for(a = 0; a < 7; a++){
 			input[a] = input[a+1];
-			input[a+1] = 0;
+			input[a+1] = 11;
 		}
 	}
 }
 
 //turn input into num
 unsigned int turn_to_NUM(void){
-	unsigned int num = 0,i,deg = 1;
-	for(i=0;i<8;i++){
-		num = num + input[i]*deg;
+	unsigned int num = 0,deg = 1;
+	for(a=0;a<8;a++){
+		num = num + input[a]*deg;
 		deg = deg *10;
 	}
 	return num;
@@ -232,9 +234,8 @@ void calculate_OP(unsigned char op){
 
 //turn ans into display mode
 void turn_to_CHAR(int n){
-	unsigned int i;
-	for(i=0;i<8;i++){
-		input[i] = n%10;
+	for(a=0;a<8;a++){
+		input[a] = n%10;
 		n = n/10;
 		if(n == 0)
 			break;
@@ -290,9 +291,10 @@ void func_call(unsigned int cmd){
 
 
 void Clean(void){
-	for(unsigned int a = 0; a < 8; a++){
-		input[a] = 0;
-		Write7219(a+1,0x00);
+	unsigned char i;
+	for(i = 1; i < 9; i++){
+		input[i-1] = 11;
+		Write7219(i,0x00);
 	}
 	Write7219(0x01,0x08);
 	flag = 1;
@@ -303,11 +305,11 @@ void main(void)
 {
 	// initialize
 	Initial();
-	for (int i = 0; i < 14; i++)
+	for (a = 0; a < 14; a++)
 	{
-		curINPUT[i] = LEVEL_HIGH;
-		state[i] = BTN_RELEASED;
-		prestate[i] = BTN_RELEASED;
+		states[a].currINPUT = LEVEL_HIGH;
+		states[a].currState = BTN_RELEASED;
+		states[a].prevState = BTN_RELEASED;
 	}
 	Clean();
 
@@ -315,44 +317,46 @@ void main(void)
 	{
 		delay_ms(20);
 		//detect keyboard
-		read_curINPUT();
-		for (int i = 0; i < 14; i++)
+		read_currINPUT();
+		for (unsigned int i = 0; i < 14; i++)
 		{
 			// finate state machine
-			switch (state[i])
+			switch (states[i].currState)
 			{
 				case BTN_RELEASED:
-					if (curINPUT[i] == LEVEL_LOW)
-						state[i] = BTN_DEBOUNCED;
+					if (states[i].currINPUT == LEVEL_LOW)
+						states[i].currState = BTN_DEBOUNCED;
 					else
-						state[i] = BTN_RELEASED;
+						states[i].currState = BTN_RELEASED;
 					break;
 				case BTN_DEBOUNCED:
-					if (curINPUT[i] == LEVEL_LOW)
-						state[i] = BTN_PRESSED;
+					if (states[i].currINPUT == LEVEL_LOW)
+						states[i].currState = BTN_PRESSED;
 					else
-						state[i] = BTN_RELEASED;
+						states[i].currState = BTN_RELEASED;
 					break;
 				case BTN_PRESSED:
-					if (curINPUT[i] == LEVEL_LOW)
-						state[i] = BTN_PRESSED;
+					if (states[i].currINPUT == LEVEL_LOW)
+						states[i].currState = BTN_PRESSED;
 					else
-						state[i] = BTN_RELEASED;
+						states[i].currState = BTN_RELEASED;
 					break;
 				default:
 					break;
 			}
 
-			if ((state[i] == BTN_RELEASED) && (prestate[i] == BTN_PRESSED)){
+			if ((states[i].currState == BTN_RELEASED) && (states[i].prevState == BTN_PRESSED)){
 				if (i < 10){
 					sequence(1);
 					input[0] = i;
+					//Write7219(1, display_seg[input[0]]);
+					//Write7219(2, display_seg[input[1]]);
 					draw();
 				}else{
 					func_call(i);
 				}
 			}
-			prestate[i] = state[i];
+			states[i].prevState = states[i].currState;
 		}
 	}
 }
