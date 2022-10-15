@@ -24,17 +24,13 @@
 #define but4 P2_1      //=
 
 // key state
-#define LEVEL_HIGH	0x01
-#define LEVEL_LOW	0x00
+#define LEVEL_HIGH 1
+#define LEVEL_LOW 0
 
 // button state
-#define BTN_RELEASED_cur	0x04
-#define BTN_DEBOUNCED_cur	0x08
-#define BTN_PRESSED_cur		0x0C
-
-#define BTN_RELEASED_pre	0x10
-#define BTN_DEBOUNCED_pre	0x20
-#define BTN_PRESSED_pre		0x30
+#define BTN_RELEASED 0
+#define BTN_DEBOUNCED 1
+#define BTN_PRESSED 2
 
 //define max7219 reigister
 #define DECODE_MODE  0x09
@@ -46,7 +42,7 @@
 //function declaration
 void Write7219(unsigned char address,unsigned char dat);
 void sendbyte(unsigned char address,unsigned char dat);
-void Initial(void);
+void Initial(void) ;
 void draw(void);
 void delay_ms(unsigned int input_ms);
 void scan_row(unsigned int row);
@@ -55,12 +51,7 @@ unsigned int turn_to_NUM(void);
 void func_call(unsigned int cmd);
 void Clean(void);
 
-unsigned char system_states[14];
-#define MASK_current_INPUT 0x03
-#define MASK_current_STATE  0x0C
-#define MASK_previous_STATE 0x30
-
-//unsigned int curINPUT[14], state[14], prestate[14];
+unsigned int curINPUT[14], state[14], prestate[14];
 unsigned int input[8];
 unsigned char patt = 0x08; // led value
 unsigned int num1,num2,flag;
@@ -180,17 +171,17 @@ void read_curINPUT(void)
 	{
 		scan_row(i);
 		if(i==3)
-			system_states[9] = INPUT2;
+			curINPUT[9] = INPUT2;
 		else{
-			system_states[i * 3 + 0] = INPUT1;
-			system_states[i * 3 + 1] = INPUT2;
-			system_states[i * 3 + 2] = INPUT3;
+			curINPUT[i * 3 + 0] = INPUT1;
+			curINPUT[i * 3 + 1] = INPUT2;
+			curINPUT[i * 3 + 2] = INPUT3;
 		}
 	}
-	system_states[10] = but1;
-	system_states[11] = but2;
-	system_states[12] = but3;
-	system_states[13] = but4;
+	curINPUT[10] = but1;
+	curINPUT[11] = but2;
+	curINPUT[12] = but3;
+	curINPUT[13] = but4;
 }
 
 //push(1) back(0) display sequence
@@ -314,7 +305,9 @@ void main(void)
 	Initial();
 	for (int i = 0; i < 14; i++)
 	{
-		system_status[i] = LEVEL_HIGH + BTN_RELEASED_cur + BTN_RELEASED_pre;
+		curINPUT[i] = LEVEL_HIGH;
+		state[i] = BTN_RELEASED;
+		prestate[i] = BTN_RELEASED;
 	}
 	Clean();
 
@@ -326,25 +319,25 @@ void main(void)
 		for (int i = 0; i < 14; i++)
 		{
 			// finate state machine
-			switch (system_status[i] & MASK_current_STATE)
+			switch (state[i])
 			{
-				case BTN_RELEASED_cur:
-					if (system_status[i] & MASK_current_INPUT == LEVEL_LOW)
-						state[i] = BTN_DEBOUNCED_cur;
+				case BTN_RELEASED:
+					if (curINPUT[i] == LEVEL_LOW)
+						state[i] = BTN_DEBOUNCED;
 					else
-						state[i] = BTN_RELEASED_cur;
+						state[i] = BTN_RELEASED;
 					break;
-				case BTN_DEBOUNCED_cur:
-					if (system_status[i] & MASK_current_INPUT == LEVEL_LOW)
-						state[i] = BTN_PRESSED_cur;
+				case BTN_DEBOUNCED:
+					if (curINPUT[i] == LEVEL_LOW)
+						state[i] = BTN_PRESSED;
 					else
-						state[i] = BTN_RELEASED_cur;
+						state[i] = BTN_RELEASED;
 					break;
-				case BTN_PRESSED_cur:
-					if (system_status[i] & MASK_current_INPUT == LEVEL_LOW)
-						state[i] = BTN_PRESSED_cur;
+				case BTN_PRESSED:
+					if (curINPUT[i] == LEVEL_LOW)
+						state[i] = BTN_PRESSED;
 					else
-						state[i] = BTN_RELEASED_cur;
+						state[i] = BTN_RELEASED;
 					break;
 				default:
 					break;
