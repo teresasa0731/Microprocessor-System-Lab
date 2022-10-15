@@ -52,10 +52,11 @@ void func_call(unsigned int cmd);
 void Clean(void);
 
 unsigned int curINPUT[14], state[14], prestate[14];
-unsigned char display[8];
+unsigned int input[8];
 unsigned char patt = 0x08; // led value
 unsigned int num1,num2,flag;
-unsigned char display_seg[] = {
+static unsigned char display_seg[] = {
+	0X7E,	// 0
 	0x30,  	// 1
 	0x6D,  	// 2
 	0x79,  	// 3
@@ -65,7 +66,6 @@ unsigned char display_seg[] = {
 	0x70,  	// 7
 	0x7F,  	// 8
 	0X7B,	// 9
-	0X7E,	// 0
 	0X4F	// E
 };
 
@@ -119,10 +119,15 @@ void Initial(void)
 
 //write all 8 digits/lines of a single 7-segment display/dot matrix.
 void draw(void){
-  	unsigned char i;
-    for(i=1; i<=8; i++) {
-        Write7219(i, display[i-1]);
-    }
+  	unsigned char c,i;
+	for(i=0;i<8;i++){
+		for(c=0;c<10;c++){
+			if(input[i] == display_seg[c]){
+				Write7219(i, display_seg[c]);
+				break;
+			}
+		}
+	}
 }
 
 //cyclic scanning each row
@@ -184,35 +189,23 @@ void sequence(unsigned int op){
 	unsigned int a;
 	if(op){
 		for(a = 7; a > 0; a--){
-			display[a] = display[a-1];
+			input[a] = input[a-1];
 		}
 	}else{
 		for(a = 0; a < 7; a++){
-			display[a] = display[a+1];
-			display[a+1] = 0x00;
+			input[a] = input[a+1];
+			input[a+1] = 0;
 		}
 	}
 }
 
-//turn display into num
+//turn input into num
 unsigned int turn_to_NUM(void){
-	unsigned int num = 0,deg = 1,i,a;
+	unsigned int num = 0,i,deg = 1;
 	for(i=0;i<8;i++){
-		if(display[i] == 0x00){
-			continue;
-		}else{
-			for(a=0;a<9;a++){
-				if(display[i] == display_seg[a]){
-					num = num + (a+1)*deg;
-					break;
-				}
-			}
-			if(display[i] == display_seg[9])
-				num = num*10;
-			deg = deg *10;
-		}
+		num = num + input[i]*deg;
+		deg = deg *10;
 	}
-	Clean();
 	return num;
 }
 
@@ -239,13 +232,9 @@ void calculate_OP(unsigned char op){
 
 //turn ans into display mode
 void turn_to_CHAR(int n){
-	unsigned int c,i;
+	unsigned int i;
 	for(i=0;i<8;i++){
-		c = n % 10;
-		if(c>0)
-			display[i] = display_seg[c];
-		else if (c == 0)
-			display[i] = display_seg[9];
+		input[i] = n%10;
 		n = n/10;
 		if(n == 0)
 			break;
@@ -302,7 +291,7 @@ void func_call(unsigned int cmd){
 
 void Clean(void){
 	for(unsigned int a = 0; a < 8; a++){
-		display[a] = 0x00;
+		input[a] = 0;
 		Write7219(a+1,0x00);
 	}
 	Write7219(0x01,0x08);
@@ -357,7 +346,7 @@ void main(void)
 			if ((state[i] == BTN_RELEASED) && (prestate[i] == BTN_PRESSED)){
 				if (i < 10){
 					sequence(1);
-					display[0] = display_seg[i];
+					input[0] = i;
 					draw();
 				}else{
 					func_call(i);

@@ -48,15 +48,15 @@ C:   00000003  l_GSINIT0
 C:   00000006  l_HOME                          
 C:   00000006  s_GSINIT0                       
 C:   00000008  l_REG_BANK_0                    
+C:   00000008  s_OSEG                          
 C:   00000008  s_REG_BANK_1                    
 C:   00000009  s_GSINIT1                       
 C:   00000009  s_GSINIT2                       
 C:   0000000A  l_GSINIT2                       
+C:   0000000A  s_SSEG                          
 C:   00000010  s_REG_BANK_2                    
 C:   00000013  s_GSINIT3                       
 C:   00000018  s_BIT_BANK                      
-C:   00000018  s_OSEG                          
-C:   00000018  s_REG_BANK_3                    
 ASxxxx Linker V03.00 + NoICE + sdld,  page 2.
 Hexadecimal  [32-Bits]
 
@@ -66,6 +66,7 @@ CABS                                00000000    00000000 =           0. bytes (A
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
+C:   00000018  s_REG_BANK_3                    
 C:   00000020  s_BSEG_BYTES                    
 C:   00000020  s__CODE                         
 C:   00000022  l_GSINIT3                       
@@ -75,14 +76,13 @@ C:   00000035  s_GSINIT4
 C:   0000005F  s_GSINIT                        
 C:   0000005F  s_GSINIT5                       
 C:   00000080  l_DSEG                          
-C:   00000080  l_SSEG                          
-C:   00000080  s_SSEG                          
 C:   00000083  s_GSFINAL                       
 C:   00000086  s_CSEG                          
+C:   000000F6  l_SSEG                          
 C:   00000100  l_IRAM                          
-C:   000006B9  l_CSEG                          
-C:   0000073F  s_CONST                         
-C:   0000073F  s_XINIT                         
+C:   000006A4  l_CSEG                          
+C:   0000072A  s_CONST                         
+C:   0000072A  s_XINIT                         
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 3.
 Hexadecimal  [32-Bits]
@@ -219,42 +219,40 @@ DSEG                                00000000    00000080 =         128. bytes (R
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     00000008  _curINPUT                          main
-     00000024  _state                             main
-     00000040  _prestate                          main
-     0000005C  _display                           main
-     00000064  _patt                              main
-     00000065  _num1                              main
-     00000067  _num2                              main
-     00000069  _flag                              main
-     0000006B  _display_seg                       main
-     00000076  _Write7219_PARM_2                  main
-
+     00000018  _curINPUT                          main
+     00000034  _state                             main
+     00000050  _prestate                          main
+     0000006C  _input                             main
+     0000007C  _patt                              main
+     0000007D  _num1                              main
+     0000007F  _num2                              main
+     00000081  _flag                              main
+     0000008E  _Write7219_PARM_2                  main
 ASxxxx Linker V03.00 + NoICE + sdld,  page 7.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-OSEG                                00000018    00000002 =           2. bytes (REL,OVR)
+OSEG                                00000008    00000002 =           2. bytes (REL,OVR)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     00000018  __divsint_PARM_2                   _divuint
-     00000018  __divuint_PARM_2                   _divuint
-     00000018  __modsint_PARM_2                   _moduint
-     00000018  __moduint_PARM_2                   _moduint
-     00000018  __mulint_PARM_2                    _mulint
-     00000018  _sendbyte_PARM_2                   main
+     00000008  __divsint_PARM_2                   _divuint
+     00000008  __divuint_PARM_2                   _divuint
+     00000008  __modsint_PARM_2                   _moduint
+     00000008  __moduint_PARM_2                   _moduint
+     00000008  __mulint_PARM_2                    _mulint
+     00000008  _sendbyte_PARM_2                   main
 ASxxxx Linker V03.00 + NoICE + sdld,  page 8.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-SSEG                                00000080    00000080 =         128. bytes (REL,OVR)
+SSEG                                0000000A    000000F6 =         246. bytes (REL,OVR)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     00000080  __start__stack                     main
+     0000000A  __start__stack                     main
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 9.
 Hexadecimal  [32-Bits]
@@ -333,7 +331,7 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-CSEG                                00000086    000006B9 =        1721. bytes (REL,CON,CODE)
+CSEG                                00000086    000006A4 =        1700. bytes (REL,CON,CODE)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -341,23 +339,23 @@ C:   00000086  _sendbyte                          main
 C:   000000BD  _Write7219                         main
 C:   000000DC  _Initial                           main
 C:   0000011E  _draw                              main
-C:   00000139  _scan_row                          main
-C:   00000177  _read_curINPUT                     main
-C:   0000021C  _sequence                          main
-C:   00000265  _turn_to_NUM                       main
-C:   0000031F  _calculate_OP                      main
-C:   0000037C  _turn_to_CHAR                      main
-C:   000003F1  _func_call                         main
-C:   00000499  _Clean                             main
-C:   000004D7  _main                              main
-C:   0000062D  _delay_ms                          delay
-C:   0000063A  __divuint                          _divuint
-C:   00000663  __mulint                           _mulint
-C:   00000663  __mulint_dummy                     _mulint
-C:   00000680  __moduint                          _moduint
-C:   000006CD  __modsint                          _modsint
-C:   00000703  __divsint                          _divsint
-C:   0000073B  __sdcc_external_startup            _startup
+C:   0000015B  _scan_row                          main
+C:   00000199  _read_curINPUT                     main
+C:   0000023E  _sequence                          main
+C:   000002A7  _turn_to_NUM                       main
+C:   00000313  _calculate_OP                      main
+C:   00000370  _turn_to_CHAR                      main
+C:   000003D8  _func_call                         main
+C:   00000480  _Clean                             main
+C:   000004C6  _main                              main
+C:   00000618  _delay_ms                          delay
+C:   00000625  __divuint                          _divuint
+C:   0000064E  __mulint                           _mulint
+C:   0000064E  __mulint_dummy                     _mulint
+C:   0000066B  __moduint                          _moduint
+C:   000006B8  __modsint                          _modsint
+C:   000006EE  __divsint                          _divsint
+C:   00000726  __sdcc_external_startup            _startup
 ASxxxx Linker V03.00 + NoICE + sdld,  page 17.
 
 Files Linked                              [ module(s) ]
