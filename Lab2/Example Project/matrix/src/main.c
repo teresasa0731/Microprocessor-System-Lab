@@ -41,7 +41,7 @@ void main(void)
 	Initial();               //MAX7219 initialize
 
 	while(1) {
-		shiftdraw(hi);       //display hi love
-		// draw(hi);
+		//shiftdraw(hi);       //display hi love
+		draw(hi);
 	}
 }

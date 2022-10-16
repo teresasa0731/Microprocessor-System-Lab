@@ -1,0 +1,397 @@
+                                      1 ;--------------------------------------------------------
+                                      2 ; File Created by SDCC : free open source ISO C Compiler 
+                                      3 ; Version 4.2.8 #13684 (MINGW64)
+                                      4 ;--------------------------------------------------------
+                                      5 	.module draw
+                                      6 	.optsdcc -mmcs51 --model-small
+                                      7 	
+                                      8 ;--------------------------------------------------------
+                                      9 ; Public variables in this module
+                                     10 ;--------------------------------------------------------
+                                     11 	.globl _Writesingle7219
+                                     12 	.globl _Write7219
+                                     13 	.globl _delay_ms
+                                     14 	.globl _singledraw_PARM_2
+                                     15 	.globl _Initial
+                                     16 	.globl _draw
+                                     17 	.globl _singledraw
+                                     18 	.globl _shiftdraw
+                                     19 ;--------------------------------------------------------
+                                     20 ; special function registers
+                                     21 ;--------------------------------------------------------
+                                     22 	.area RSEG    (ABS,DATA)
+      000000                         23 	.org 0x0000
+                                     24 ;--------------------------------------------------------
+                                     25 ; special function bits
+                                     26 ;--------------------------------------------------------
+                                     27 	.area RSEG    (ABS,DATA)
+      000000                         28 	.org 0x0000
+                                     29 ;--------------------------------------------------------
+                                     30 ; overlayable register banks
+                                     31 ;--------------------------------------------------------
+                                     32 	.area REG_BANK_0	(REL,OVR,DATA)
+      000000                         33 	.ds 8
+                                     34 ;--------------------------------------------------------
+                                     35 ; internal ram data
+                                     36 ;--------------------------------------------------------
+                                     37 	.area DSEG    (DATA)
+      000000                         38 _singledraw_PARM_2:
+      000000                         39 	.ds 3
+      000003                         40 _shiftdraw_shift_65536_21:
+      000003                         41 	.ds 1
+      000004                         42 _shiftdraw_picture_65536_20:
+      000004                         43 	.ds 3
+                                     44 ;--------------------------------------------------------
+                                     45 ; overlayable items in internal ram
+                                     46 ;--------------------------------------------------------
+                                     47 ;--------------------------------------------------------
+                                     48 ; indirectly addressable internal ram data
+                                     49 ;--------------------------------------------------------
+                                     50 	.area ISEG    (DATA)
+                                     51 ;--------------------------------------------------------
+                                     52 ; absolute internal ram data
+                                     53 ;--------------------------------------------------------
+                                     54 	.area IABS    (ABS,DATA)
+                                     55 	.area IABS    (ABS,DATA)
+                                     56 ;--------------------------------------------------------
+                                     57 ; bit data
+                                     58 ;--------------------------------------------------------
+                                     59 	.area BSEG    (BIT)
+                                     60 ;--------------------------------------------------------
+                                     61 ; paged external ram data
+                                     62 ;--------------------------------------------------------
+                                     63 	.area PSEG    (PAG,XDATA)
+                                     64 ;--------------------------------------------------------
+                                     65 ; uninitialized external ram data
+                                     66 ;--------------------------------------------------------
+                                     67 	.area XSEG    (XDATA)
+                                     68 ;--------------------------------------------------------
+                                     69 ; absolute external ram data
+                                     70 ;--------------------------------------------------------
+                                     71 	.area XABS    (ABS,XDATA)
+                                     72 ;--------------------------------------------------------
+                                     73 ; initialized external ram data
+                                     74 ;--------------------------------------------------------
+                                     75 	.area XISEG   (XDATA)
+                                     76 	.area HOME    (CODE)
+                                     77 	.area GSINIT0 (CODE)
+                                     78 	.area GSINIT1 (CODE)
+                                     79 	.area GSINIT2 (CODE)
+                                     80 	.area GSINIT3 (CODE)
+                                     81 	.area GSINIT4 (CODE)
+                                     82 	.area GSINIT5 (CODE)
+                                     83 	.area GSINIT  (CODE)
+                                     84 	.area GSFINAL (CODE)
+                                     85 	.area CSEG    (CODE)
+                                     86 ;--------------------------------------------------------
+                                     87 ; global & static initialisations
+                                     88 ;--------------------------------------------------------
+                                     89 	.area HOME    (CODE)
+                                     90 	.area GSINIT  (CODE)
+                                     91 	.area GSFINAL (CODE)
+                                     92 	.area GSINIT  (CODE)
+                                     93 ;------------------------------------------------------------
+                                     94 ;Allocation info for local variables in function 'shiftdraw'
+                                     95 ;------------------------------------------------------------
+                                     96 ;shift                     Allocated with name '_shiftdraw_shift_65536_21'
+                                     97 ;picture                   Allocated with name '_shiftdraw_picture_65536_20'
+                                     98 ;i                         Allocated to registers r4 
+                                     99 ;------------------------------------------------------------
+                                    100 ;	./src/draw.c:44: static char shift = 0;
+      000000 75*03 00         [24]  101 	mov	_shiftdraw_shift_65536_21,#0x00
+                                    102 ;--------------------------------------------------------
+                                    103 ; Home
+                                    104 ;--------------------------------------------------------
+                                    105 	.area HOME    (CODE)
+                                    106 	.area HOME    (CODE)
+                                    107 ;--------------------------------------------------------
+                                    108 ; code
+                                    109 ;--------------------------------------------------------
+                                    110 	.area CSEG    (CODE)
+                                    111 ;------------------------------------------------------------
+                                    112 ;Allocation info for local variables in function 'Initial'
+                                    113 ;------------------------------------------------------------
+                                    114 ;i                         Allocated to registers r7 
+                                    115 ;------------------------------------------------------------
+                                    116 ;	./src/draw.c:6: void Initial(void)
+                                    117 ;	-----------------------------------------
+                                    118 ;	 function Initial
+                                    119 ;	-----------------------------------------
+      000000                        120 _Initial:
+                           000007   121 	ar7 = 0x07
+                           000006   122 	ar6 = 0x06
+                           000005   123 	ar5 = 0x05
+                           000004   124 	ar4 = 0x04
+                           000003   125 	ar3 = 0x03
+                           000002   126 	ar2 = 0x02
+                           000001   127 	ar1 = 0x01
+                           000000   128 	ar0 = 0x00
+                                    129 ;	./src/draw.c:9: Write7219(SHUT_DOWN, 0x01);          // normal mode(0xX1)
+      000000 75*00 01         [24]  130 	mov	_Write7219_PARM_2,#0x01
+      000003 75 82 0C         [24]  131 	mov	dpl,#0x0c
+      000006 12r00r00         [24]  132 	lcall	_Write7219
+                                    133 ;	./src/draw.c:10: Write7219(DISPLAY_TEST, 0x00); 
+      000009 75*00 00         [24]  134 	mov	_Write7219_PARM_2,#0x00
+      00000C 75 82 0F         [24]  135 	mov	dpl,#0x0f
+      00000F 12r00r00         [24]  136 	lcall	_Write7219
+                                    137 ;	./src/draw.c:11: Write7219(DECODE_MODE, 0x00);        // select non-decode mode
+      000012 75*00 00         [24]  138 	mov	_Write7219_PARM_2,#0x00
+      000015 75 82 09         [24]  139 	mov	dpl,#0x09
+      000018 12r00r00         [24]  140 	lcall	_Write7219
+                                    141 ;	./src/draw.c:12: Write7219(SCAN_LIMIT, 0x07);         // use all 8 LED
+      00001B 75*00 07         [24]  142 	mov	_Write7219_PARM_2,#0x07
+      00001E 75 82 0B         [24]  143 	mov	dpl,#0x0b
+      000021 12r00r00         [24]  144 	lcall	_Write7219
+                                    145 ;	./src/draw.c:13: Write7219(INTENSITY, 0x00);          // set up intensity
+      000024 75*00 00         [24]  146 	mov	_Write7219_PARM_2,#0x00
+      000027 75 82 0A         [24]  147 	mov	dpl,#0x0a
+      00002A 12r00r00         [24]  148 	lcall	_Write7219
+                                    149 ;	./src/draw.c:15: for(i=1; i<=8; i++) { 
+      00002D 7F 01            [12]  150 	mov	r7,#0x01
+      00002F                        151 00102$:
+                                    152 ;	./src/draw.c:16: Write7219(i, 0x00);              // turn off all LED
+      00002F 75*00 00         [24]  153 	mov	_Write7219_PARM_2,#0x00
+      000032 8F 82            [24]  154 	mov	dpl,r7
+      000034 C0 07            [24]  155 	push	ar7
+      000036 12r00r00         [24]  156 	lcall	_Write7219
+      000039 D0 07            [24]  157 	pop	ar7
+                                    158 ;	./src/draw.c:15: for(i=1; i<=8; i++) { 
+      00003B 0F               [12]  159 	inc	r7
+      00003C EF               [12]  160 	mov	a,r7
+      00003D 24 F7            [12]  161 	add	a,#0xff - 0x08
+      00003F 50 EE            [24]  162 	jnc	00102$
+                                    163 ;	./src/draw.c:18: }
+      000041 22               [24]  164 	ret
+                                    165 ;------------------------------------------------------------
+                                    166 ;Allocation info for local variables in function 'draw'
+                                    167 ;------------------------------------------------------------
+                                    168 ;picture                   Allocated to registers r5 r6 r7 
+                                    169 ;i                         Allocated to registers r4 
+                                    170 ;------------------------------------------------------------
+                                    171 ;	./src/draw.c:21: void draw(unsigned char *picture)
+                                    172 ;	-----------------------------------------
+                                    173 ;	 function draw
+                                    174 ;	-----------------------------------------
+      000042                        175 _draw:
+      000042 AD 82            [24]  176 	mov	r5,dpl
+      000044 AE 83            [24]  177 	mov	r6,dph
+      000046 AF F0            [24]  178 	mov	r7,b
+                                    179 ;	./src/draw.c:25: for(i=1; i<=8; i++) {
+      000048 7C 01            [12]  180 	mov	r4,#0x01
+      00004A                        181 00102$:
+                                    182 ;	./src/draw.c:26: Write7219(i, picture[i-1]);
+      00004A 8C 02            [24]  183 	mov	ar2,r4
+      00004C 7B 00            [12]  184 	mov	r3,#0x00
+      00004E 1A               [12]  185 	dec	r2
+      00004F BA FF 01         [24]  186 	cjne	r2,#0xff,00111$
+      000052 1B               [12]  187 	dec	r3
+      000053                        188 00111$:
+      000053 EA               [12]  189 	mov	a,r2
+      000054 2D               [12]  190 	add	a,r5
+      000055 FA               [12]  191 	mov	r2,a
+      000056 EB               [12]  192 	mov	a,r3
+      000057 3E               [12]  193 	addc	a,r6
+      000058 F9               [12]  194 	mov	r1,a
+      000059 8F 03            [24]  195 	mov	ar3,r7
+      00005B 8A 82            [24]  196 	mov	dpl,r2
+      00005D 89 83            [24]  197 	mov	dph,r1
+      00005F 8B F0            [24]  198 	mov	b,r3
+      000061 12r00r00         [24]  199 	lcall	__gptrget
+      000064 F5*00            [12]  200 	mov	_Write7219_PARM_2,a
+      000066 8C 82            [24]  201 	mov	dpl,r4
+      000068 C0 07            [24]  202 	push	ar7
+      00006A C0 06            [24]  203 	push	ar6
+      00006C C0 05            [24]  204 	push	ar5
+      00006E C0 04            [24]  205 	push	ar4
+      000070 12r00r00         [24]  206 	lcall	_Write7219
+      000073 D0 04            [24]  207 	pop	ar4
+      000075 D0 05            [24]  208 	pop	ar5
+      000077 D0 06            [24]  209 	pop	ar6
+      000079 D0 07            [24]  210 	pop	ar7
+                                    211 ;	./src/draw.c:25: for(i=1; i<=8; i++) {
+      00007B 0C               [12]  212 	inc	r4
+      00007C EC               [12]  213 	mov	a,r4
+      00007D 24 F7            [12]  214 	add	a,#0xff - 0x08
+      00007F 50 C9            [24]  215 	jnc	00102$
+                                    216 ;	./src/draw.c:28: }
+      000081 22               [24]  217 	ret
+                                    218 ;------------------------------------------------------------
+                                    219 ;Allocation info for local variables in function 'singledraw'
+                                    220 ;------------------------------------------------------------
+                                    221 ;picture                   Allocated with name '_singledraw_PARM_2'
+                                    222 ;chosen                    Allocated to registers r7 
+                                    223 ;i                         Allocated to registers r6 
+                                    224 ;------------------------------------------------------------
+                                    225 ;	./src/draw.c:31: void singledraw(unsigned char chosen, unsigned char *picture)
+                                    226 ;	-----------------------------------------
+                                    227 ;	 function singledraw
+                                    228 ;	-----------------------------------------
+      000082                        229 _singledraw:
+      000082 AF 82            [24]  230 	mov	r7,dpl
+                                    231 ;	./src/draw.c:35: for(i=1; i<=8; i++) {
+      000084 7E 01            [12]  232 	mov	r6,#0x01
+      000086                        233 00102$:
+                                    234 ;	./src/draw.c:36: Writesingle7219(chosen, i, picture[i-1]);
+      000086 8E 04            [24]  235 	mov	ar4,r6
+      000088 7D 00            [12]  236 	mov	r5,#0x00
+      00008A 1C               [12]  237 	dec	r4
+      00008B BC FF 01         [24]  238 	cjne	r4,#0xff,00111$
+      00008E 1D               [12]  239 	dec	r5
+      00008F                        240 00111$:
+      00008F EC               [12]  241 	mov	a,r4
+      000090 25*00            [12]  242 	add	a,_singledraw_PARM_2
+      000092 FC               [12]  243 	mov	r4,a
+      000093 ED               [12]  244 	mov	a,r5
+      000094 35*01            [12]  245 	addc	a,(_singledraw_PARM_2 + 1)
+      000096 FD               [12]  246 	mov	r5,a
+      000097 AB*02            [24]  247 	mov	r3,(_singledraw_PARM_2 + 2)
+      000099 8C 82            [24]  248 	mov	dpl,r4
+      00009B 8D 83            [24]  249 	mov	dph,r5
+      00009D 8B F0            [24]  250 	mov	b,r3
+      00009F 12r00r00         [24]  251 	lcall	__gptrget
+      0000A2 F5*00            [12]  252 	mov	_Writesingle7219_PARM_3,a
+      0000A4 8E*00            [24]  253 	mov	_Writesingle7219_PARM_2,r6
+      0000A6 8F 82            [24]  254 	mov	dpl,r7
+      0000A8 C0 07            [24]  255 	push	ar7
+      0000AA C0 06            [24]  256 	push	ar6
+      0000AC 12r00r00         [24]  257 	lcall	_Writesingle7219
+      0000AF D0 06            [24]  258 	pop	ar6
+      0000B1 D0 07            [24]  259 	pop	ar7
+                                    260 ;	./src/draw.c:35: for(i=1; i<=8; i++) {
+      0000B3 0E               [12]  261 	inc	r6
+      0000B4 EE               [12]  262 	mov	a,r6
+      0000B5 24 F7            [12]  263 	add	a,#0xff - 0x08
+      0000B7 50 CD            [24]  264 	jnc	00102$
+                                    265 ;	./src/draw.c:38: }
+      0000B9 22               [24]  266 	ret
+                                    267 ;------------------------------------------------------------
+                                    268 ;Allocation info for local variables in function 'shiftdraw'
+                                    269 ;------------------------------------------------------------
+                                    270 ;shift                     Allocated with name '_shiftdraw_shift_65536_21'
+                                    271 ;picture                   Allocated with name '_shiftdraw_picture_65536_20'
+                                    272 ;i                         Allocated to registers r4 
+                                    273 ;------------------------------------------------------------
+                                    274 ;	./src/draw.c:41: void shiftdraw(unsigned char *picture)
+                                    275 ;	-----------------------------------------
+                                    276 ;	 function shiftdraw
+                                    277 ;	-----------------------------------------
+      0000BA                        278 _shiftdraw:
+      0000BA 85 82*04         [24]  279 	mov	_shiftdraw_picture_65536_20,dpl
+      0000BD 85 83*05         [24]  280 	mov	(_shiftdraw_picture_65536_20 + 1),dph
+      0000C0 85 F0*06         [24]  281 	mov	(_shiftdraw_picture_65536_20 + 2),b
+                                    282 ;	./src/draw.c:46: for(i=1; i<=8; i++) {
+      0000C3 7C 01            [12]  283 	mov	r4,#0x01
+      0000C5                        284 00104$:
+                                    285 ;	./src/draw.c:47: Writesingle7219(1, i, picture[(shift+i-1) % 16]);
+      0000C5 AA*03            [24]  286 	mov	r2,_shiftdraw_shift_65536_21
+      0000C7 7B 00            [12]  287 	mov	r3,#0x00
+      0000C9 8C 00            [24]  288 	mov	ar0,r4
+      0000CB 79 00            [12]  289 	mov	r1,#0x00
+      0000CD E8               [12]  290 	mov	a,r0
+      0000CE 2A               [12]  291 	add	a,r2
+      0000CF FA               [12]  292 	mov	r2,a
+      0000D0 E9               [12]  293 	mov	a,r1
+      0000D1 3B               [12]  294 	addc	a,r3
+      0000D2 FB               [12]  295 	mov	r3,a
+      0000D3 EA               [12]  296 	mov	a,r2
+      0000D4 24 FF            [12]  297 	add	a,#0xff
+      0000D6 F5 82            [12]  298 	mov	dpl,a
+      0000D8 EB               [12]  299 	mov	a,r3
+      0000D9 34 FF            [12]  300 	addc	a,#0xff
+      0000DB F5 83            [12]  301 	mov	dph,a
+      0000DD 75*00 10         [24]  302 	mov	__modsint_PARM_2,#0x10
+                                    303 ;	1-genFromRTrack replaced	mov	(__modsint_PARM_2 + 1),#0x00
+      0000E0 89*01            [24]  304 	mov	(__modsint_PARM_2 + 1),r1
+      0000E2 C0 04            [24]  305 	push	ar4
+      0000E4 C0 01            [24]  306 	push	ar1
+      0000E6 C0 00            [24]  307 	push	ar0
+      0000E8 12r00r00         [24]  308 	lcall	__modsint
+      0000EB AA 82            [24]  309 	mov	r2,dpl
+      0000ED AB 83            [24]  310 	mov	r3,dph
+      0000EF D0 00            [24]  311 	pop	ar0
+      0000F1 D0 01            [24]  312 	pop	ar1
+      0000F3 D0 04            [24]  313 	pop	ar4
+      0000F5 EA               [12]  314 	mov	a,r2
+      0000F6 25*04            [12]  315 	add	a,_shiftdraw_picture_65536_20
+      0000F8 FA               [12]  316 	mov	r2,a
+      0000F9 EB               [12]  317 	mov	a,r3
+      0000FA 35*05            [12]  318 	addc	a,(_shiftdraw_picture_65536_20 + 1)
+      0000FC FB               [12]  319 	mov	r3,a
+      0000FD AF*06            [24]  320 	mov	r7,(_shiftdraw_picture_65536_20 + 2)
+      0000FF 8A 82            [24]  321 	mov	dpl,r2
+      000101 8B 83            [24]  322 	mov	dph,r3
+      000103 8F F0            [24]  323 	mov	b,r7
+      000105 12r00r00         [24]  324 	lcall	__gptrget
+      000108 F5*00            [12]  325 	mov	_Writesingle7219_PARM_3,a
+      00010A 8C*00            [24]  326 	mov	_Writesingle7219_PARM_2,r4
+      00010C 75 82 01         [24]  327 	mov	dpl,#0x01
+      00010F C0 04            [24]  328 	push	ar4
+      000111 C0 01            [24]  329 	push	ar1
+      000113 C0 00            [24]  330 	push	ar0
+      000115 12r00r00         [24]  331 	lcall	_Writesingle7219
+      000118 D0 00            [24]  332 	pop	ar0
+      00011A D0 01            [24]  333 	pop	ar1
+                                    334 ;	./src/draw.c:48: Writesingle7219(2, i, picture[(shift+i+8-1) % 16]);
+      00011C AE*03            [24]  335 	mov	r6,_shiftdraw_shift_65536_21
+      00011E 7F 00            [12]  336 	mov	r7,#0x00
+      000120 E8               [12]  337 	mov	a,r0
+      000121 2E               [12]  338 	add	a,r6
+      000122 F8               [12]  339 	mov	r0,a
+      000123 E9               [12]  340 	mov	a,r1
+      000124 3F               [12]  341 	addc	a,r7
+      000125 F9               [12]  342 	mov	r1,a
+      000126 74 07            [12]  343 	mov	a,#0x07
+      000128 28               [12]  344 	add	a,r0
+      000129 F5 82            [12]  345 	mov	dpl,a
+      00012B E4               [12]  346 	clr	a
+      00012C 39               [12]  347 	addc	a,r1
+      00012D F5 83            [12]  348 	mov	dph,a
+      00012F 75*00 10         [24]  349 	mov	__modsint_PARM_2,#0x10
+                                    350 ;	1-genFromRTrack replaced	mov	(__modsint_PARM_2 + 1),#0x00
+      000132 8F*01            [24]  351 	mov	(__modsint_PARM_2 + 1),r7
+      000134 12r00r00         [24]  352 	lcall	__modsint
+      000137 AE 82            [24]  353 	mov	r6,dpl
+      000139 AF 83            [24]  354 	mov	r7,dph
+      00013B D0 04            [24]  355 	pop	ar4
+      00013D EE               [12]  356 	mov	a,r6
+      00013E 25*04            [12]  357 	add	a,_shiftdraw_picture_65536_20
+      000140 FE               [12]  358 	mov	r6,a
+      000141 EF               [12]  359 	mov	a,r7
+      000142 35*05            [12]  360 	addc	a,(_shiftdraw_picture_65536_20 + 1)
+      000144 FF               [12]  361 	mov	r7,a
+      000145 AD*06            [24]  362 	mov	r5,(_shiftdraw_picture_65536_20 + 2)
+      000147 8E 82            [24]  363 	mov	dpl,r6
+      000149 8F 83            [24]  364 	mov	dph,r7
+      00014B 8D F0            [24]  365 	mov	b,r5
+      00014D 12r00r00         [24]  366 	lcall	__gptrget
+      000150 F5*00            [12]  367 	mov	_Writesingle7219_PARM_3,a
+      000152 8C*00            [24]  368 	mov	_Writesingle7219_PARM_2,r4
+      000154 75 82 02         [24]  369 	mov	dpl,#0x02
+      000157 C0 04            [24]  370 	push	ar4
+      000159 12r00r00         [24]  371 	lcall	_Writesingle7219
+      00015C D0 04            [24]  372 	pop	ar4
+                                    373 ;	./src/draw.c:46: for(i=1; i<=8; i++) {
+      00015E 0C               [12]  374 	inc	r4
+      00015F EC               [12]  375 	mov	a,r4
+      000160 24 F7            [12]  376 	add	a,#0xff - 0x08
+      000162 40 03            [24]  377 	jc	00121$
+      000164 02r00rC5         [24]  378 	ljmp	00104$
+      000167                        379 00121$:
+                                    380 ;	./src/draw.c:51: shift += 1;
+      000167 E5*03            [12]  381 	mov	a,_shiftdraw_shift_65536_21
+      000169 04               [12]  382 	inc	a
+                                    383 ;	./src/draw.c:53: if(shift > 16) {
+      00016A F5*03            [12]  384 	mov  _shiftdraw_shift_65536_21,a
+      00016C 24 EF            [12]  385 	add	a,#0xff - 0x10
+      00016E 50 03            [24]  386 	jnc	00103$
+                                    387 ;	./src/draw.c:54: shift = 0;
+      000170 75*03 00         [24]  388 	mov	_shiftdraw_shift_65536_21,#0x00
+      000173                        389 00103$:
+                                    390 ;	./src/draw.c:57: delay_ms(1000);
+      000173 90 03 E8         [24]  391 	mov	dptr,#0x03e8
+                                    392 ;	./src/draw.c:58: }
+      000176 02r00r00         [24]  393 	ljmp	_delay_ms
+                                    394 	.area CSEG    (CODE)
+                                    395 	.area CONST   (CODE)
+                                    396 	.area XINIT   (CODE)
+                                    397 	.area CABS    (ABS,CODE)
