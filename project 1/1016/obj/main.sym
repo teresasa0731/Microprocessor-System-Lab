@@ -202,7 +202,7 @@ Symbol Table
     _ACC                                                        =  0000E0 G
     _B                                                          =  0000F0 G
     _CY                                                         =  0000D7 G
- 18 _Clean                                                         000416 GR
+ 18 _Clean                                                         000440 GR
     _DPH                                                        =  000083 G
     _DPL                                                        =  000082 G
     _EA                                                         =  0000AF G
@@ -332,7 +332,7 @@ Symbol Table
   5 _flag                                                          000023 GR
  18 _func_call                                                     00036E GR
   5 _input                                                         00000E GR
- 18 _main                                                          000447 GR
+ 18 _main                                                          00046A GR
   5 _num1                                                          00001F GR
   5 _num2                                                          000021 GR
   5 _patt                                                          00001E GR
@@ -579,7 +579,7 @@ Area Table
   15 GSINIT5                                    size      0   flags   20
   16 GSINIT                                     size     27   flags   20
   17 GSFINAL                                    size      3   flags   20
-  18 CSEG                                       size    571   flags   20
+  18 CSEG                                       size    599   flags   20
   19 CONST                                      size      0   flags   20
   1A XINIT                                      size      0   flags   20
   1B CABS                                       size      0   flags   28

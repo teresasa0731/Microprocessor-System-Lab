@@ -80,9 +80,9 @@ C:   00000086  s_GSFINAL
 C:   00000089  s_CSEG                          
 C:   000000C0  l_SSEG                          
 C:   00000100  l_IRAM                          
-C:   00000683  l_CSEG                          
-C:   0000070C  s_CONST                         
-C:   0000070C  s_XINIT                         
+C:   000006AB  l_CSEG                          
+C:   00000734  s_CONST                         
+C:   00000734  s_XINIT                         
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 3.
 Hexadecimal  [32-Bits]
@@ -331,7 +331,7 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-CSEG                                00000089    00000683 =        1667. bytes (REL,CON,CODE)
+CSEG                                00000089    000006AB =        1707. bytes (REL,CON,CODE)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -346,16 +346,16 @@ C:   000002CC  _turn_to_NUM                       main
 C:   00000339  _calculate_OP                      main
 C:   00000396  _turn_to_CHAR                      main
 C:   000003F7  _func_call                         main
-C:   0000049F  _Clean                             main
-C:   000004D0  _main                              main
-C:   000005FA  _delay_ms                          delay
-C:   00000607  __divuint                          _divuint
-C:   00000630  __mulint                           _mulint
-C:   00000630  __mulint_dummy                     _mulint
-C:   0000064D  __moduint                          _moduint
-C:   0000069A  __modsint                          _modsint
-C:   000006D0  __divsint                          _divsint
-C:   00000708  __sdcc_external_startup            _startup
+C:   000004C9  _Clean                             main
+C:   000004F3  _main                              main
+C:   00000622  _delay_ms                          delay
+C:   0000062F  __divuint                          _divuint
+C:   00000658  __mulint                           _mulint
+C:   00000658  __mulint_dummy                     _mulint
+C:   00000675  __moduint                          _moduint
+C:   000006C2  __modsint                          _modsint
+C:   000006F8  __divsint                          _divsint
+C:   00000730  __sdcc_external_startup            _startup
 ASxxxx Linker V03.00 + NoICE + sdld,  page 17.
 
 Files Linked                              [ module(s) ]

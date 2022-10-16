@@ -234,8 +234,8 @@ void calculate_OP(unsigned char op){
 
 //turn ans into display mode
 void turn_to_CHAR(int n){
-	for(a=0;a<8;a++){
-		input[a] = n%10;
+	for(a = 0;a < 8; a++){
+		input[a] = n % 10;
 		n = n/10;
 		if(n == 0)
 			break;
@@ -258,17 +258,21 @@ void func_call(unsigned int cmd){
 		delay_ms(20);
 
 		//flag = 1:start mode,flag = 0:get num2 and do operate
-		if(flag){
+		if(flag == 0 && num1 == 0){
 			num1 = turn_to_NUM();
-			flag = 0;
-		}else{
+			flag = 1;
+			Clean();
+		}
+		if(flag == 0 && num1 != 0){
 			num2 = turn_to_NUM();
+			Clean();
 			op = patt >> 1;
 			if(op == 0x04)
 				op = 0x40;
 			calculate_OP(op);
 			turn_to_CHAR(num1);
 			draw();
+			flag = 1;
 		}
 		break;
 	case 11:	//back <-
@@ -277,6 +281,8 @@ void func_call(unsigned int cmd){
 		break;
 	case 12:	//AC
 		Clean();
+		num1 = 0;
+		num2 = 0;
 		break;
 	case 13:	//equal=
 		num2 = turn_to_NUM();
@@ -297,7 +303,6 @@ void Clean(void){
 		Write7219(i,0x00);
 	}
 	Write7219(0x01,0x08);
-	flag = 1;
 }
 
 
@@ -349,9 +354,8 @@ void main(void)
 				if (i < 10){
 					sequence(1);
 					input[0] = i;
-					//Write7219(1, display_seg[input[0]]);
-					//Write7219(2, display_seg[input[1]]);
 					draw();
+					flag = 0;
 				}else{
 					func_call(i);
 				}

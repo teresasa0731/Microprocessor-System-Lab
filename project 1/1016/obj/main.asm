@@ -1074,12 +1074,12 @@ _calculate_OP:
 _turn_to_CHAR:
 	mov	r6,dpl
 	mov	r7,dph
-;	./src/main.c:237: for(a=0;a<8;a++){
+;	./src/main.c:237: for(a = 0;a < 8; a++){
 	clr	a
 	mov	_a,a
 	mov	(_a + 1),a
 00104$:
-;	./src/main.c:238: input[a] = n%10;
+;	./src/main.c:238: input[a] = n % 10;
 	mov	a,_a
 	add	a,_a
 	mov	r4,a
@@ -1117,7 +1117,7 @@ _turn_to_CHAR:
 	mov	a,r6
 	orl	a,r7
 	jz	00106$
-;	./src/main.c:237: for(a=0;a<8;a++){
+;	./src/main.c:237: for(a = 0;a < 8; a++){
 	inc	_a
 	clr	a
 	cjne	a,_a,00117$
@@ -1146,22 +1146,22 @@ _func_call:
 	mov	r6,dpl
 	mov	r7,dph
 ;	./src/main.c:247: switch (cmd)
-	cjne	r6,#0x0a,00151$
-	cjne	r7,#0x00,00151$
+	cjne	r6,#0x0a,00166$
+	cjne	r7,#0x00,00166$
 	sjmp	00101$
-00151$:
-	cjne	r6,#0x0b,00152$
-	cjne	r7,#0x00,00152$
-	ljmp	00112$
-00152$:
-	cjne	r6,#0x0c,00153$
-	cjne	r7,#0x00,00153$
-	ljmp	00113$
-00153$:
-	cjne	r6,#0x0d,00154$
-	cjne	r7,#0x00,00154$
-	ljmp	00114$
-00154$:
+00166$:
+	cjne	r6,#0x0b,00167$
+	cjne	r7,#0x00,00167$
+	ljmp	00115$
+00167$:
+	cjne	r6,#0x0c,00168$
+	cjne	r7,#0x00,00168$
+	ljmp	00116$
+00168$:
+	cjne	r6,#0x0d,00169$
+	cjne	r7,#0x00,00169$
+	ljmp	00117$
+00169$:
 	ret
 ;	./src/main.c:249: case 10:	//op
 00101$:
@@ -1188,88 +1188,114 @@ _func_call:
 ;	./src/main.c:258: delay_ms(20);
 	mov	dptr,#0x0014
 	lcall	_delay_ms
-;	./src/main.c:261: if(flag){
+;	./src/main.c:261: if(flag == 0 && num1 == 0){
 	mov	a,_flag
 	orl	a,(_flag + 1)
-	jz	00110$
+	jnz	00108$
+	mov	a,_num1
+	orl	a,(_num1 + 1)
+	jnz	00108$
 ;	./src/main.c:262: num1 = turn_to_NUM();
 	lcall	_turn_to_NUM
 	mov	_num1,dpl
 	mov	(_num1 + 1),dph
-;	./src/main.c:263: flag = 0;
-	clr	a
-	mov	_flag,a
-	mov	(_flag + 1),a
-	ret
-00110$:
-;	./src/main.c:265: num2 = turn_to_NUM();
+;	./src/main.c:263: flag = 1;
+	mov	_flag,#0x01
+	mov	(_flag + 1),#0x00
+;	./src/main.c:264: Clean();
+	lcall	_Clean
+00108$:
+;	./src/main.c:266: if(flag == 0 && num1 != 0){
+	mov	a,_flag
+	orl	a,(_flag + 1)
+	jnz	00120$
+	mov	a,_num1
+	orl	a,(_num1 + 1)
+	jz	00120$
+;	./src/main.c:267: num2 = turn_to_NUM();
 	lcall	_turn_to_NUM
 	mov	_num2,dpl
 	mov	(_num2 + 1),dph
-;	./src/main.c:266: op = patt >> 1;
+;	./src/main.c:268: Clean();
+	lcall	_Clean
+;	./src/main.c:269: op = patt >> 1;
 	mov	a,_patt
 	clr	c
 	rrc	a
 	mov	r7,a
-;	./src/main.c:267: if(op == 0x04)
-	cjne	r7,#0x04,00108$
-;	./src/main.c:268: op = 0x40;
+;	./src/main.c:270: if(op == 0x04)
+	cjne	r7,#0x04,00111$
+;	./src/main.c:271: op = 0x40;
 	mov	r7,#0x40
-00108$:
-;	./src/main.c:269: calculate_OP(op);
+00111$:
+;	./src/main.c:272: calculate_OP(op);
 	mov	dpl,r7
 	lcall	_calculate_OP
-;	./src/main.c:270: turn_to_CHAR(num1);
+;	./src/main.c:273: turn_to_CHAR(num1);
 	mov	dpl,_num1
 	mov	dph,(_num1 + 1)
 	lcall	_turn_to_CHAR
-;	./src/main.c:271: draw();
-;	./src/main.c:273: break;
-;	./src/main.c:274: case 11:	//back <-
-	ljmp	_draw
-00112$:
-;	./src/main.c:275: sequence(0);
+;	./src/main.c:274: draw();
+	lcall	_draw
+;	./src/main.c:275: flag = 1;
+	mov	_flag,#0x01
+	mov	(_flag + 1),#0x00
+;	./src/main.c:277: break;
+;	./src/main.c:278: case 11:	//back <-
+	ret
+00115$:
+;	./src/main.c:279: sequence(0);
 	mov	dptr,#0x0000
 	lcall	_sequence
-;	./src/main.c:276: draw();
-;	./src/main.c:277: break;
-;	./src/main.c:278: case 12:	//AC
+;	./src/main.c:280: draw();
+;	./src/main.c:281: break;
+;	./src/main.c:282: case 12:	//AC
 	ljmp	_draw
-00113$:
-;	./src/main.c:279: Clean();
-;	./src/main.c:280: break;
-;	./src/main.c:281: case 13:	//equal=
-	ljmp	_Clean
-00114$:
-;	./src/main.c:282: num2 = turn_to_NUM();
+00116$:
+;	./src/main.c:283: Clean();
+	lcall	_Clean
+;	./src/main.c:284: num1 = 0;
+	clr	a
+	mov	_num1,a
+	mov	(_num1 + 1),a
+;	./src/main.c:285: num2 = 0;
+	mov	_num2,a
+	mov	(_num2 + 1),a
+;	./src/main.c:286: break;
+;	./src/main.c:287: case 13:	//equal=
+	ret
+00117$:
+;	./src/main.c:288: num2 = turn_to_NUM();
 	lcall	_turn_to_NUM
 	mov	_num2,dpl
 	mov	(_num2 + 1),dph
-;	./src/main.c:283: calculate_OP(patt);
+;	./src/main.c:289: calculate_OP(patt);
 	mov	dpl,_patt
 	lcall	_calculate_OP
-;	./src/main.c:284: turn_to_CHAR(num1);
+;	./src/main.c:290: turn_to_CHAR(num1);
 	mov	dpl,_num1
 	mov	dph,(_num1 + 1)
 	lcall	_turn_to_CHAR
-;	./src/main.c:285: draw();
-;	./src/main.c:289: }
-;	./src/main.c:290: }
+;	./src/main.c:291: draw();
+;	./src/main.c:295: }
+;	./src/main.c:296: }
 	ljmp	_draw
+00120$:
+	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'Clean'
 ;------------------------------------------------------------
 ;i                         Allocated to registers r7 
 ;------------------------------------------------------------
-;	./src/main.c:293: void Clean(void){
+;	./src/main.c:299: void Clean(void){
 ;	-----------------------------------------
 ;	 function Clean
 ;	-----------------------------------------
 _Clean:
-;	./src/main.c:295: for(i = 1; i < 9; i++){
+;	./src/main.c:301: for(i = 1; i < 9; i++){
 	mov	r7,#0x01
 00102$:
-;	./src/main.c:296: input[i-1] = 11;
+;	./src/main.c:302: input[i-1] = 11;
 	mov	ar6,r7
 	dec	r6
 	mov	a,r6
@@ -1279,65 +1305,61 @@ _Clean:
 	mov	@r0,#0x0b
 	inc	r0
 	mov	@r0,#0x00
-;	./src/main.c:297: Write7219(i,0x00);
+;	./src/main.c:303: Write7219(i,0x00);
 	mov	_Write7219_PARM_2,#0x00
 	mov	dpl,r7
 	push	ar7
 	lcall	_Write7219
 	pop	ar7
-;	./src/main.c:295: for(i = 1; i < 9; i++){
+;	./src/main.c:301: for(i = 1; i < 9; i++){
 	inc	r7
 	cjne	r7,#0x09,00115$
 00115$:
 	jc	00102$
-;	./src/main.c:299: Write7219(0x01,0x08);
+;	./src/main.c:305: Write7219(0x01,0x08);
 	mov	_Write7219_PARM_2,#0x08
 	mov	dpl,#0x01
-	lcall	_Write7219
-;	./src/main.c:300: flag = 1;
-	mov	_flag,#0x01
-	mov	(_flag + 1),#0x00
-;	./src/main.c:301: }
-	ret
+;	./src/main.c:306: }
+	ljmp	_Write7219
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'main'
 ;------------------------------------------------------------
 ;i                         Allocated to registers r6 r7 
 ;------------------------------------------------------------
-;	./src/main.c:304: void main(void)
+;	./src/main.c:309: void main(void)
 ;	-----------------------------------------
 ;	 function main
 ;	-----------------------------------------
 _main:
-;	./src/main.c:307: Initial();
+;	./src/main.c:312: Initial();
 	lcall	_Initial
-;	./src/main.c:308: for (a = 0; a < 14; a++)
+;	./src/main.c:313: for (a = 0; a < 14; a++)
 	clr	a
 	mov	_a,a
 	mov	(_a + 1),a
 00126$:
-;	./src/main.c:310: states[a].currINPUT = LEVEL_HIGH;
+;	./src/main.c:315: states[a].currINPUT = LEVEL_HIGH;
 	mov	a,_a
 	add	a,#_states
 	mov	r0,a
 	mov	a,@r0
 	orl	a,#0x01
 	mov	@r0,a
-;	./src/main.c:311: states[a].currState = BTN_RELEASED;
+;	./src/main.c:316: states[a].currState = BTN_RELEASED;
 	mov	a,_a
 	add	a,#_states
 	mov	r0,a
 	mov	a,@r0
 	anl	a,#0xf9
 	mov	@r0,a
-;	./src/main.c:312: states[a].prevState = BTN_RELEASED;
+;	./src/main.c:317: states[a].prevState = BTN_RELEASED;
 	mov	a,_a
 	add	a,#_states
 	mov	r0,a
 	mov	a,@r0
 	anl	a,#0xe7
 	mov	@r0,a
-;	./src/main.c:308: for (a = 0; a < 14; a++)
+;	./src/main.c:313: for (a = 0; a < 14; a++)
 	inc	_a
 	clr	a
 	cjne	a,_a,00189$
@@ -1349,16 +1371,16 @@ _main:
 	mov	a,(_a + 1)
 	subb	a,#0x00
 	jc	00126$
-;	./src/main.c:314: Clean();
+;	./src/main.c:319: Clean();
 	lcall	_Clean
-;	./src/main.c:316: while(1)
+;	./src/main.c:321: while(1)
 00124$:
-;	./src/main.c:318: delay_ms(20);
+;	./src/main.c:323: delay_ms(20);
 	mov	dptr,#0x0014
 	lcall	_delay_ms
-;	./src/main.c:320: read_currINPUT();
+;	./src/main.c:325: read_currINPUT();
 	lcall	_read_currINPUT
-;	./src/main.c:321: for (unsigned int i = 0; i < 14; i++)
+;	./src/main.c:326: for (unsigned int i = 0; i < 14; i++)
 	mov	r6,#0x00
 	mov	r7,#0x00
 00129$:
@@ -1368,7 +1390,7 @@ _main:
 	mov	a,r7
 	subb	a,#0x00
 	jnc	00124$
-;	./src/main.c:324: switch (states[i].currState)
+;	./src/main.c:329: switch (states[i].currState)
 	mov	a,r6
 	add	a,#_states
 	mov	r1,a
@@ -1380,17 +1402,17 @@ _main:
 	cjne	r5,#0x01,00193$
 	sjmp	00106$
 00193$:
-;	./src/main.c:326: case BTN_RELEASED:
+;	./src/main.c:331: case BTN_RELEASED:
 	cjne	r5,#0x02,00115$
 	sjmp	00110$
 00102$:
-;	./src/main.c:327: if (states[i].currINPUT == LEVEL_LOW)
+;	./src/main.c:332: if (states[i].currINPUT == LEVEL_LOW)
 	mov	a,r6
 	add	a,#_states
 	mov	r1,a
 	mov	a,@r1
 	jb	acc.0,00104$
-;	./src/main.c:328: states[i].currState = BTN_DEBOUNCED;
+;	./src/main.c:333: states[i].currState = BTN_DEBOUNCED;
 	mov	a,r6
 	add	a,#_states
 	mov	r0,a
@@ -1400,24 +1422,24 @@ _main:
 	mov	@r0,a
 	sjmp	00115$
 00104$:
-;	./src/main.c:330: states[i].currState = BTN_RELEASED;
+;	./src/main.c:335: states[i].currState = BTN_RELEASED;
 	mov	a,r6
 	add	a,#_states
 	mov	r0,a
 	mov	a,@r0
 	anl	a,#0xf9
 	mov	@r0,a
-;	./src/main.c:331: break;
-;	./src/main.c:332: case BTN_DEBOUNCED:
+;	./src/main.c:336: break;
+;	./src/main.c:337: case BTN_DEBOUNCED:
 	sjmp	00115$
 00106$:
-;	./src/main.c:333: if (states[i].currINPUT == LEVEL_LOW)
+;	./src/main.c:338: if (states[i].currINPUT == LEVEL_LOW)
 	mov	a,r6
 	add	a,#_states
 	mov	r1,a
 	mov	a,@r1
 	jb	acc.0,00108$
-;	./src/main.c:334: states[i].currState = BTN_PRESSED;
+;	./src/main.c:339: states[i].currState = BTN_PRESSED;
 	mov	a,r6
 	add	a,#_states
 	mov	r0,a
@@ -1427,24 +1449,24 @@ _main:
 	mov	@r0,a
 	sjmp	00115$
 00108$:
-;	./src/main.c:336: states[i].currState = BTN_RELEASED;
+;	./src/main.c:341: states[i].currState = BTN_RELEASED;
 	mov	a,r6
 	add	a,#_states
 	mov	r0,a
 	mov	a,@r0
 	anl	a,#0xf9
 	mov	@r0,a
-;	./src/main.c:337: break;
-;	./src/main.c:338: case BTN_PRESSED:
+;	./src/main.c:342: break;
+;	./src/main.c:343: case BTN_PRESSED:
 	sjmp	00115$
 00110$:
-;	./src/main.c:339: if (states[i].currINPUT == LEVEL_LOW)
+;	./src/main.c:344: if (states[i].currINPUT == LEVEL_LOW)
 	mov	a,r6
 	add	a,#_states
 	mov	r1,a
 	mov	a,@r1
 	jb	acc.0,00112$
-;	./src/main.c:340: states[i].currState = BTN_PRESSED;
+;	./src/main.c:345: states[i].currState = BTN_PRESSED;
 	mov	a,r6
 	add	a,#_states
 	mov	r0,a
@@ -1454,16 +1476,16 @@ _main:
 	mov	@r0,a
 	sjmp	00115$
 00112$:
-;	./src/main.c:342: states[i].currState = BTN_RELEASED;
+;	./src/main.c:347: states[i].currState = BTN_RELEASED;
 	mov	a,r6
 	add	a,#_states
 	mov	r0,a
 	mov	a,@r0
 	anl	a,#0xf9
 	mov	@r0,a
-;	./src/main.c:346: }
+;	./src/main.c:351: }
 00115$:
-;	./src/main.c:348: if ((states[i].currState == BTN_RELEASED) && (states[i].prevState == BTN_PRESSED)){
+;	./src/main.c:353: if ((states[i].currState == BTN_RELEASED) && (states[i].prevState == BTN_PRESSED)){
 	mov	a,r6
 	add	a,#_states
 	mov	r1,a
@@ -1479,32 +1501,36 @@ _main:
 	anl	a,#0x03
 	mov	r5,a
 	cjne	r5,#0x02,00120$
-;	./src/main.c:349: if (i < 10){
+;	./src/main.c:354: if (i < 10){
 	clr	c
 	mov	a,r6
 	subb	a,#0x0a
 	mov	a,r7
 	subb	a,#0x00
 	jnc	00117$
-;	./src/main.c:350: sequence(1);
+;	./src/main.c:355: sequence(1);
 	mov	dptr,#0x0001
 	push	ar7
 	push	ar6
 	lcall	_sequence
 	pop	ar6
 	pop	ar7
-;	./src/main.c:351: input[0] = i;
+;	./src/main.c:356: input[0] = i;
 	mov	(_input + 0),r6
 	mov	(_input + 1),r7
-;	./src/main.c:354: draw();
+;	./src/main.c:357: draw();
 	push	ar7
 	push	ar6
 	lcall	_draw
 	pop	ar6
 	pop	ar7
+;	./src/main.c:358: flag = 0;
+	clr	a
+	mov	_flag,a
+	mov	(_flag + 1),a
 	sjmp	00120$
 00117$:
-;	./src/main.c:356: func_call(i);
+;	./src/main.c:360: func_call(i);
 	mov	dpl,r6
 	mov	dph,r7
 	push	ar7
@@ -1513,7 +1539,7 @@ _main:
 	pop	ar6
 	pop	ar7
 00120$:
-;	./src/main.c:359: states[i].prevState = states[i].currState;
+;	./src/main.c:363: states[i].prevState = states[i].currState;
 	mov	a,r6
 	add	a,#_states
 	mov	r1,a
@@ -1532,12 +1558,12 @@ _main:
 	anl	a,#0xe7
 	orl	a,b
 	mov	@r1,a
-;	./src/main.c:321: for (unsigned int i = 0; i < 14; i++)
+;	./src/main.c:326: for (unsigned int i = 0; i < 14; i++)
 	inc	r6
 	cjne	r6,#0x00,00202$
 	inc	r7
 00202$:
-;	./src/main.c:362: }
+;	./src/main.c:366: }
 	ljmp	00129$
 	.area CSEG    (CODE)
 	.area CONST   (CODE)
