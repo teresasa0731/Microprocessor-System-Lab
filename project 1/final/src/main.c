@@ -105,12 +105,7 @@ void Write7219(unsigned char address, unsigned char dat)
 {
     unsigned char cnt;
     LOAD = 0;
-
-  	for(cnt=1; cnt<=matrixnum; cnt++)       // send address and data according to the nuber of your matrix
- 	{
-        sendbyte(address, dat);
-    }
-    
+    sendbyte(address, dat);
     LOAD = 1;                               // after the load becomes 1, will the 7-segment display display
 }
 

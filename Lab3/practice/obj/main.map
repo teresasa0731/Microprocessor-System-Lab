@@ -80,9 +80,9 @@ C:   00000087  s_GSFINAL
 C:   0000008A  s_CSEG                          
 C:   000000C7  l_SSEG                          
 C:   00000100  l_IRAM                          
-C:   000006AB  l_CSEG                          
-C:   00000735  s_CONST                         
-C:   00000759  s_XINIT                         
+C:   000006B7  l_CSEG                          
+C:   00000741  s_CONST                         
+C:   00000765  s_XINIT                         
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 3.
 Hexadecimal  [32-Bits]
@@ -348,52 +348,52 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-CSEG                                0000008A    000006AB =        1707. bytes (REL,CON,CODE)
+CSEG                                0000008A    000006B7 =        1719. bytes (REL,CON,CODE)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
 C:   0000008A  _main                              main
-C:   00000194  _I2C_Start                         i2c
-C:   000001A3  _I2C_Stop                          i2c
-C:   000001AF  _I2C_SendACK                       i2c
-C:   000001BD  _I2C_RecvACK                       i2c
-C:   000001CE  _I2C_SendByte                      i2c
-C:   000001F6  _I2C_RecvByte                      i2c
-C:   0000022A  _Single_WriteI2C                   i2c
-C:   00000247  _Single_ReadI2C                    i2c
-C:   00000281  _Delay                             i2c
-C:   00000286  _delay_ms                          delay
-C:   00000298  _MPU6050_INIT                      MPU6050
-C:   00000326  _writeByte                         MPU6050
-C:   0000032F  _readByte                          MPU6050
-C:   00000335  _readMPU6050_AccelData             MPU6050
-C:   00000408  _readMPU6050_GyroData              MPU6050
-C:   000004DB  _resetMPU6050                      MPU6050
-C:   000004ED  _OLED_Init                         oled_i2c
-C:   0000055C  _OLED_DisplayChar                  oled_i2c
-C:   000005DE  _OLED_DisplayString                oled_i2c
-C:   00000609  _OLED_Clear                        oled_i2c
-C:   00000634  _OLED_SetCursor                    oled_i2c
-C:   00000664  _oledSendCommand                   oled_i2c
-C:   00000670  _oledSendData                      oled_i2c
-C:   0000067C  __gptrput                          _gptrput
-C:   00000697  __mulint                           _mulint
-C:   00000697  __mulint_dummy                     _mulint
-C:   000006B4  __divuint                          _divuint
-C:   000006DD  __gptrget                          _gptrget
-C:   000006F9  __divsint                          _divsint
-C:   00000731  __sdcc_external_startup            _startup
+C:   000001A0  _I2C_Start                         i2c
+C:   000001AF  _I2C_Stop                          i2c
+C:   000001BB  _I2C_SendACK                       i2c
+C:   000001C9  _I2C_RecvACK                       i2c
+C:   000001DA  _I2C_SendByte                      i2c
+C:   00000202  _I2C_RecvByte                      i2c
+C:   00000236  _Single_WriteI2C                   i2c
+C:   00000253  _Single_ReadI2C                    i2c
+C:   0000028D  _Delay                             i2c
+C:   00000292  _delay_ms                          delay
+C:   000002A4  _MPU6050_INIT                      MPU6050
+C:   00000332  _writeByte                         MPU6050
+C:   0000033B  _readByte                          MPU6050
+C:   00000341  _readMPU6050_AccelData             MPU6050
+C:   00000414  _readMPU6050_GyroData              MPU6050
+C:   000004E7  _resetMPU6050                      MPU6050
+C:   000004F9  _OLED_Init                         oled_i2c
+C:   00000568  _OLED_DisplayChar                  oled_i2c
+C:   000005EA  _OLED_DisplayString                oled_i2c
+C:   00000615  _OLED_Clear                        oled_i2c
+C:   00000640  _OLED_SetCursor                    oled_i2c
+C:   00000670  _oledSendCommand                   oled_i2c
+C:   0000067C  _oledSendData                      oled_i2c
+C:   00000688  __gptrput                          _gptrput
+C:   000006A3  __mulint                           _mulint
+C:   000006A3  __mulint_dummy                     _mulint
+C:   000006C0  __divuint                          _divuint
+C:   000006E9  __gptrget                          _gptrget
+C:   00000705  __divsint                          _divsint
+C:   0000073D  __sdcc_external_startup            _startup
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 18.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-CONST                               00000735    00000024 =          36. bytes (REL,CON,CODE)
+CONST                               00000741    00000024 =          36. bytes (REL,CON,CODE)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-C:   0000073B  _OledFontTable                     oled_i2c
+C:   00000747  _OledFontTable                     oled_i2c
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 19.
 

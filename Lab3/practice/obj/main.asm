@@ -458,12 +458,15 @@ _main:
 	mov	r3,a
 	mov	((_main_pre_location_65536_33 + 0x0002) + 0),r2
 	mov	((_main_pre_location_65536_33 + 0x0002) + 1),r3
-;	./src/main.c:68: if(pre_location[0]<=0)pre_location[0] = 0;
-	mov	a,r4
-	orl	a,r5
-	jnz	00104$
-	mov	(_main_pre_location_65536_33 + 0),a
-	mov	(_main_pre_location_65536_33 + 1),a
+;	./src/main.c:68: if(pre_location[0]<=1)pre_location[0] = 1;
+	clr	c
+	mov	a,#0x01
+	subb	a,r4
+	clr	a
+	subb	a,r5
+	jc	00104$
+	mov	(_main_pre_location_65536_33 + 0),#0x01
+	mov	(_main_pre_location_65536_33 + 1),#0x00
 	sjmp	00105$
 00104$:
 ;	./src/main.c:69: else if (pre_location[0]>7)pre_location[0] = 7;
@@ -476,22 +479,25 @@ _main:
 	mov	(_main_pre_location_65536_33 + 0),#0x07
 	mov	(_main_pre_location_65536_33 + 1),#0x00
 00105$:
-;	./src/main.c:71: if(pre_location[1]<=0)pre_location[1] = 0;
-	mov	a,(_main_pre_location_65536_33 + 0x0002)
-	orl	a,((_main_pre_location_65536_33 + 0x0002) + 1)
-	jnz	00109$
-	mov	((_main_pre_location_65536_33 + 0x0002) + 0),a
-	mov	((_main_pre_location_65536_33 + 0x0002) + 1),a
+;	./src/main.c:71: if(pre_location[1]<=8)pre_location[1] = 8;
+	clr	c
+	mov	a,#0x08
+	subb	a,(_main_pre_location_65536_33 + 0x0002)
+	clr	a
+	subb	a,((_main_pre_location_65536_33 + 0x0002) + 1)
+	jc	00109$
+	mov	((_main_pre_location_65536_33 + 0x0002) + 0),#0x08
+	mov	((_main_pre_location_65536_33 + 0x0002) + 1),#0x00
 	sjmp	00110$
 00109$:
-;	./src/main.c:72: else if (pre_location[1]>126)pre_location[1] = 124;
+;	./src/main.c:72: else if (pre_location[1]>126)pre_location[1] = 123;
 	clr	c
 	mov	a,#0x7e
 	subb	a,(_main_pre_location_65536_33 + 0x0002)
 	clr	a
 	subb	a,((_main_pre_location_65536_33 + 0x0002) + 1)
 	jnc	00110$
-	mov	((_main_pre_location_65536_33 + 0x0002) + 0),#0x7c
+	mov	((_main_pre_location_65536_33 + 0x0002) + 0),#0x7b
 	mov	((_main_pre_location_65536_33 + 0x0002) + 1),#0x00
 00110$:
 ;	./src/main.c:74: OLED_SetCursor(pre_location[0], pre_location[1]);

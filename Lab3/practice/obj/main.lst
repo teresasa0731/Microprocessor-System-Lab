@@ -458,67 +458,73 @@
       0000A8 FB               [12]  458 	mov	r3,a
       0000A9 8A*11            [24]  459 	mov	((_main_pre_location_65536_33 + 0x0002) + 0),r2
       0000AB 8B*12            [24]  460 	mov	((_main_pre_location_65536_33 + 0x0002) + 1),r3
-                                    461 ;	./src/main.c:68: if(pre_location[0]<=0)pre_location[0] = 0;
-      0000AD EC               [12]  462 	mov	a,r4
-      0000AE 4D               [12]  463 	orl	a,r5
-      0000AF 70 06            [24]  464 	jnz	00104$
-      0000B1 F5*0F            [12]  465 	mov	(_main_pre_location_65536_33 + 0),a
-      0000B3 F5*10            [12]  466 	mov	(_main_pre_location_65536_33 + 1),a
-      0000B5 80 10            [24]  467 	sjmp	00105$
-      0000B7                        468 00104$:
-                                    469 ;	./src/main.c:69: else if (pre_location[0]>7)pre_location[0] = 7;
-      0000B7 C3               [12]  470 	clr	c
-      0000B8 74 07            [12]  471 	mov	a,#0x07
-      0000BA 95*0F            [12]  472 	subb	a,_main_pre_location_65536_33
-      0000BC E4               [12]  473 	clr	a
-      0000BD 95*10            [12]  474 	subb	a,(_main_pre_location_65536_33 + 1)
-      0000BF 50 06            [24]  475 	jnc	00105$
-      0000C1 75*0F 07         [24]  476 	mov	(_main_pre_location_65536_33 + 0),#0x07
-      0000C4 75*10 00         [24]  477 	mov	(_main_pre_location_65536_33 + 1),#0x00
-      0000C7                        478 00105$:
-                                    479 ;	./src/main.c:71: if(pre_location[1]<=0)pre_location[1] = 0;
-      0000C7 E5*11            [12]  480 	mov	a,(_main_pre_location_65536_33 + 0x0002)
-      0000C9 45*12            [12]  481 	orl	a,((_main_pre_location_65536_33 + 0x0002) + 1)
-      0000CB 70 06            [24]  482 	jnz	00109$
-      0000CD F5*11            [12]  483 	mov	((_main_pre_location_65536_33 + 0x0002) + 0),a
-      0000CF F5*12            [12]  484 	mov	((_main_pre_location_65536_33 + 0x0002) + 1),a
-      0000D1 80 10            [24]  485 	sjmp	00110$
-      0000D3                        486 00109$:
-                                    487 ;	./src/main.c:72: else if (pre_location[1]>126)pre_location[1] = 124;
-      0000D3 C3               [12]  488 	clr	c
-      0000D4 74 7E            [12]  489 	mov	a,#0x7e
-      0000D6 95*11            [12]  490 	subb	a,(_main_pre_location_65536_33 + 0x0002)
-      0000D8 E4               [12]  491 	clr	a
-      0000D9 95*12            [12]  492 	subb	a,((_main_pre_location_65536_33 + 0x0002) + 1)
-      0000DB 50 06            [24]  493 	jnc	00110$
-      0000DD 75*11 7C         [24]  494 	mov	((_main_pre_location_65536_33 + 0x0002) + 0),#0x7c
-      0000E0 75*12 00         [24]  495 	mov	((_main_pre_location_65536_33 + 0x0002) + 1),#0x00
-      0000E3                        496 00110$:
-                                    497 ;	./src/main.c:74: OLED_SetCursor(pre_location[0], pre_location[1]);
-      0000E3 85*0F 82         [24]  498 	mov	dpl,_main_pre_location_65536_33
-      0000E6 85*11*00         [24]  499 	mov	_OLED_SetCursor_PARM_2,(_main_pre_location_65536_33 + 0x0002)
-      0000E9 12r00r00         [24]  500 	lcall	_OLED_SetCursor
-                                    501 ;	./src/main.c:75: OLED_DisplayChar('0');
-      0000EC 75 82 30         [24]  502 	mov	dpl,#0x30
-      0000EF 12r00r00         [24]  503 	lcall	_OLED_DisplayChar
-                                    504 ;	./src/main.c:76: delay_ms(50);
-      0000F2 90 00 32         [24]  505 	mov	dptr,#0x0032
-      0000F5 12r00r00         [24]  506 	lcall	_delay_ms
-                                    507 ;	./src/main.c:77: OLED_SetCursor(pre_location[0], pre_location[1]);
-      0000F8 85*0F 82         [24]  508 	mov	dpl,_main_pre_location_65536_33
-      0000FB 85*11*00         [24]  509 	mov	_OLED_SetCursor_PARM_2,(_main_pre_location_65536_33 + 0x0002)
-      0000FE 12r00r00         [24]  510 	lcall	_OLED_SetCursor
-                                    511 ;	./src/main.c:78: OLED_DisplayChar(' ');
-      000101 75 82 20         [24]  512 	mov	dpl,#0x20
-      000104 12r00r00         [24]  513 	lcall	_OLED_DisplayChar
-                                    514 ;	./src/main.c:80: }
-      000107 02r00r40         [24]  515 	ljmp	00112$
-                                    516 	.area CSEG    (CODE)
-                                    517 	.area CONST   (CODE)
-                                    518 	.area CONST   (CODE)
-      000000                        519 ___str_0:
-      000000 53 54 41 52 54         520 	.ascii "START"
-      000005 00                     521 	.db 0x00
+                                    461 ;	./src/main.c:68: if(pre_location[0]<=1)pre_location[0] = 1;
+      0000AD C3               [12]  462 	clr	c
+      0000AE 74 01            [12]  463 	mov	a,#0x01
+      0000B0 9C               [12]  464 	subb	a,r4
+      0000B1 E4               [12]  465 	clr	a
+      0000B2 9D               [12]  466 	subb	a,r5
+      0000B3 40 08            [24]  467 	jc	00104$
+      0000B5 75*0F 01         [24]  468 	mov	(_main_pre_location_65536_33 + 0),#0x01
+      0000B8 75*10 00         [24]  469 	mov	(_main_pre_location_65536_33 + 1),#0x00
+      0000BB 80 10            [24]  470 	sjmp	00105$
+      0000BD                        471 00104$:
+                                    472 ;	./src/main.c:69: else if (pre_location[0]>7)pre_location[0] = 7;
+      0000BD C3               [12]  473 	clr	c
+      0000BE 74 07            [12]  474 	mov	a,#0x07
+      0000C0 95*0F            [12]  475 	subb	a,_main_pre_location_65536_33
+      0000C2 E4               [12]  476 	clr	a
+      0000C3 95*10            [12]  477 	subb	a,(_main_pre_location_65536_33 + 1)
+      0000C5 50 06            [24]  478 	jnc	00105$
+      0000C7 75*0F 07         [24]  479 	mov	(_main_pre_location_65536_33 + 0),#0x07
+      0000CA 75*10 00         [24]  480 	mov	(_main_pre_location_65536_33 + 1),#0x00
+      0000CD                        481 00105$:
+                                    482 ;	./src/main.c:71: if(pre_location[1]<=8)pre_location[1] = 8;
+      0000CD C3               [12]  483 	clr	c
+      0000CE 74 08            [12]  484 	mov	a,#0x08
+      0000D0 95*11            [12]  485 	subb	a,(_main_pre_location_65536_33 + 0x0002)
+      0000D2 E4               [12]  486 	clr	a
+      0000D3 95*12            [12]  487 	subb	a,((_main_pre_location_65536_33 + 0x0002) + 1)
+      0000D5 40 08            [24]  488 	jc	00109$
+      0000D7 75*11 08         [24]  489 	mov	((_main_pre_location_65536_33 + 0x0002) + 0),#0x08
+      0000DA 75*12 00         [24]  490 	mov	((_main_pre_location_65536_33 + 0x0002) + 1),#0x00
+      0000DD 80 10            [24]  491 	sjmp	00110$
+      0000DF                        492 00109$:
+                                    493 ;	./src/main.c:72: else if (pre_location[1]>126)pre_location[1] = 123;
+      0000DF C3               [12]  494 	clr	c
+      0000E0 74 7E            [12]  495 	mov	a,#0x7e
+      0000E2 95*11            [12]  496 	subb	a,(_main_pre_location_65536_33 + 0x0002)
+      0000E4 E4               [12]  497 	clr	a
+      0000E5 95*12            [12]  498 	subb	a,((_main_pre_location_65536_33 + 0x0002) + 1)
+      0000E7 50 06            [24]  499 	jnc	00110$
+      0000E9 75*11 7B         [24]  500 	mov	((_main_pre_location_65536_33 + 0x0002) + 0),#0x7b
+      0000EC 75*12 00         [24]  501 	mov	((_main_pre_location_65536_33 + 0x0002) + 1),#0x00
+      0000EF                        502 00110$:
+                                    503 ;	./src/main.c:74: OLED_SetCursor(pre_location[0], pre_location[1]);
+      0000EF 85*0F 82         [24]  504 	mov	dpl,_main_pre_location_65536_33
+      0000F2 85*11*00         [24]  505 	mov	_OLED_SetCursor_PARM_2,(_main_pre_location_65536_33 + 0x0002)
+      0000F5 12r00r00         [24]  506 	lcall	_OLED_SetCursor
+                                    507 ;	./src/main.c:75: OLED_DisplayChar('0');
+      0000F8 75 82 30         [24]  508 	mov	dpl,#0x30
+      0000FB 12r00r00         [24]  509 	lcall	_OLED_DisplayChar
+                                    510 ;	./src/main.c:76: delay_ms(50);
+      0000FE 90 00 32         [24]  511 	mov	dptr,#0x0032
+      000101 12r00r00         [24]  512 	lcall	_delay_ms
+                                    513 ;	./src/main.c:77: OLED_SetCursor(pre_location[0], pre_location[1]);
+      000104 85*0F 82         [24]  514 	mov	dpl,_main_pre_location_65536_33
+      000107 85*11*00         [24]  515 	mov	_OLED_SetCursor_PARM_2,(_main_pre_location_65536_33 + 0x0002)
+      00010A 12r00r00         [24]  516 	lcall	_OLED_SetCursor
+                                    517 ;	./src/main.c:78: OLED_DisplayChar(' ');
+      00010D 75 82 20         [24]  518 	mov	dpl,#0x20
+      000110 12r00r00         [24]  519 	lcall	_OLED_DisplayChar
+                                    520 ;	./src/main.c:80: }
+      000113 02r00r40         [24]  521 	ljmp	00112$
                                     522 	.area CSEG    (CODE)
-                                    523 	.area XINIT   (CODE)
-                                    524 	.area CABS    (ABS,CODE)
+                                    523 	.area CONST   (CODE)
+                                    524 	.area CONST   (CODE)
+      000000                        525 ___str_0:
+      000000 53 54 41 52 54         526 	.ascii "START"
+      000005 00                     527 	.db 0x00
+                                    528 	.area CSEG    (CODE)
+                                    529 	.area XINIT   (CODE)
+                                    530 	.area CABS    (ABS,CODE)

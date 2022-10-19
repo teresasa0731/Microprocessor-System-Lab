@@ -96,7 +96,7 @@
                                      96 ;	-----------------------------------------
                                      97 ;	 function delay_ms
                                      98 ;	-----------------------------------------
-      000286                         99 _delay_ms:
+      000292                         99 _delay_ms:
                            000007   100 	ar7 = 0x07
                            000006   101 	ar6 = 0x06
                            000005   102 	ar5 = 0x05
@@ -106,23 +106,23 @@
                            000001   106 	ar1 = 0x01
                            000000   107 	ar0 = 0x00
                                     108 ;	./src/delay.c:16: __endasm;			// end of assembly code, don't forget to add ";"
-      000286                        109 DELAY1:
-      000286 AC 83            [24]  110 	MOV R4,dph
-      000288                        111 DELAY3:
-      000288 0C               [12]  112 	INC R4
-      000289                        113 DELAY4:
-      000289 AD 82            [24]  114 	MOV R5,dpl
-      00028B                        115 DL1:
-      00028B 7E 03            [12]  116 	MOV R6,#3
-      00028D                        117 DL2:
-      00028D 7F AA            [12]  118 	MOV R7,#170
-      00028F                        119 DL3:
-      00028F DF FE            [24]  120 	DJNZ R7,DL3
-      000291 DE FA            [24]  121 	DJNZ	R6,DL2
-      000293 DD F6            [24]  122 	DJNZ	R5,DL1
-      000295 DC F2            [24]  123 	DJNZ	R4,DELAY4
+      000292                        109 DELAY1:
+      000292 AC 83            [24]  110 	MOV R4,dph
+      000294                        111 DELAY3:
+      000294 0C               [12]  112 	INC R4
+      000295                        113 DELAY4:
+      000295 AD 82            [24]  114 	MOV R5,dpl
+      000297                        115 DL1:
+      000297 7E 03            [12]  116 	MOV R6,#3
+      000299                        117 DL2:
+      000299 7F AA            [12]  118 	MOV R7,#170
+      00029B                        119 DL3:
+      00029B DF FE            [24]  120 	DJNZ R7,DL3
+      00029D DE FA            [24]  121 	DJNZ	R6,DL2
+      00029F DD F6            [24]  122 	DJNZ	R5,DL1
+      0002A1 DC F2            [24]  123 	DJNZ	R4,DELAY4
                                     124 ;	./src/delay.c:17: }
-      000297 22               [24]  125 	ret
+      0002A3 22               [24]  125 	ret
                                     126 	.area CSEG    (CODE)
                                     127 	.area CONST   (CODE)
                                     128 	.area XINIT   (CODE)

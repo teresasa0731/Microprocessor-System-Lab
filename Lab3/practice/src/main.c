@@ -65,11 +65,11 @@ void main(void)
       pre_location[0]  = pre_location[0]+delta_x/5000;
       pre_location[1]  = pre_location[1]+delta_y/1000;
        
-      if(pre_location[0]<=0)pre_location[0] = 0;
+      if(pre_location[0]<=1)pre_location[0] = 1;
       else if (pre_location[0]>7)pre_location[0] = 7;
 
-      if(pre_location[1]<=0)pre_location[1] = 0;
-      else if (pre_location[1]>126)pre_location[1] = 124;
+      if(pre_location[1]<=8)pre_location[1] = 8;
+      else if (pre_location[1]>126)pre_location[1] = 123;
       
       OLED_SetCursor(pre_location[0], pre_location[1]);
       OLED_DisplayChar('0');
