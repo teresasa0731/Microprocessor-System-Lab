@@ -1,0 +1,477 @@
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 1
+
+
+
+
+
+       MCS-51 Family Macro Assembler   A S E M - 5 1   V 1.3
+       =====================================================
+
+
+
+	Source File:	main.asm
+	Object File:	main.hex
+	List File:	main.lst
+
+
+
+ Line  I  Addr  Code            Source
+
+    1:		N      0030	ORG 0030H			;origin start at memory address 0
+    2:	  0030			START:
+    3:	  0030			LOOP:
+    4:	  0030	7C 19				MOV R4,#25
+    5:	  0032	7D 19		DOAGAIN:	MOV R5,#25
+    6:	  0034			DO:
+    7:	  0034	D2 B7			SETB P3.7
+    8:	  0036	31 3B			ACALL DELAY_DO
+    9:	  0038	C2 B7			CLR P3.7
+   10:	  003A	31 3B			ACALL DELAY_DO
+   11:	  003C	DD F6			DJNZ R5,DO
+   12:	  003E	DC F2			DJNZ R4,DOAGAIN
+   13:
+   14:	  0040	31 2E				ACALL DELAY
+   15:	  0042	7C 19				MOV R4,#25
+   16:	  0044	7D 19		DO1AGAIN:	MOV R5,#25
+   17:	  0046			DO1:
+   18:	  0046	D2 B7			SETB P3.7
+   19:	  0048	31 3B			ACALL DELAY_DO
+   20:	  004A	C2 B7			CLR P3.7
+   21:	  004C	31 3B			ACALL DELAY_DO
+   22:	  004E	DD F6			DJNZ R5,DO1
+   23:	  0050	DC F2			DJNZ R4,DO1AGAIN
+   24:
+   25:	  0052	31 2E				ACALL DELAY
+   26:	  0054	7C 19				MOV R4,#25
+   27:	  0056	7D 19		SOAGAIN:	MOV R5,#25
+   28:	  0058			SO:
+   29:	  0058	D2 B7			SETB P3.7
+   30:	  005A	31 6F			ACALL DELAY_SO
+   31:	  005C	C2 B7			CLR P3.7
+   32:	  005E	31 6F			ACALL DELAY_SO
+   33:	  0060	DD F6			DJNZ R5,SO
+   34:	  0062	DC F2			DJNZ R4,SOAGAIN
+   35:
+   36:	  0064	31 2E				ACALL DELAY
+   37:	  0066	7C 19				MOV R4,#25
+   38:	  0068	7D 19		SO1AGAIN:	MOV R5,#25
+   39:	  006A			SO1:
+   40:	  006A	D2 B7			SETB P3.7
+   41:	  006C	31 6F			ACALL DELAY_SO
+   42:	  006E	C2 B7			CLR P3.7
+   43:	  0070	31 6F			ACALL DELAY_SO
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 2
+
+
+
+ Line  I  Addr  Code            Source
+
+   44:	  0072	DD F6			DJNZ R5,SO1
+   45:	  0074	DC F2			DJNZ R4,SO1AGAIN
+   46:
+   47:	  0076	31 2E				ACALL DELAY
+   48:	  0078	7C 19				MOV R4,#25
+   49:	  007A	7D 19		LAAGAIN:	MOV R5,#25
+   50:	  007C			LA:
+   51:	  007C	D2 B7			SETB P3.7
+   52:	  007E	31 7C			ACALL DELAY_LA
+   53:	  0080	C2 B7			CLR P3.7
+   54:	  0082	31 7C			ACALL DELAY_LA
+   55:	  0084	DD F6			DJNZ R5,LA
+   56:	  0086	DC F2			DJNZ R4,LAAGAIN
+   57:
+   58:	  0088	31 2E				ACALL DELAY
+   59:	  008A	7C 19				MOV R4,#25
+   60:	  008C	7D 19		LA1AGAIN:	MOV R5,#25
+   61:	  008E			LA1:
+   62:	  008E	D2 B7			SETB P3.7
+   63:	  0090	31 7C			ACALL DELAY_LA
+   64:	  0092	C2 B7			CLR P3.7
+   65:	  0094	31 7C			ACALL DELAY_LA
+   66:	  0096	DD F6			DJNZ R5,LA1
+   67:	  0098	DC F2			DJNZ R4,LA1AGAIN
+   68:
+   69:	  009A	31 2E				ACALL DELAY
+   70:	  009C	7C 1E				MOV R4,#30
+   71:	  009E	7D 1E		SO2AGAIN:	MOV R5,#30
+   72:	  00A0			SO2:
+   73:	  00A0	D2 B7			SETB P3.7
+   74:	  00A2	31 6F			ACALL DELAY_SO
+   75:	  00A4	C2 B7			CLR P3.7
+   76:	  00A6	31 6F			ACALL DELAY_SO
+   77:	  00A8	DD F6			DJNZ R5,SO2
+   78:	  00AA	DC F2			DJNZ R4,SO2AGAIN
+   79:
+   80:	  00AC	31 2E				ACALL DELAY
+   81:	  00AE	7C 19				MOV R4,#25
+   82:	  00B0	7D 19		FAAGAIN:	MOV R5,#25
+   83:	  00B2			FA:
+   84:	  00B2	D2 B7			SETB P3.7
+   85:	  00B4	31 62			ACALL DELAY_FA
+   86:	  00B6	C2 B7			CLR P3.7
+   87:	  00B8	31 62			ACALL DELAY_FA
+   88:	  00BA	DD F6			DJNZ R5,FA
+   89:	  00BC	DC F2			DJNZ R4,FAAGAIN
+   90:
+   91:	  00BE	31 2E				ACALL DELAY
+   92:	  00C0	7C 19				MOV R4,#25
+   93:	  00C2	7D 19		FA1AGAIN:	MOV R5,#25
+   94:	  00C4			FA1:
+   95:	  00C4	D2 B7			SETB P3.7
+   96:	  00C6	31 62			ACALL DELAY_FA
+   97:	  00C8	C2 B7			CLR P3.7
+   98:	  00CA	31 62			ACALL DELAY_FA
+   99:	  00CC	DD F6			DJNZ R5,FA1
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 3
+
+
+
+ Line  I  Addr  Code            Source
+
+  100:	  00CE	DC F2			DJNZ R4,FA1AGAIN
+  101:
+  102:	  00D0	31 2E				ACALL DELAY
+  103:	  00D2	7C 19				MOV R4,#25
+  104:	  00D4	7D 19		MIAGAIN:	MOV R5,#25
+  105:	  00D6			MI:
+  106:	  00D6	D2 B7			SETB P3.7
+  107:	  00D8	31 55			ACALL DELAY_MI
+  108:	  00DA	C2 B7			CLR P3.7
+  109:	  00DC	31 55			ACALL DELAY_MI
+  110:	  00DE	DD F6			DJNZ R5,MI
+  111:	  00E0	DC F2			DJNZ R4,MIAGAIN
+  112:
+  113:	  00E2	31 2E				ACALL DELAY
+  114:	  00E4	7C 19				MOV R4,#25
+  115:	  00E6	7D 19		MI1AGAIN:	MOV R5,#25
+  116:	  00E8			MI1:
+  117:	  00E8	D2 B7			SETB P3.7
+  118:	  00EA	31 55			ACALL DELAY_MI
+  119:	  00EC	C2 B7			CLR P3.7
+  120:	  00EE	31 55			ACALL DELAY_MI
+  121:	  00F0	DD F6			DJNZ R5,MI1
+  122:	  00F2	DC F2			DJNZ R4,MI1AGAIN
+  123:
+  124:	  00F4	31 2E				ACALL DELAY
+  125:	  00F6	7C 19		        MOV R4,#25
+  126:	  00F8	7D 19		REAGAIN:	MOV R5,#25
+  127:	  00FA			RE:
+  128:	  00FA	D2 B7			SETB P3.7
+  129:	  00FC	31 48			ACALL DELAY_RE
+  130:	  00FE	C2 B7			CLR P3.7
+  131:	  0100	31 48			ACALL DELAY_RE
+  132:	  0102	DD F6			DJNZ R5,RE
+  133:	  0104	DC F2			DJNZ R4,REAGAIN
+  134:
+  135:	  0106	31 2E				ACALL DELAY
+  136:	  0108	7C 19		        MOV R4,#25
+  137:	  010A	7D 19		RE1AGAIN:	MOV R5,#25
+  138:	  010C			RE1:
+  139:	  010C	D2 B7			SETB P3.7
+  140:	  010E	31 48			ACALL DELAY_RE
+  141:	  0110	C2 B7			CLR P3.7
+  142:	  0112	31 48			ACALL DELAY_RE
+  143:	  0114	DD F6			DJNZ R5,RE1
+  144:	  0116	DC F2			DJNZ R4,RE1AGAIN
+  145:
+  146:	  0118	31 2E				ACALL DELAY
+  147:	  011A	7C 19				MOV R4,#25
+  148:	  011C	7D 19		DO2AGAIN:	MOV R5,#25
+  149:	  011E			DO2:
+  150:	  011E	D2 B7			SETB P3.7
+  151:	  0120	31 3B			ACALL DELAY_DO
+  152:	  0122	C2 B7			CLR P3.7
+  153:	  0124	31 3B			ACALL DELAY_DO
+  154:	  0126	DD F6			DJNZ R5,DO2
+  155:	  0128	DC F2			DJNZ R4,DO2AGAIN
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 4
+
+
+
+ Line  I  Addr  Code            Source
+
+  156:	  012A	31 7C			ACALL DELAY_LA
+  157:	  012C	80 5B			SJMP END1
+  158:
+  159:
+  160:
+  161:	  012E			DELAY:
+  162:	  012E	7A 64			MOV R2,#100
+  163:	  0130			DELAY_DL:
+  164:	  0130	7B 64			MOV R3,#100
+  165:	  0132	DB FE			DJNZ R3,$
+  166:	  0134	DA FA			DJNZ R2,DELAY_DL
+  167:	  0136	7B 64			MOV R3,#100
+  168:	  0138	DF FE			DJNZ R7,$
+  169:	  013A	22			RET
+  170:
+  171:
+  172:
+  173:
+  174:	  013B			DELAY_Do:  		;1047HZ, We need Delay 0.478mS
+  175:							;440cycles @Fosc = 11.0592MHz
+  176:	  013B	7E 0A		    	MOV R6,#10
+  177:				    			;+1cycle
+  178:	  013D			DELAY_Do_DL1:
+  179:	  013D	7F 13			MOV R7,#19
+  180:	  013F	DF FE			DJNZ R7,$
+  181:	  0141	DE FA			DJNZ R6,DELAY_Do_DL1
+  182:							;+410cycle = 10 * (1 + (19*2) + 2)
+  183:
+  184:	  0143	7F 0D			MOV R7,#13
+  185:	  0145	DF FE			DJNZ R7,$
+  186:							;+27cycle = 1 + (13*2)
+  187:	  0147	22			RET		;+2cycles => Total = 1758
+  188:
+  189:	  0148			DELAY_RE:  		;1175HZ, We need Delay 0.42553mS
+  190:							;392cycles @Fosc = 11.0592MHz
+  191:	  0148	7E 0A		    	MOV R6,#10
+  192:				    			;+1cycle
+  193:	  014A			DELAY_RE_DL1:
+  194:	  014A	7F 11			MOV R7,#17
+  195:	  014C	DF FE			DJNZ R7,$
+  196:	  014E	DE FA			DJNZ R6,DELAY_RE_DL1
+  197:							;+370cycle = 10 * (1 + (17*2) + 2)
+  198:
+  199:	  0150	7F 09			MOV R7,#9
+  200:	  0152	DF FE			DJNZ R7,$
+  201:							;+19cycle = 1 + (9*2)
+  202:	  0154	22			RET		;+2cycles => Total = 1567
+  203:
+  204:	  0155			DELAY_MI:  		;1319HZ, We need Delay 1.515mS
+  205:							;349cycles @Fosc = 11.0592MHz
+  206:	  0155	7E 0A		    	MOV R6,#10
+  207:				    			;+1cycle
+  208:	  0157			DELAY_MI_DL1:
+  209:	  0157	7F 0F			MOV R7,#15
+  210:	  0159	DF FE			DJNZ R7,$
+  211:	  015B	DE FA			DJNZ R6,DELAY_MI_DL1
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 5
+
+
+
+ Line  I  Addr  Code            Source
+
+  212:							;+330cycle = 10 * (1 + (15*2) + 2)
+  213:
+  214:	  015D	7F 07			MOV R7,#7
+  215:	  015F	DF FE			DJNZ R7,$
+  216:							;+15cycle = 1 + (7*2)
+  217:	  0161	22			RET		;+2cycles => Total = 1396
+  218:
+  219:	  0162			DELAY_FA:  		;1396HZ
+  220:							;330cycles
+  221:	  0162	7E 0A		    	MOV R6,#10
+  222:				    			;+1cycle
+  223:	  0164			DELAY_FA_DL1:
+  224:	  0164	7F 0E			MOV R7,#14
+  225:	  0166	DF FE			DJNZ R7,$
+  226:	  0168	DE FA			DJNZ R6,DELAY_FA_DL1
+  227:							;+310cycle = 10 * (1 + (14*2) + 2)
+  228:
+  229:	  016A	7F 09			MOV R7,#9
+  230:	  016C	DF FE			DJNZ R7,$
+  231:							;+19cycle = 1 + (9*2)
+  232:	  016E	22			RET		;+2cycles => Total = 1758
+  233:
+  234:	  016F			DELAY_SO:  		;1567HZ
+  235:							;294cycles
+  236:	  016F	7E 0A		    	MOV R6,#10
+  237:				    			;+1cycle
+  238:	  0171			DELAY_SO_DL1:
+  239:	  0171	7F 0C			MOV R7,#12
+  240:	  0173	DF FE			DJNZ R7,$
+  241:	  0175	DE FA			DJNZ R6,DELAY_SO_DL1
+  242:							;+270cycle = 10 * (1 + (12*2) + 2)
+  243:
+  244:	  0177	7F 08			MOV R7,#8
+  245:	  0179	DF FE			DJNZ R7,$
+  246:							;+17cycle = 1 + (8*2)
+  247:	  017B	22			RET		;+2cycles => Total = 1758
+  248:
+  249:	  017C			DELAY_LA:  		;1760HZ
+  250:							;262cycles
+  251:	  017C	7E 0A		    	MOV R6,#10
+  252:				    			;+1cycle
+  253:	  017E			DELAY_LA_DL1:
+  254:	  017E	7F 0A			MOV R7,#10
+  255:	  0180	DF FE			DJNZ R7,$
+  256:	  0182	DE FA			DJNZ R6,DELAY_LA_DL1
+  257:							;+230cycle = 10 * (1 + (10*2) + 2)
+  258:
+  259:	  0184	7F 0E			MOV R7,#14
+  260:	  0186	DF FE			DJNZ R7,$
+  261:							;+29cycle = 1 + (14*2)
+  262:	  0188	22			RET		;+2cycles => Total = 1758
+  263:
+  264:
+  265:	  0189			END1:
+  266:	  0189	80 FE		     SJMP END1
+  267:				END
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 6
+
+
+
+ Line  I  Addr  Code            Source
+
+  268:
+
+
+
+
+
+                     register banks used:  ---
+
+                     no errors
+
+
+
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 7
+
+
+
+
+
+	       L I S T   O F   S Y M B O L S
+	       =============================
+
+
+SYMBOL				  TYPE     VALUE	LINE
+------------------------------------------------------------
+??ASEM_51			  NUMBER    8051
+??VERSION			  NUMBER    0130
+AC				  BIT	      D6
+ACC				  DATA	      E0
+B				  DATA	      F0
+CY				  BIT	      D7
+DELAY				  CODE	    012E	 161
+DELAY_DL			  CODE	    0130	 163
+DELAY_DO			  CODE	    013B	 174
+DELAY_DO_DL1			  CODE	    013D	 178
+DELAY_FA			  CODE	    0162	 219
+DELAY_FA_DL1			  CODE	    0164	 223
+DELAY_LA			  CODE	    017C	 249
+DELAY_LA_DL1			  CODE	    017E	 253
+DELAY_MI			  CODE	    0155	 204
+DELAY_MI_DL1			  CODE	    0157	 208
+DELAY_RE			  CODE	    0148	 189
+DELAY_RE_DL1			  CODE	    014A	 193
+DELAY_SO			  CODE	    016F	 234
+DELAY_SO_DL1			  CODE	    0171	 238
+DO				  CODE	    0034	   6
+DO1				  CODE	    0046	  17
+DO1AGAIN			  CODE	    0044	  16
+DO2				  CODE	    011E	 149
+DO2AGAIN			  CODE	    011C	 148
+DOAGAIN				  CODE	    0032	   5
+DPH				  DATA	      83
+DPL				  DATA	      82
+EA				  BIT	      AF
+END1				  CODE	    0189	 265
+ES				  BIT	      AC
+ET0				  BIT	      A9
+ET1				  BIT	      AB
+EX0				  BIT	      A8
+EX1				  BIT	      AA
+EXTI0				  CODE	    0003
+EXTI1				  CODE	    0013
+F0				  BIT	      D5
+FA				  CODE	    00B2	  83
+FA1				  CODE	    00C4	  94
+FA1AGAIN			  CODE	    00C2	  93
+FAAGAIN				  CODE	    00B0	  82
+IE				  DATA	      A8
+IE0				  BIT	      89
+IE1				  BIT	      8B
+INT0				  BIT	      B2
+INT1				  BIT	      B3
+IP				  DATA	      B8
+IT0				  BIT	      88
+IT1				  BIT	      8A
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 8
+
+
+
+SYMBOL				  TYPE     VALUE	LINE
+------------------------------------------------------------
+LA				  CODE	    007C	  50
+LA1				  CODE	    008E	  61
+LA1AGAIN			  CODE	    008C	  60
+LAAGAIN				  CODE	    007A	  49
+LOOP				  CODE	    0030	   3
+MI				  CODE	    00D6	 105
+MI1				  CODE	    00E8	 116
+MI1AGAIN			  CODE	    00E6	 115
+MIAGAIN				  CODE	    00D4	 104
+OV				  BIT	      D2
+P				  BIT	      D0
+P0				  DATA	      80
+P1				  DATA	      90
+P2				  DATA	      A0
+P3				  DATA	      B0
+PCON				  DATA	      87
+PS				  BIT	      BC
+PSW				  DATA	      D0
+PT0				  BIT	      B9
+PT1				  BIT	      BB
+PX0				  BIT	      B8
+PX1				  BIT	      BA
+RB8				  BIT	      9A
+RD				  BIT	      B7
+RE				  CODE	    00FA	 127
+RE1				  CODE	    010C	 138
+RE1AGAIN			  CODE	    010A	 137
+REAGAIN				  CODE	    00F8	 126
+REN				  BIT	      9C
+RESET				  CODE	    0000
+RI				  BIT	      98
+RS0				  BIT	      D3
+RS1				  BIT	      D4
+RXD				  BIT	      B0
+SBUF				  DATA	      99
+SCON				  DATA	      98
+SINT				  CODE	    0023
+SM0				  BIT	      9F
+SM1				  BIT	      9E
+SM2				  BIT	      9D
+SO				  CODE	    0058	  28
+SO1				  CODE	    006A	  39
+SO1AGAIN			  CODE	    0068	  38
+SO2				  CODE	    00A0	  72
+SO2AGAIN			  CODE	    009E	  71
+SOAGAIN				  CODE	    0056	  27
+SP				  DATA	      81
+START				  CODE	    0030	   2
+T0				  BIT	      B4
+T1				  BIT	      B5
+TB8				  BIT	      9B
+TCON				  DATA	      88
+TF0				  BIT	      8D
+TF1				  BIT	      8F
+TH0				  DATA	      8C
+TH1				  DATA	      8D
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 9
+
+
+
+SYMBOL				  TYPE     VALUE	LINE
+------------------------------------------------------------
+TI				  BIT	      99
+TIMER0				  CODE	    000B
+TIMER1				  CODE	    001B
+TL0				  DATA	      8A
+TL1				  DATA	      8B
+TMOD				  DATA	      89
+TR0				  BIT	      8C
+TR1				  BIT	      8E
+TXD				  BIT	      B1
+WR				  BIT	      B6

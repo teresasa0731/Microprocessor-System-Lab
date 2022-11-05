@@ -1,0 +1,228 @@
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 1
+
+
+
+
+
+       MCS-51 Family Macro Assembler   A S E M - 5 1   V 1.3
+       =====================================================
+
+
+
+	Source File:	main.asm
+	Object File:	main.hex
+	List File:	main.lst
+
+
+
+ Line  I  Addr  Code            Source
+
+    1:		N      0030	ORG 0030H			;origin start at memory address 0
+    2:	  0030			START:
+    3:	  0030			LOOP:
+    4:
+    5:	  0030	7C 19				MOV R4,#25
+    6:	  0032	7D 19		DOAGAIN:	MOV R5,#25
+    7:	  0034			DO:
+    8:	  0034	D2 B7			SETB P3.7
+    9:	  0036	11 62			ACALL DELAY_DO
+   10:	  0038	C2 B7			CLR P3.7
+   11:	  003A	11 62			ACALL DELAY_DO
+   12:	  003C	DD F6			DJNZ R5,DO
+   13:	  003E	DC F2			DJNZ R4,DOAGAIN
+   14:
+   15:	  0040	7C 19				MOV R4,#25
+   16:	  0042	7D 19		REAGAIN:	MOV R5,#25
+   17:	  0044			RE:
+   18:	  0044	D2 B7			SETB P3.7
+   19:	  0046	11 6F			ACALL DELAY_RE
+   20:	  0048	C2 B7			CLR P3.7
+   21:	  004A	11 6F			ACALL DELAY_RE
+   22:	  004C	DD F6			DJNZ R5,RE
+   23:	  004E	DC F2			DJNZ R4,REAGAIN
+   24:
+   25:	  0050	7C 19				MOV R4,#25
+   26:	  0052	7D 19		MIAGAIN:	MOV R5,#25
+   27:	  0054			MI:
+   28:	  0054	D2 B7			SETB P3.7
+   29:	  0056	11 7C			ACALL DELAY_MI
+   30:	  0058	C2 B7			CLR P3.7
+   31:	  005A	11 7C			ACALL DELAY_MI
+   32:	  005C	DD F6			DJNZ R5,MI
+   33:	  005E	DC F2			DJNZ R4,MIAGAIN
+   34:	  0060	80 27			SJMP END1
+   35:
+   36:	  0062			DELAY_Do:  		;1047HZ, We need Delay 0.478mS
+   37:							;440cycles @Fosc = 11.0592MHz
+   38:	  0062	7E 0A		    	MOV R6,#10
+   39:				    			;+1cycle
+   40:	  0064			DELAY_Do_DL1:
+   41:	  0064	7F 13			MOV R7,#19
+   42:	  0066	DF FE			DJNZ R7,$
+   43:	  0068	DE FA			DJNZ R6,DELAY_Do_DL1
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 2
+
+
+
+ Line  I  Addr  Code            Source
+
+   44:							;+410cycle = 10 * (1 + (19*2) + 2)
+   45:
+   46:	  006A	7F 0D			MOV R7,#13
+   47:	  006C	DF FE			DJNZ R7,$
+   48:							;+27cycle = 1 + (13*2)
+   49:	  006E	22			RET		;+2cycles => Total = 1758
+   50:
+   51:	  006F			DELAY_RE:  		;1175HZ, We need Delay 0.42553mS
+   52:							;392cycles @Fosc = 11.0592MHz
+   53:	  006F	7E 0A		    	MOV R6,#10
+   54:				    			;+1cycle
+   55:	  0071			DELAY_RE_DL1:
+   56:	  0071	7F 11			MOV R7,#17
+   57:	  0073	DF FE			DJNZ R7,$
+   58:	  0075	DE FA			DJNZ R6,DELAY_RE_DL1
+   59:							;+370cycle = 10 * (1 + (17*2) + 2)
+   60:
+   61:	  0077	7F 09			MOV R7,#9
+   62:	  0079	DF FE			DJNZ R7,$
+   63:							;+19cycle = 1 + (9*2)
+   64:	  007B	22			RET		;+2cycles => Total = 1567
+   65:
+   66:	  007C			DELAY_MI:  		;1319HZ, We need Delay 1.515mS
+   67:							;349cycles @Fosc = 11.0592MHz
+   68:	  007C	7E 0A		    	MOV R6,#10
+   69:				    			;+1cycle
+   70:	  007E			DELAY_MI_DL1:
+   71:	  007E	7F 0F			MOV R7,#15
+   72:	  0080	DF FE			DJNZ R7,$
+   73:	  0082	DE FA			DJNZ R6,DELAY_MI_DL1
+   74:							;+330cycle = 10 * (1 + (15*2) + 2)
+   75:
+   76:	  0084	7F 07			MOV R7,#7
+   77:	  0086	DF FE			DJNZ R7,$
+   78:							;+15cycle = 1 + (7*2)
+   79:	  0088	22			RET		;+2cycles => Total = 1396
+   80:
+   81:	  0089			END1:
+   82:	  0089	80 FE		     SJMP END1
+   83:				END
+   84:
+
+
+
+
+
+                     register banks used:  ---
+
+                     no errors
+
+
+
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 3
+
+
+
+
+
+	       L I S T   O F   S Y M B O L S
+	       =============================
+
+
+SYMBOL				  TYPE     VALUE	LINE
+------------------------------------------------------------
+??ASEM_51			  NUMBER    8051
+??VERSION			  NUMBER    0130
+AC				  BIT	      D6
+ACC				  DATA	      E0
+B				  DATA	      F0
+CY				  BIT	      D7
+DELAY_DO			  CODE	    0062	  36
+DELAY_DO_DL1			  CODE	    0064	  40
+DELAY_MI			  CODE	    007C	  66
+DELAY_MI_DL1			  CODE	    007E	  70
+DELAY_RE			  CODE	    006F	  51
+DELAY_RE_DL1			  CODE	    0071	  55
+DO				  CODE	    0034	   7
+DOAGAIN				  CODE	    0032	   6
+DPH				  DATA	      83
+DPL				  DATA	      82
+EA				  BIT	      AF
+END1				  CODE	    0089	  81
+ES				  BIT	      AC
+ET0				  BIT	      A9
+ET1				  BIT	      AB
+EX0				  BIT	      A8
+EX1				  BIT	      AA
+EXTI0				  CODE	    0003
+EXTI1				  CODE	    0013
+F0				  BIT	      D5
+IE				  DATA	      A8
+IE0				  BIT	      89
+IE1				  BIT	      8B
+INT0				  BIT	      B2
+INT1				  BIT	      B3
+IP				  DATA	      B8
+IT0				  BIT	      88
+IT1				  BIT	      8A
+LOOP				  CODE	    0030	   3
+MI				  CODE	    0054	  27
+MIAGAIN				  CODE	    0052	  26
+OV				  BIT	      D2
+P				  BIT	      D0
+P0				  DATA	      80
+P1				  DATA	      90
+P2				  DATA	      A0
+P3				  DATA	      B0
+PCON				  DATA	      87
+PS				  BIT	      BC
+PSW				  DATA	      D0
+PT0				  BIT	      B9
+PT1				  BIT	      BB
+PX0				  BIT	      B8
+PX1				  BIT	      BA
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 4
+
+
+
+SYMBOL				  TYPE     VALUE	LINE
+------------------------------------------------------------
+RB8				  BIT	      9A
+RD				  BIT	      B7
+RE				  CODE	    0044	  17
+REAGAIN				  CODE	    0042	  16
+REN				  BIT	      9C
+RESET				  CODE	    0000
+RI				  BIT	      98
+RS0				  BIT	      D3
+RS1				  BIT	      D4
+RXD				  BIT	      B0
+SBUF				  DATA	      99
+SCON				  DATA	      98
+SINT				  CODE	    0023
+SM0				  BIT	      9F
+SM1				  BIT	      9E
+SM2				  BIT	      9D
+SP				  DATA	      81
+START				  CODE	    0030	   2
+T0				  BIT	      B4
+T1				  BIT	      B5
+TB8				  BIT	      9B
+TCON				  DATA	      88
+TF0				  BIT	      8D
+TF1				  BIT	      8F
+TH0				  DATA	      8C
+TH1				  DATA	      8D
+TI				  BIT	      99
+TIMER0				  CODE	    000B
+TIMER1				  CODE	    001B
+TL0				  DATA	      8A
+TL1				  DATA	      8B
+TMOD				  DATA	      89
+TR0				  BIT	      8C
+TR1				  BIT	      8E
+TXD				  BIT	      B1
+WR				  BIT	      B6
