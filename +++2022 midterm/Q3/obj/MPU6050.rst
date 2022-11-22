@@ -1,0 +1,517 @@
+                                      1 ;--------------------------------------------------------
+                                      2 ; File Created by SDCC : free open source ISO C Compiler 
+                                      3 ; Version 4.2.8 #13684 (MINGW64)
+                                      4 ;--------------------------------------------------------
+                                      5 	.module MPU6050
+                                      6 	.optsdcc -mmcs51 --model-small
+                                      7 	
+                                      8 ;--------------------------------------------------------
+                                      9 ; Public variables in this module
+                                     10 ;--------------------------------------------------------
+                                     11 	.globl _delay_ms
+                                     12 	.globl _Single_ReadI2C
+                                     13 	.globl _Single_WriteI2C
+                                     14 	.globl _readByte_PARM_2
+                                     15 	.globl _writeByte_PARM_3
+                                     16 	.globl _writeByte_PARM_2
+                                     17 	.globl _i2c_package
+                                     18 	.globl _Mmode
+                                     19 	.globl _Gscale
+                                     20 	.globl _Ascale
+                                     21 	.globl _MPU6050_INIT
+                                     22 	.globl _writeByte
+                                     23 	.globl _readByte
+                                     24 	.globl _readMPU6050_AccelData
+                                     25 	.globl _readMPU6050_GyroData
+                                     26 	.globl _resetMPU6050
+                                     27 ;--------------------------------------------------------
+                                     28 ; special function registers
+                                     29 ;--------------------------------------------------------
+                                     30 	.area RSEG    (ABS,DATA)
+      000000                         31 	.org 0x0000
+                                     32 ;--------------------------------------------------------
+                                     33 ; special function bits
+                                     34 ;--------------------------------------------------------
+                                     35 	.area RSEG    (ABS,DATA)
+      000000                         36 	.org 0x0000
+                                     37 ;--------------------------------------------------------
+                                     38 ; overlayable register banks
+                                     39 ;--------------------------------------------------------
+                                     40 	.area REG_BANK_0	(REL,OVR,DATA)
+      000000                         41 	.ds 8
+                                     42 ;--------------------------------------------------------
+                                     43 ; internal ram data
+                                     44 ;--------------------------------------------------------
+                                     45 	.area DSEG    (DATA)
+      000046                         46 _Ascale::
+      000046                         47 	.ds 1
+      000047                         48 _Gscale::
+      000047                         49 	.ds 1
+      000048                         50 _Mmode::
+      000048                         51 	.ds 1
+      000049                         52 _i2c_package::
+      000049                         53 	.ds 6
+      00004F                         54 _writeByte_PARM_2:
+      00004F                         55 	.ds 1
+      000050                         56 _writeByte_PARM_3:
+      000050                         57 	.ds 1
+      000051                         58 _readByte_PARM_2:
+      000051                         59 	.ds 1
+      000052                         60 _readMPU6050_AccelData_buffer_65536_27:
+      000052                         61 	.ds 3
+      000055                         62 _readMPU6050_AccelData_sloc0_1_0:
+      000055                         63 	.ds 2
+      000057                         64 _readMPU6050_GyroData_buffer_65536_29:
+      000057                         65 	.ds 3
+      00005A                         66 _readMPU6050_GyroData_sloc0_1_0:
+      00005A                         67 	.ds 2
+                                     68 ;--------------------------------------------------------
+                                     69 ; overlayable items in internal ram
+                                     70 ;--------------------------------------------------------
+                                     71 ;--------------------------------------------------------
+                                     72 ; indirectly addressable internal ram data
+                                     73 ;--------------------------------------------------------
+                                     74 	.area ISEG    (DATA)
+                                     75 ;--------------------------------------------------------
+                                     76 ; absolute internal ram data
+                                     77 ;--------------------------------------------------------
+                                     78 	.area IABS    (ABS,DATA)
+                                     79 	.area IABS    (ABS,DATA)
+                                     80 ;--------------------------------------------------------
+                                     81 ; bit data
+                                     82 ;--------------------------------------------------------
+                                     83 	.area BSEG    (BIT)
+                                     84 ;--------------------------------------------------------
+                                     85 ; paged external ram data
+                                     86 ;--------------------------------------------------------
+                                     87 	.area PSEG    (PAG,XDATA)
+                                     88 ;--------------------------------------------------------
+                                     89 ; uninitialized external ram data
+                                     90 ;--------------------------------------------------------
+                                     91 	.area XSEG    (XDATA)
+                                     92 ;--------------------------------------------------------
+                                     93 ; absolute external ram data
+                                     94 ;--------------------------------------------------------
+                                     95 	.area XABS    (ABS,XDATA)
+                                     96 ;--------------------------------------------------------
+                                     97 ; initialized external ram data
+                                     98 ;--------------------------------------------------------
+                                     99 	.area XISEG   (XDATA)
+                                    100 	.area HOME    (CODE)
+                                    101 	.area GSINIT0 (CODE)
+                                    102 	.area GSINIT1 (CODE)
+                                    103 	.area GSINIT2 (CODE)
+                                    104 	.area GSINIT3 (CODE)
+                                    105 	.area GSINIT4 (CODE)
+                                    106 	.area GSINIT5 (CODE)
+                                    107 	.area GSINIT  (CODE)
+                                    108 	.area GSFINAL (CODE)
+                                    109 	.area CSEG    (CODE)
+                                    110 ;--------------------------------------------------------
+                                    111 ; global & static initialisations
+                                    112 ;--------------------------------------------------------
+                                    113 	.area HOME    (CODE)
+                                    114 	.area GSINIT  (CODE)
+                                    115 	.area GSFINAL (CODE)
+                                    116 	.area GSINIT  (CODE)
+                                    117 ;	./src/MPU6050.c:5: uint8_t Ascale = AFS_2G;     // AFS_2G, AFS_4G, AFS_8G, AFS_16G
+      0000AE 75 46 00         [24]  118 	mov	_Ascale,#0x00
+                                    119 ;	./src/MPU6050.c:6: uint8_t Gscale = GFS_500DPS; // GFS_250DPS, GFS_500DPS, GFS_1000DPS, GFS_2000DPS
+      0000B1 75 47 01         [24]  120 	mov	_Gscale,#0x01
+                                    121 ;	./src/MPU6050.c:7: uint8_t Mmode = 0x06;        // Either 8 Hz 0x02) or 100 Hz (0x06) magnetometer data ODR  
+      0000B4 75 48 06         [24]  122 	mov	_Mmode,#0x06
+                                    123 ;	./src/MPU6050.c:9: uint8_t i2c_package[6] = {0};
+      0000B7 75 49 00         [24]  124 	mov	_i2c_package,#0x00
+                                    125 ;--------------------------------------------------------
+                                    126 ; Home
+                                    127 ;--------------------------------------------------------
+                                    128 	.area HOME    (CODE)
+                                    129 	.area HOME    (CODE)
+                                    130 ;--------------------------------------------------------
+                                    131 ; code
+                                    132 ;--------------------------------------------------------
+                                    133 	.area CSEG    (CODE)
+                                    134 ;------------------------------------------------------------
+                                    135 ;Allocation info for local variables in function 'MPU6050_INIT'
+                                    136 ;------------------------------------------------------------
+                                    137 ;accel_fchoice_b           Allocated to registers 
+                                    138 ;A_DLPFCFG                 Allocated to registers 
+                                    139 ;mpu6050_i                 Allocated to registers 
+                                    140 ;------------------------------------------------------------
+                                    141 ;	./src/MPU6050.c:11: void MPU6050_INIT(void)
+                                    142 ;	-----------------------------------------
+                                    143 ;	 function MPU6050_INIT
+                                    144 ;	-----------------------------------------
+      00043A                        145 _MPU6050_INIT:
+                           000007   146 	ar7 = 0x07
+                           000006   147 	ar6 = 0x06
+                           000005   148 	ar5 = 0x05
+                           000004   149 	ar4 = 0x04
+                           000003   150 	ar3 = 0x03
+                           000002   151 	ar2 = 0x02
+                           000001   152 	ar1 = 0x01
+                           000000   153 	ar0 = 0x00
+                                    154 ;	./src/MPU6050.c:17: delay_ms(100);                                          // Delay 100 ms
+      00043A 90 00 64         [24]  155 	mov	dptr,#0x0064
+      00043D 12 04 28         [24]  156 	lcall	_delay_ms
+                                    157 ;	./src/MPU6050.c:18: writeByte(MPU6050_ADDRESS, PWR_MGMT_1, 0x00);           // Clear sleep mode bit (6), enable all sensors 
+      000440 75 4F 6B         [24]  158 	mov	_writeByte_PARM_2,#0x6b
+      000443 75 50 00         [24]  159 	mov	_writeByte_PARM_3,#0x00
+      000446 75 82 D0         [24]  160 	mov	dpl,#0xd0
+      000449 12 04 C8         [24]  161 	lcall	_writeByte
+                                    162 ;	./src/MPU6050.c:19: delay_ms(100);                                          // Delay 100 ms for PLL to get established on x-axis gyro; should check for PLL ready interrupt  
+      00044C 90 00 64         [24]  163 	mov	dptr,#0x0064
+      00044F 12 04 28         [24]  164 	lcall	_delay_ms
+                                    165 ;	./src/MPU6050.c:20: writeByte(MPU6050_ADDRESS , SIGNAL_PATH_RESET , 0x07);
+      000452 75 4F 68         [24]  166 	mov	_writeByte_PARM_2,#0x68
+      000455 75 50 07         [24]  167 	mov	_writeByte_PARM_3,#0x07
+      000458 75 82 D0         [24]  168 	mov	dpl,#0xd0
+      00045B 12 04 C8         [24]  169 	lcall	_writeByte
+                                    170 ;	./src/MPU6050.c:21: writeByte(MPU6050_ADDRESS, PWR_MGMT_1, 0x01);           // Set clock source to be PLL with x-axis gyroscope reference, bits 2:0 = 001
+      00045E 75 4F 6B         [24]  171 	mov	_writeByte_PARM_2,#0x6b
+      000461 75 50 01         [24]  172 	mov	_writeByte_PARM_3,#0x01
+      000464 75 82 D0         [24]  173 	mov	dpl,#0xd0
+      000467 12 04 C8         [24]  174 	lcall	_writeByte
+                                    175 ;	./src/MPU6050.c:22: writeByte(MPU6050_ADDRESS, CONFIG, 0x03);  
+      00046A 75 4F 1A         [24]  176 	mov	_writeByte_PARM_2,#0x1a
+      00046D 75 50 03         [24]  177 	mov	_writeByte_PARM_3,#0x03
+      000470 75 82 D0         [24]  178 	mov	dpl,#0xd0
+      000473 12 04 C8         [24]  179 	lcall	_writeByte
+                                    180 ;	./src/MPU6050.c:23: writeByte(MPU6050_ADDRESS, SMPLRT_DIV, 0);              // Use a 1000 Hz rate; the same rate set in CONFIG above     
+      000476 75 4F 19         [24]  181 	mov	_writeByte_PARM_2,#0x19
+      000479 75 50 00         [24]  182 	mov	_writeByte_PARM_3,#0x00
+      00047C 75 82 D0         [24]  183 	mov	dpl,#0xd0
+      00047F 12 04 C8         [24]  184 	lcall	_writeByte
+                                    185 ;	./src/MPU6050.c:24: mpu6050_i = (Gscale << 3) | 0x00;
+      000482 E5 47            [12]  186 	mov	a,_Gscale
+      000484 C4               [12]  187 	swap	a
+      000485 03               [12]  188 	rr	a
+      000486 54 F8            [12]  189 	anl	a,#0xf8
+      000488 F5 50            [12]  190 	mov	_writeByte_PARM_3,a
+                                    191 ;	./src/MPU6050.c:25: writeByte(MPU6050_ADDRESS, GYRO_CONFIG, mpu6050_i);     // Write new GYRO_CONFIG value to register     
+      00048A 75 4F 1B         [24]  192 	mov	_writeByte_PARM_2,#0x1b
+      00048D 75 82 D0         [24]  193 	mov	dpl,#0xd0
+      000490 12 04 C8         [24]  194 	lcall	_writeByte
+                                    195 ;	./src/MPU6050.c:26: mpu6050_i = (Ascale << 3);
+      000493 E5 46            [12]  196 	mov	a,_Ascale
+      000495 C4               [12]  197 	swap	a
+      000496 03               [12]  198 	rr	a
+      000497 54 F8            [12]  199 	anl	a,#0xf8
+      000499 F5 50            [12]  200 	mov	_writeByte_PARM_3,a
+                                    201 ;	./src/MPU6050.c:27: writeByte(MPU6050_ADDRESS, ACCEL_CONFIG, mpu6050_i);    // Write new ACCEL_CONFIG register value
+      00049B 75 4F 1C         [24]  202 	mov	_writeByte_PARM_2,#0x1c
+      00049E 75 82 D0         [24]  203 	mov	dpl,#0xd0
+      0004A1 12 04 C8         [24]  204 	lcall	_writeByte
+                                    205 ;	./src/MPU6050.c:29: writeByte(MPU6050_ADDRESS, ACCEL_CONFIG2, mpu6050_i);   // Write new ACCEL_CONFIG2 register value	
+      0004A4 75 4F 1D         [24]  206 	mov	_writeByte_PARM_2,#0x1d
+      0004A7 75 50 03         [24]  207 	mov	_writeByte_PARM_3,#0x03
+      0004AA 75 82 D0         [24]  208 	mov	dpl,#0xd0
+      0004AD 12 04 C8         [24]  209 	lcall	_writeByte
+                                    210 ;	./src/MPU6050.c:30: writeByte(MPU6050_ADDRESS, INT_PIN_CFG, 0x22);    
+      0004B0 75 4F 37         [24]  211 	mov	_writeByte_PARM_2,#0x37
+      0004B3 75 50 22         [24]  212 	mov	_writeByte_PARM_3,#0x22
+      0004B6 75 82 D0         [24]  213 	mov	dpl,#0xd0
+      0004B9 12 04 C8         [24]  214 	lcall	_writeByte
+                                    215 ;	./src/MPU6050.c:31: writeByte(MPU6050_ADDRESS, INT_ENABLE, 0x00);           // disable data ready (bit 0) interrupt
+      0004BC 75 4F 38         [24]  216 	mov	_writeByte_PARM_2,#0x38
+      0004BF 75 50 00         [24]  217 	mov	_writeByte_PARM_3,#0x00
+      0004C2 75 82 D0         [24]  218 	mov	dpl,#0xd0
+                                    219 ;	./src/MPU6050.c:32: }
+      0004C5 02 04 C8         [24]  220 	ljmp	_writeByte
+                                    221 ;------------------------------------------------------------
+                                    222 ;Allocation info for local variables in function 'writeByte'
+                                    223 ;------------------------------------------------------------
+                                    224 ;subAddress                Allocated with name '_writeByte_PARM_2'
+                                    225 ;REG_data                  Allocated with name '_writeByte_PARM_3'
+                                    226 ;address                   Allocated to registers 
+                                    227 ;------------------------------------------------------------
+                                    228 ;	./src/MPU6050.c:35: void writeByte(uint8_t address, uint8_t subAddress, uint8_t REG_data)
+                                    229 ;	-----------------------------------------
+                                    230 ;	 function writeByte
+                                    231 ;	-----------------------------------------
+      0004C8                        232 _writeByte:
+                                    233 ;	./src/MPU6050.c:37: Single_WriteI2C(address, subAddress, REG_data);
+      0004C8 85 4F 08         [24]  234 	mov	_Single_WriteI2C_PARM_2,_writeByte_PARM_2
+      0004CB 85 50 09         [24]  235 	mov	_Single_WriteI2C_PARM_3,_writeByte_PARM_3
+                                    236 ;	./src/MPU6050.c:38: }
+      0004CE 02 03 CC         [24]  237 	ljmp	_Single_WriteI2C
+                                    238 ;------------------------------------------------------------
+                                    239 ;Allocation info for local variables in function 'readByte'
+                                    240 ;------------------------------------------------------------
+                                    241 ;subAddress                Allocated with name '_readByte_PARM_2'
+                                    242 ;address                   Allocated to registers 
+                                    243 ;------------------------------------------------------------
+                                    244 ;	./src/MPU6050.c:41: uint8_t readByte(uint8_t address, uint8_t subAddress)
+                                    245 ;	-----------------------------------------
+                                    246 ;	 function readByte
+                                    247 ;	-----------------------------------------
+      0004D1                        248 _readByte:
+                                    249 ;	./src/MPU6050.c:43: return Single_ReadI2C(address, subAddress); 
+      0004D1 85 51 0A         [24]  250 	mov	_Single_ReadI2C_PARM_2,_readByte_PARM_2
+                                    251 ;	./src/MPU6050.c:44: }
+      0004D4 02 03 E9         [24]  252 	ljmp	_Single_ReadI2C
+                                    253 ;------------------------------------------------------------
+                                    254 ;Allocation info for local variables in function 'readMPU6050_AccelData'
+                                    255 ;------------------------------------------------------------
+                                    256 ;buffer                    Allocated with name '_readMPU6050_AccelData_buffer_65536_27'
+                                    257 ;sloc0                     Allocated with name '_readMPU6050_AccelData_sloc0_1_0'
+                                    258 ;------------------------------------------------------------
+                                    259 ;	./src/MPU6050.c:46: void readMPU6050_AccelData(int * buffer)
+                                    260 ;	-----------------------------------------
+                                    261 ;	 function readMPU6050_AccelData
+                                    262 ;	-----------------------------------------
+      0004D7                        263 _readMPU6050_AccelData:
+      0004D7 85 82 52         [24]  264 	mov	_readMPU6050_AccelData_buffer_65536_27,dpl
+      0004DA 85 83 53         [24]  265 	mov	(_readMPU6050_AccelData_buffer_65536_27 + 1),dph
+      0004DD 85 F0 54         [24]  266 	mov	(_readMPU6050_AccelData_buffer_65536_27 + 2),b
+                                    267 ;	./src/MPU6050.c:49: i2c_package[0] = readByte(MPU6050_ADDRESS, ACCEL_XOUT_H);
+      0004E0 75 51 3B         [24]  268 	mov	_readByte_PARM_2,#0x3b
+      0004E3 75 82 D0         [24]  269 	mov	dpl,#0xd0
+      0004E6 12 04 D1         [24]  270 	lcall	_readByte
+      0004E9 E5 82            [12]  271 	mov	a,dpl
+      0004EB F5 49            [12]  272 	mov	_i2c_package,a
+                                    273 ;	./src/MPU6050.c:50: i2c_package[1] = readByte(MPU6050_ADDRESS, ACCEL_XOUT_L);
+      0004ED 75 51 3C         [24]  274 	mov	_readByte_PARM_2,#0x3c
+      0004F0 75 82 D0         [24]  275 	mov	dpl,#0xd0
+      0004F3 12 04 D1         [24]  276 	lcall	_readByte
+      0004F6 E5 82            [12]  277 	mov	a,dpl
+      0004F8 F5 4A            [12]  278 	mov	(_i2c_package + 0x0001),a
+                                    279 ;	./src/MPU6050.c:51: i2c_package[2] = readByte(MPU6050_ADDRESS, ACCEL_YOUT_H);
+      0004FA 75 51 3D         [24]  280 	mov	_readByte_PARM_2,#0x3d
+      0004FD 75 82 D0         [24]  281 	mov	dpl,#0xd0
+      000500 12 04 D1         [24]  282 	lcall	_readByte
+      000503 E5 82            [12]  283 	mov	a,dpl
+      000505 F5 4B            [12]  284 	mov	(_i2c_package + 0x0002),a
+                                    285 ;	./src/MPU6050.c:52: i2c_package[3] = readByte(MPU6050_ADDRESS, ACCEL_YOUT_L);
+      000507 75 51 3E         [24]  286 	mov	_readByte_PARM_2,#0x3e
+      00050A 75 82 D0         [24]  287 	mov	dpl,#0xd0
+      00050D 12 04 D1         [24]  288 	lcall	_readByte
+      000510 E5 82            [12]  289 	mov	a,dpl
+      000512 F5 4C            [12]  290 	mov	(_i2c_package + 0x0003),a
+                                    291 ;	./src/MPU6050.c:53: i2c_package[4] = readByte(MPU6050_ADDRESS, ACCEL_ZOUT_H);
+      000514 75 51 3F         [24]  292 	mov	_readByte_PARM_2,#0x3f
+      000517 75 82 D0         [24]  293 	mov	dpl,#0xd0
+      00051A 12 04 D1         [24]  294 	lcall	_readByte
+      00051D E5 82            [12]  295 	mov	a,dpl
+      00051F F5 4D            [12]  296 	mov	(_i2c_package + 0x0004),a
+                                    297 ;	./src/MPU6050.c:54: i2c_package[5] = readByte(MPU6050_ADDRESS, ACCEL_ZOUT_L);
+      000521 75 51 40         [24]  298 	mov	_readByte_PARM_2,#0x40
+      000524 75 82 D0         [24]  299 	mov	dpl,#0xd0
+      000527 12 04 D1         [24]  300 	lcall	_readByte
+      00052A AC 82            [24]  301 	mov	r4,dpl
+      00052C 8C 4E            [24]  302 	mov	(_i2c_package + 0x0005),r4
+                                    303 ;	./src/MPU6050.c:56: buffer[0] = (int)(((int)i2c_package[0] << 8) | i2c_package[1]) ;  // Turn the MSB and LSB into a signed 16-bit value
+      00052E AB 49            [24]  304 	mov	r3,_i2c_package
+      000530 7A 00            [12]  305 	mov	r2,#0x00
+      000532 AE 4A            [24]  306 	mov	r6,(_i2c_package + 0x0001)
+      000534 7F 00            [12]  307 	mov	r7,#0x00
+      000536 EE               [12]  308 	mov	a,r6
+      000537 42 02            [12]  309 	orl	ar2,a
+      000539 EF               [12]  310 	mov	a,r7
+      00053A 42 03            [12]  311 	orl	ar3,a
+      00053C 85 52 82         [24]  312 	mov	dpl,_readMPU6050_AccelData_buffer_65536_27
+      00053F 85 53 83         [24]  313 	mov	dph,(_readMPU6050_AccelData_buffer_65536_27 + 1)
+      000542 85 54 F0         [24]  314 	mov	b,(_readMPU6050_AccelData_buffer_65536_27 + 2)
+      000545 EA               [12]  315 	mov	a,r2
+      000546 12 06 8F         [24]  316 	lcall	__gptrput
+      000549 A3               [24]  317 	inc	dptr
+      00054A EB               [12]  318 	mov	a,r3
+      00054B 12 06 8F         [24]  319 	lcall	__gptrput
+                                    320 ;	./src/MPU6050.c:57: buffer[1] = (int)(((int)i2c_package[2] << 8) | i2c_package[3]) ;  
+      00054E 74 02            [12]  321 	mov	a,#0x02
+      000550 25 52            [12]  322 	add	a,_readMPU6050_AccelData_buffer_65536_27
+      000552 FD               [12]  323 	mov	r5,a
+      000553 E4               [12]  324 	clr	a
+      000554 35 53            [12]  325 	addc	a,(_readMPU6050_AccelData_buffer_65536_27 + 1)
+      000556 FE               [12]  326 	mov	r6,a
+      000557 AF 54            [24]  327 	mov	r7,(_readMPU6050_AccelData_buffer_65536_27 + 2)
+      000559 AA 4B            [24]  328 	mov	r2,(_i2c_package + 0x0002)
+      00055B 7B 00            [12]  329 	mov	r3,#0x00
+      00055D 8A 56            [24]  330 	mov	(_readMPU6050_AccelData_sloc0_1_0 + 1),r2
+                                    331 ;	1-genFromRTrack replaced	mov	_readMPU6050_AccelData_sloc0_1_0,#0x00
+      00055F 8B 55            [24]  332 	mov	_readMPU6050_AccelData_sloc0_1_0,r3
+      000561 AA 4C            [24]  333 	mov	r2,(_i2c_package + 0x0003)
+      000563 7B 00            [12]  334 	mov	r3,#0x00
+      000565 E5 55            [12]  335 	mov	a,_readMPU6050_AccelData_sloc0_1_0
+      000567 42 02            [12]  336 	orl	ar2,a
+      000569 E5 56            [12]  337 	mov	a,(_readMPU6050_AccelData_sloc0_1_0 + 1)
+      00056B 42 03            [12]  338 	orl	ar3,a
+      00056D 8D 82            [24]  339 	mov	dpl,r5
+      00056F 8E 83            [24]  340 	mov	dph,r6
+      000571 8F F0            [24]  341 	mov	b,r7
+      000573 EA               [12]  342 	mov	a,r2
+      000574 12 06 8F         [24]  343 	lcall	__gptrput
+      000577 A3               [24]  344 	inc	dptr
+      000578 EB               [12]  345 	mov	a,r3
+      000579 12 06 8F         [24]  346 	lcall	__gptrput
+                                    347 ;	./src/MPU6050.c:58: buffer[2] = (int)(((int)i2c_package[4] << 8) | i2c_package[5]) ; 
+      00057C 74 04            [12]  348 	mov	a,#0x04
+      00057E 25 52            [12]  349 	add	a,_readMPU6050_AccelData_buffer_65536_27
+      000580 FD               [12]  350 	mov	r5,a
+      000581 E4               [12]  351 	clr	a
+      000582 35 53            [12]  352 	addc	a,(_readMPU6050_AccelData_buffer_65536_27 + 1)
+      000584 FE               [12]  353 	mov	r6,a
+      000585 AF 54            [24]  354 	mov	r7,(_readMPU6050_AccelData_buffer_65536_27 + 2)
+      000587 AA 4D            [24]  355 	mov	r2,(_i2c_package + 0x0004)
+      000589 7B 00            [12]  356 	mov	r3,#0x00
+      00058B 8A 56            [24]  357 	mov	(_readMPU6050_AccelData_sloc0_1_0 + 1),r2
+                                    358 ;	1-genFromRTrack replaced	mov	_readMPU6050_AccelData_sloc0_1_0,#0x00
+      00058D 8B 55            [24]  359 	mov	_readMPU6050_AccelData_sloc0_1_0,r3
+      00058F 8C 03            [24]  360 	mov	ar3,r4
+      000591 7C 00            [12]  361 	mov	r4,#0x00
+      000593 E5 55            [12]  362 	mov	a,_readMPU6050_AccelData_sloc0_1_0
+      000595 42 03            [12]  363 	orl	ar3,a
+      000597 E5 56            [12]  364 	mov	a,(_readMPU6050_AccelData_sloc0_1_0 + 1)
+      000599 42 04            [12]  365 	orl	ar4,a
+      00059B 8D 82            [24]  366 	mov	dpl,r5
+      00059D 8E 83            [24]  367 	mov	dph,r6
+      00059F 8F F0            [24]  368 	mov	b,r7
+      0005A1 EB               [12]  369 	mov	a,r3
+      0005A2 12 06 8F         [24]  370 	lcall	__gptrput
+      0005A5 A3               [24]  371 	inc	dptr
+      0005A6 EC               [12]  372 	mov	a,r4
+                                    373 ;	./src/MPU6050.c:59: }
+      0005A7 02 06 8F         [24]  374 	ljmp	__gptrput
+                                    375 ;------------------------------------------------------------
+                                    376 ;Allocation info for local variables in function 'readMPU6050_GyroData'
+                                    377 ;------------------------------------------------------------
+                                    378 ;buffer                    Allocated with name '_readMPU6050_GyroData_buffer_65536_29'
+                                    379 ;sloc0                     Allocated with name '_readMPU6050_GyroData_sloc0_1_0'
+                                    380 ;------------------------------------------------------------
+                                    381 ;	./src/MPU6050.c:61: void readMPU6050_GyroData(int * buffer)
+                                    382 ;	-----------------------------------------
+                                    383 ;	 function readMPU6050_GyroData
+                                    384 ;	-----------------------------------------
+      0005AA                        385 _readMPU6050_GyroData:
+      0005AA 85 82 57         [24]  386 	mov	_readMPU6050_GyroData_buffer_65536_29,dpl
+      0005AD 85 83 58         [24]  387 	mov	(_readMPU6050_GyroData_buffer_65536_29 + 1),dph
+      0005B0 85 F0 59         [24]  388 	mov	(_readMPU6050_GyroData_buffer_65536_29 + 2),b
+                                    389 ;	./src/MPU6050.c:63: i2c_package[5] = readByte(MPU6050_ADDRESS, GYRO_ZOUT_L);
+      0005B3 75 51 48         [24]  390 	mov	_readByte_PARM_2,#0x48
+      0005B6 75 82 D0         [24]  391 	mov	dpl,#0xd0
+      0005B9 12 04 D1         [24]  392 	lcall	_readByte
+      0005BC E5 82            [12]  393 	mov	a,dpl
+      0005BE F5 4E            [12]  394 	mov	(_i2c_package + 0x0005),a
+                                    395 ;	./src/MPU6050.c:64: i2c_package[4] = readByte(MPU6050_ADDRESS, GYRO_ZOUT_H);
+      0005C0 75 51 47         [24]  396 	mov	_readByte_PARM_2,#0x47
+      0005C3 75 82 D0         [24]  397 	mov	dpl,#0xd0
+      0005C6 12 04 D1         [24]  398 	lcall	_readByte
+      0005C9 E5 82            [12]  399 	mov	a,dpl
+      0005CB F5 4D            [12]  400 	mov	(_i2c_package + 0x0004),a
+                                    401 ;	./src/MPU6050.c:65: i2c_package[3] = readByte(MPU6050_ADDRESS, GYRO_YOUT_L);
+      0005CD 75 51 46         [24]  402 	mov	_readByte_PARM_2,#0x46
+      0005D0 75 82 D0         [24]  403 	mov	dpl,#0xd0
+      0005D3 12 04 D1         [24]  404 	lcall	_readByte
+      0005D6 E5 82            [12]  405 	mov	a,dpl
+      0005D8 F5 4C            [12]  406 	mov	(_i2c_package + 0x0003),a
+                                    407 ;	./src/MPU6050.c:66: i2c_package[2] = readByte(MPU6050_ADDRESS, GYRO_YOUT_H);
+      0005DA 75 51 45         [24]  408 	mov	_readByte_PARM_2,#0x45
+      0005DD 75 82 D0         [24]  409 	mov	dpl,#0xd0
+      0005E0 12 04 D1         [24]  410 	lcall	_readByte
+      0005E3 E5 82            [12]  411 	mov	a,dpl
+      0005E5 F5 4B            [12]  412 	mov	(_i2c_package + 0x0002),a
+                                    413 ;	./src/MPU6050.c:67: i2c_package[1] = readByte(MPU6050_ADDRESS, GYRO_XOUT_L);
+      0005E7 75 51 44         [24]  414 	mov	_readByte_PARM_2,#0x44
+      0005EA 75 82 D0         [24]  415 	mov	dpl,#0xd0
+      0005ED 12 04 D1         [24]  416 	lcall	_readByte
+      0005F0 E5 82            [12]  417 	mov	a,dpl
+      0005F2 F5 4A            [12]  418 	mov	(_i2c_package + 0x0001),a
+                                    419 ;	./src/MPU6050.c:68: i2c_package[0] = readByte(MPU6050_ADDRESS, GYRO_XOUT_H);
+      0005F4 75 51 43         [24]  420 	mov	_readByte_PARM_2,#0x43
+      0005F7 75 82 D0         [24]  421 	mov	dpl,#0xd0
+      0005FA 12 04 D1         [24]  422 	lcall	_readByte
+      0005FD AC 82            [24]  423 	mov	r4,dpl
+      0005FF 8C 49            [24]  424 	mov	_i2c_package,r4
+                                    425 ;	./src/MPU6050.c:69: buffer[0] = (int)(((int)i2c_package[0] << 8) | i2c_package[1]) ;  // Turn the MSB and LSB into a signed 16-bit value
+      000601 8C 03            [24]  426 	mov	ar3,r4
+      000603 7C 00            [12]  427 	mov	r4,#0x00
+      000605 AA 4A            [24]  428 	mov	r2,(_i2c_package + 0x0001)
+      000607 7F 00            [12]  429 	mov	r7,#0x00
+      000609 EA               [12]  430 	mov	a,r2
+      00060A 42 04            [12]  431 	orl	ar4,a
+      00060C EF               [12]  432 	mov	a,r7
+      00060D 42 03            [12]  433 	orl	ar3,a
+      00060F 85 57 82         [24]  434 	mov	dpl,_readMPU6050_GyroData_buffer_65536_29
+      000612 85 58 83         [24]  435 	mov	dph,(_readMPU6050_GyroData_buffer_65536_29 + 1)
+      000615 85 59 F0         [24]  436 	mov	b,(_readMPU6050_GyroData_buffer_65536_29 + 2)
+      000618 EC               [12]  437 	mov	a,r4
+      000619 12 06 8F         [24]  438 	lcall	__gptrput
+      00061C A3               [24]  439 	inc	dptr
+      00061D EB               [12]  440 	mov	a,r3
+      00061E 12 06 8F         [24]  441 	lcall	__gptrput
+                                    442 ;	./src/MPU6050.c:70: buffer[1] = (int)(((int)i2c_package[2] << 8) | i2c_package[3]) ;  
+      000621 74 02            [12]  443 	mov	a,#0x02
+      000623 25 57            [12]  444 	add	a,_readMPU6050_GyroData_buffer_65536_29
+      000625 FD               [12]  445 	mov	r5,a
+      000626 E4               [12]  446 	clr	a
+      000627 35 58            [12]  447 	addc	a,(_readMPU6050_GyroData_buffer_65536_29 + 1)
+      000629 FE               [12]  448 	mov	r6,a
+      00062A AF 59            [24]  449 	mov	r7,(_readMPU6050_GyroData_buffer_65536_29 + 2)
+      00062C AB 4B            [24]  450 	mov	r3,(_i2c_package + 0x0002)
+      00062E 7C 00            [12]  451 	mov	r4,#0x00
+      000630 8B 5B            [24]  452 	mov	(_readMPU6050_GyroData_sloc0_1_0 + 1),r3
+                                    453 ;	1-genFromRTrack replaced	mov	_readMPU6050_GyroData_sloc0_1_0,#0x00
+      000632 8C 5A            [24]  454 	mov	_readMPU6050_GyroData_sloc0_1_0,r4
+      000634 AA 4C            [24]  455 	mov	r2,(_i2c_package + 0x0003)
+      000636 7C 00            [12]  456 	mov	r4,#0x00
+      000638 E5 5A            [12]  457 	mov	a,_readMPU6050_GyroData_sloc0_1_0
+      00063A 42 02            [12]  458 	orl	ar2,a
+      00063C E5 5B            [12]  459 	mov	a,(_readMPU6050_GyroData_sloc0_1_0 + 1)
+      00063E 42 04            [12]  460 	orl	ar4,a
+      000640 8D 82            [24]  461 	mov	dpl,r5
+      000642 8E 83            [24]  462 	mov	dph,r6
+      000644 8F F0            [24]  463 	mov	b,r7
+      000646 EA               [12]  464 	mov	a,r2
+      000647 12 06 8F         [24]  465 	lcall	__gptrput
+      00064A A3               [24]  466 	inc	dptr
+      00064B EC               [12]  467 	mov	a,r4
+      00064C 12 06 8F         [24]  468 	lcall	__gptrput
+                                    469 ;	./src/MPU6050.c:71: buffer[2] = (int)(((int)i2c_package[4] << 8) | i2c_package[5]) ; 
+      00064F 74 04            [12]  470 	mov	a,#0x04
+      000651 25 57            [12]  471 	add	a,_readMPU6050_GyroData_buffer_65536_29
+      000653 FD               [12]  472 	mov	r5,a
+      000654 E4               [12]  473 	clr	a
+      000655 35 58            [12]  474 	addc	a,(_readMPU6050_GyroData_buffer_65536_29 + 1)
+      000657 FE               [12]  475 	mov	r6,a
+      000658 AF 59            [24]  476 	mov	r7,(_readMPU6050_GyroData_buffer_65536_29 + 2)
+      00065A AB 4D            [24]  477 	mov	r3,(_i2c_package + 0x0004)
+      00065C 7C 00            [12]  478 	mov	r4,#0x00
+      00065E 8B 5B            [24]  479 	mov	(_readMPU6050_GyroData_sloc0_1_0 + 1),r3
+                                    480 ;	1-genFromRTrack replaced	mov	_readMPU6050_GyroData_sloc0_1_0,#0x00
+      000660 8C 5A            [24]  481 	mov	_readMPU6050_GyroData_sloc0_1_0,r4
+      000662 AA 4E            [24]  482 	mov	r2,(_i2c_package + 0x0005)
+      000664 7C 00            [12]  483 	mov	r4,#0x00
+      000666 E5 5A            [12]  484 	mov	a,_readMPU6050_GyroData_sloc0_1_0
+      000668 42 02            [12]  485 	orl	ar2,a
+      00066A E5 5B            [12]  486 	mov	a,(_readMPU6050_GyroData_sloc0_1_0 + 1)
+      00066C 42 04            [12]  487 	orl	ar4,a
+      00066E 8D 82            [24]  488 	mov	dpl,r5
+      000670 8E 83            [24]  489 	mov	dph,r6
+      000672 8F F0            [24]  490 	mov	b,r7
+      000674 EA               [12]  491 	mov	a,r2
+      000675 12 06 8F         [24]  492 	lcall	__gptrput
+      000678 A3               [24]  493 	inc	dptr
+      000679 EC               [12]  494 	mov	a,r4
+                                    495 ;	./src/MPU6050.c:72: }
+      00067A 02 06 8F         [24]  496 	ljmp	__gptrput
+                                    497 ;------------------------------------------------------------
+                                    498 ;Allocation info for local variables in function 'resetMPU6050'
+                                    499 ;------------------------------------------------------------
+                                    500 ;	./src/MPU6050.c:74: void resetMPU6050(void) 
+                                    501 ;	-----------------------------------------
+                                    502 ;	 function resetMPU6050
+                                    503 ;	-----------------------------------------
+      00067D                        504 _resetMPU6050:
+                                    505 ;	./src/MPU6050.c:77: writeByte(MPU6050_ADDRESS, PWR_MGMT_1, 0x80); // Write a one to bit 7 reset bit; toggle reset device
+      00067D 75 4F 6B         [24]  506 	mov	_writeByte_PARM_2,#0x6b
+      000680 75 50 80         [24]  507 	mov	_writeByte_PARM_3,#0x80
+      000683 75 82 D0         [24]  508 	mov	dpl,#0xd0
+      000686 12 04 C8         [24]  509 	lcall	_writeByte
+                                    510 ;	./src/MPU6050.c:78: delay_ms(100);
+      000689 90 00 64         [24]  511 	mov	dptr,#0x0064
+                                    512 ;	./src/MPU6050.c:79: }
+      00068C 02 04 28         [24]  513 	ljmp	_delay_ms
+                                    514 	.area CSEG    (CODE)
+                                    515 	.area CONST   (CODE)
+                                    516 	.area XINIT   (CODE)
+                                    517 	.area CABS    (ABS,CODE)
